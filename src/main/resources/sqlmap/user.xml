@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="user">
+    <insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        insert into bmw_user (account, account_type, password, nick_name, image_url, sex, create_time, last_updated)
+        values (#{account}, #{account_type}, #{password}, #{nick_name}, #{image_url}, #{sex}, #{create_time}, #{last_updated})
+    </insert>
+
+    <select id="getUserByAccount" parameterType="java.lang.String" resultType="User">
+        select id from bmw_user where account = #{account} limit 1
+    </select>
+
+    <select id="getUserByAccountPassword" parameterType="User" resultType="User">
+        select * from bmw_user where account = #{account} and password = #{password} limit 1
+    </select>
+
+    <update id="updateUser" parameterType="User">
+        update bmw_user set last_updated = #{last_updated}
+        <if test="image_url != null">
+            , image_url = #{image_url}
+        </if>
+        <if test="image_url != null">
+            , image_url = #{image_url}
+        </if>
+        where id = #{id}
+    </update>
+</mapper>
