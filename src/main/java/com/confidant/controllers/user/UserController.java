@@ -28,9 +28,9 @@ public class UserController extends BaseController {
     public void saveUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String account = request.getParameter("account");
         String password = request.getParameter("password");
-        String nick_name = request.getParameter("nick_name");
-        String sex = request.getParameter("sex");
-        if (chekValuesEmpty(new String[]{account, password, nick_name, sex}))
+//        String nick_name = request.getParameter("nick_name");
+//        String sex = request.getParameter("sex");
+        if (chekValuesEmpty(new String[]{account, password}))
             fail(response, Constants.ErrorMsg.Common.IllegalArgument);
         else {
             User user = new User();
@@ -40,8 +40,9 @@ public class UserController extends BaseController {
                 fail(response, Constants.ErrorMsg.User.UserExists);
             else {
                 user.setPassword(password);
+                String nick_name = account.indexOf("@") > 0 ? account.substring(0, account.indexOf("@")) : account;
                 user.setNick_name(nick_name);
-                user.setSex(sex);
+//                user.setSex(sex);
                 Date now = new Date();
                 user.setCreate_time(now);
                 user.setLast_updated(now);
