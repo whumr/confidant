@@ -4,11 +4,6 @@ body {
     padding: 0;
     font-family: "Microsoft Yahei","宋体","Tahoma",Arial;
 }
-
-div {
-    display: block;
-}
-
 .content_hd {
     border-bottom: 1px solid #d3d3d3;
     font-size: 14px;
@@ -52,11 +47,14 @@ div {
 }
 
 .mainwrapper {
+    position: relative;
+}
+
+.mainwrapper {
     width: 1000px;
     margin: 35px 0;
     margin-left: auto;
     margin-right: auto;
-    position: relative;
 }
 .mainwrapper .inner {
     position: relative;
@@ -114,7 +112,12 @@ pre{
     margin: 1em 0px;
 }
 #mw-panel {
-    border-color: #d3d3d3;
+    float: left;
+    width: 208px;
+    font-size: 14px;
+    padding: 0 0 100px;
+    border-right: 1px solid #ECEDE8;
+    margin-right: -1px;
 }
 #mw-panel {
     position: absolute;
@@ -123,17 +126,14 @@ pre{
     width: 250px;
 }
 #mw-panel {
-    float: left;
-    width: 208px;
-    font-size: 14px;
-    padding: 0 0 100px;
-    border-right: 1px solid #ECEDE8;
-    margin-right: -1px;
-    padding-left: 38px;
+    border-color: #d3d3d3;
 }
 #content {
-    background-color: #ffffff;
-    border-color: #d3d3d3;
+    float: right;
+    width: 751px;
+    border-left: 1px solid #ECEDE8;
+    padding: 0;
+    padding-bottom: 100px;
 }
 #content {
     float: none;
@@ -142,11 +142,8 @@ pre{
     margin-left: 250px;
 }
 #content {
-    float: right;
-    width: 751px;
-    border-left: 1px solid #ECEDE8;
-    padding: 0;
-    padding-bottom: 100px;
+    background-color: #ffffff;
+    border-color: #d3d3d3;
 }
 
 #mw-head {
@@ -172,4 +169,48 @@ pre{
     border: 1px solid #ECEDE8;
     border-radius: 0 0 0 5px;
     padding: 10px 0;
+}
+
+#mw-panel h5 {
+    height: 35px;
+    line-height: 35px;
+    margin: -1px 15px 0;
+    border: 1px solid #D9D9D9;
+    border-width: 1px 0;
+    font-size: 14px;
+    text-indent: 32px;
+    color: #333;
+    cursor: pointer
+}
+
+#mw-panel h5.active a {
+    background-position: -171px -50px;
+    color: #70ABD5
+}
+
+.portal_arrow {
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-left-color: #aaa;
+    display: inline-block;
+    *position: absolute;
+    *margin-top: 3px;
+    margin-left: -12px;
+    font-size: 1px;
+    line-height: 0
+}
+
+.active .portal_arrow {
+    border-top-color: #70ABD5;
+    border-left-color: transparent;
+    margin: 0 6px -3px -18px;
+    *margin-top: 6px
+}
+
+#mw-panel ul a {
+    height: 30px;
+    line-height: 30px;
+    font-size: 12px;
+    border-radius: 3px
 }
