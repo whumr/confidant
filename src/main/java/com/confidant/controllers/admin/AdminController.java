@@ -35,7 +35,7 @@ public class AdminController extends BaseController {
     @RequestMapping({"", "/index"})
     public String index(HttpServletRequest request, HttpServletResponse response) throws Exception {
         if (checkLogin(request, response))
-            return "admin/index_c1";
+            return "admin/user_reg";
         return null;
     }
 

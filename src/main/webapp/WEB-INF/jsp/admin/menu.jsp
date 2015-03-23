@@ -5,8 +5,9 @@
 
     <div class="body">
         <ul>
-            <li ><a href="index_c1">用户注册</a></li>
-            <li ><a href="index_c2">邮箱检查</a></li>
+            <li><a href="user_reg">用户注册</a></li>
+            <li><a href="user_account_check">邮箱检查</a></li>
+            <li><a href="user_login">用户登陆</a></li>
         </ul>
     </div>
 </div>

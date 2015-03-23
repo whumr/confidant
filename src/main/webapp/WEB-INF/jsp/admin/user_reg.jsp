@@ -26,7 +26,7 @@
             <div id="bodyContent" class="bodyContent">
                 <p><b>接口调用请求说明</b></p>
                 <pre>http请求方式: POST
-<a href="http://confidant.jd-app.com/user/save?account=aaa@111.com&amp;password=bbb&amp;nick_name=cccc&amp;sex=M" class="external free" rel="nofollow" target="_blank">http://confidant.jd-app.com/user/save?account=aaa@111.com&password=bbb&nick_name=cccc&sex=M</a>
+<a href="http://confidant.jd-app.com/user/save?account=aaa@111.com&amp;password=bbb" class="external free" rel="nofollow" target="_blank">http://confidant.jd-app.com/user/save?account=aaa@111.com&password=bbb</a>
 </pre>
                 <p><b>参数说明</b>
                 </p>
@@ -49,13 +49,13 @@
                     </tr>
                     <tr>
                         <td> nick_name</td>
-                        <td> 是</td>
+                        <td> 否</td>
                         <td> 账号昵称</td>
                     </tr>
                     <tr>
                         <td> sex</td>
-                        <td> 是</td>
-                        <td> 性别</td>
+                        <td> 否</td>
+                        <td> 性别(默认男性)</td>
                     </tr>
                     </tbody>
                 </table>
