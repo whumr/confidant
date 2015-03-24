@@ -9,7 +9,7 @@ import java.io.InputStream;
  */
 public class FileUtil {
 
-    public static int BUFFER_SIZE = 10240, MAX_FILE_SIZE = 1024 * 1024;
+    public static int BUFFER_SIZE = 10240, MAX_FILE_SIZE = 5 * 1024 * 1024;
 
     public static void copyFile(InputStream in, String file) throws IOException {
         int size;

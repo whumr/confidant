@@ -12,24 +12,24 @@ public class User extends BaseEntity {
     public static int ACCOUNT_TYPE_MOBILE = 1, ACCOUNT_TYPE_DEFAULT = ACCOUNT_TYPE_MOBILE;
     public static String SEX_MAlE = "M", SEX_FEMALE = "F", SEX_DEFAULT = SEX_MAlE;
 
-    private long id;
-    private int account_type = ACCOUNT_TYPE_DEFAULT;
-    private String account, password, nick_name, image_url, sex = SEX_DEFAULT;
+    private Long id;
+    private Integer account_type;// = ACCOUNT_TYPE_DEFAULT;
+    private String account, password, nick_name, image_url, sex;// = SEX_DEFAULT;
     private Date create_time, last_updated;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getAccount_type() {
+    public Integer getAccount_type() {
         return account_type;
     }
 
-    public void setAccount_type(int account_type) {
+    public void setAccount_type(Integer account_type) {
         this.account_type = account_type;
     }
 

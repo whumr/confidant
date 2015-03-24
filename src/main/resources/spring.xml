@@ -15,6 +15,17 @@
     <mvc:annotation-driven/>
 	<context:property-placeholder location="classpath:config.properties" />
     <mvc:resources mapping="/css/**" location="/WEB-INF/css/" />
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!-- 需拦截的地址 -->
+            <mvc:mapping path="/user/*" />
+            <!-- 需排除拦截的地址 -->
+            <mvc:exclude-mapping path="/user/login"/>
+            <mvc:exclude-mapping path="/user/checkAccount"/>
+            <mvc:exclude-mapping path="/user/save"/>
+            <bean class="com.confidant.interceptor.SessionInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/" />

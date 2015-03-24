@@ -107,4 +107,12 @@ public class BaseController {
         Object o = request.getSession().getAttribute(Constants.Keys.Session.KeyUser);
         return o == null ? null : (User)o;
     }
+
+    protected JSONObject successJson() {
+        return (JSONObject)SUCCESS_JSON.clone();
+    }
+
+    protected JSONObject failJson() {
+        return (JSONObject)FAIL_JSON.clone();
+    }
 }

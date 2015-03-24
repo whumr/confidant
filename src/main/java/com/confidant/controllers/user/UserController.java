@@ -80,7 +80,9 @@ public class UserController extends BaseController {
                 fail(response);
             else {
                 request.getSession().setAttribute(Constants.Keys.Session.KeyUser, user);
-                succeed(response);
+                JSONObject json = successJson();
+                json.put("user", user);
+                renderJson(response, json);
             }
         }
     }
@@ -105,9 +107,11 @@ public class UserController extends BaseController {
                 user.setImage_url(imgPath);
                 user.setLast_updated(new Date());
                 userService.updateUser(user);
-                succeed(response);
+                JSONObject json = successJson();
+                json.put("url", imgPath);
+                renderJson(response, json);
             } catch (IOException e) {
-                fail(response);
+                fail(response, e.getMessage());
             }
         }
     }
@@ -123,7 +127,9 @@ public class UserController extends BaseController {
             user.setNick_name(nick_name);
             user.setLast_updated(new Date());
             userService.updateUser(user);
-            renderJson(response, user);
+            JSONObject json = successJson();
+            json.put("user", user);
+            renderJson(response, json);
         }
     }
 }

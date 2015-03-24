@@ -9,6 +9,7 @@ public class Constants {
         public static class Common {
             public static String IllegalArgument = "illegal arguments";
             public static String FileTooLarge = "file too large";
+            public static String NotLogin = "not login";
         }
         public static class User {
             public static String UserExists = "user exists";

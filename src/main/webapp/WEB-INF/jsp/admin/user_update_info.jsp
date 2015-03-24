@@ -20,13 +20,13 @@
         </div>
         <div id="content">
             <div class="content_hd">
-                <h2 id="firstHeading" class="">用户登陆</h2>
+                <h2 id="firstHeading" class="">用户编辑个人资料</h2>
                 <div class="info"></div>
             </div>
             <div id="bodyContent" class="bodyContent">
                 <p><b>接口调用请求说明</b></p>
                 <pre>http请求方式: POST
-<a href="http://confidant.jd-app.com/user/login?account=aa&password=bbbb" class="external free" rel="nofollow" target="_blank">http://confidant.jd-app.com/user/login?account=aa&password=bbbb</a>
+<a href="http://confidant.jd-app.com/user/updateInfo?nick_name=xxx" class="external free" rel="nofollow" target="_blank">http://confidant.jd-app.com/user/updateInfo?nick_name=xxx</a>
 </pre>
                 <p><b>参数说明</b>
                 </p>
@@ -38,23 +38,23 @@
                         <th>说明</th>
                     </tr>
                     <tr>
-                        <td> account</td>
+                        <td> nick_name</td>
                         <td> 是</td>
                         <td> 用户注册使用的邮箱账号</td>
                     </tr>
                     <tr>
-                        <td> password</td>
-                        <td> 是</td>
-                        <td> 账号密码</td>
+                        <td> 其他</td>
+                        <td> 否</td>
+                        <td> 其他可编辑信息待定</td>
                     </tr>
                     </tbody>
                 </table>
 
                 <p><b>返回说明</b></p>
 
-                <p>登陆失败：</p>
+                <p>编辑失败：</p>
                 <pre>{"status":0}</pre>
-                <p>登陆成功：</p>
+                <p>编辑成功：</p>
                 <pre>{"status":1,"user":{"account":"aa","id":2,"nick_name":"cccc","sex":"M"}}</pre>
 
                 <table border="1" cellspacing="0" cellpadding="4" align="center" width="640px">
@@ -65,7 +65,7 @@
                     </tr>
                     <tr>
                         <td> status</td>
-                        <td> 是否登陆成功（0：否；1：是）</td>
+                        <td> 是否编辑成功（0：否；1：是）</td>
                     </tr>
                     <tr>
                         <td> user</td>
