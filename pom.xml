@@ -15,6 +15,7 @@
 		<mysql-connector.version>5.1.23</mysql-connector.version>
 		<servlet.version>3.1.0</servlet.version>
 		<fastjson.version>1.2.4</fastjson.version>
+		<jstl.version>1.2</jstl.version>
 	</properties>
 
 	<dependencies>
@@ -72,6 +73,11 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>${servlet.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
