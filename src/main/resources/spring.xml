@@ -21,11 +21,11 @@
     <mvc:interceptors>
         <mvc:interceptor>
             <!-- 需拦截的地址 -->
-            <mvc:mapping path="/user/*" />
+            <mvc:mapping path="/member/*" />
             <!-- 需排除拦截的地址 -->
-            <mvc:exclude-mapping path="/user/login"/>
-            <mvc:exclude-mapping path="/user/checkAccount"/>
-            <mvc:exclude-mapping path="/user/save"/>
+            <mvc:exclude-mapping path="/member/login"/>
+            <mvc:exclude-mapping path="/member/checkAccount"/>
+            <mvc:exclude-mapping path="/member/save"/>
             <bean class="com.confidant.interceptor.SessionInterceptor" />
         </mvc:interceptor>
     </mvc:interceptors>

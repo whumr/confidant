@@ -1,9 +1,9 @@
-package com.confidant.controllers.user;
+package com.confidant.controllers.member;
 
 import com.alibaba.fastjson.JSONObject;
 import com.confidant.common.BaseController;
 import com.confidant.common.Constants;
-import com.confidant.entity.User;
+import com.confidant.entity.Member;
 import com.confidant.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,12 +17,14 @@ import java.util.Date;
 /**
  * Created by Administrator on 2015/1/29.
  */
-@Controller("userController")
-@RequestMapping("/user")
-public class UserController extends BaseController {
+@Controller("memberrController")
+@RequestMapping("/member")
+public class MemberController extends BaseController {
+
+    private static String BATH_PATH = "member/";
 
     @Autowired
-    private UserService<User> userService;
+    private MemberService<Member> memberService;
 
     @RequestMapping("/save")
     public void saveUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -33,21 +35,21 @@ public class UserController extends BaseController {
         if (chekValuesEmpty(new String[]{account, password}))
             fail(response, Constants.ErrorMsg.Common.IllegalArgument);
         else {
-            User user = new User();
-            user.setAccount(account);
-            User check_user = userService.getUserByAccount(account);
-            if (check_user != null)
+            Member member = new Member();
+            member.setAccount(account);
+            Member check_member = memberService.getMemberByAccount(account);
+            if (check_member != null)
                 fail(response, Constants.ErrorMsg.User.UserExists);
             else {
-                user.setPassword(password);
+                member.setPassword(password);
                 String nick_name = account.indexOf("@") > 0 ? account.substring(0, account.indexOf("@")) : account;
-                user.setNick_name(nick_name);
-//                user.setSex(sex);
+                member.setNick_name(nick_name);
+//                member.setSex(sex);
                 Date now = new Date();
-                user.setCreate_time(now);
-                user.setLast_updated(now);
-                userService.insert(user);
-                renderJson(response, user);
+                member.setCreate_time(now);
+                member.setLast_updated(now);
+                memberService.insert(member);
+                renderJson(response, member);
             }
         }
     }
@@ -59,32 +61,37 @@ public class UserController extends BaseController {
             fail(response, Constants.ErrorMsg.Common.IllegalArgument);
         else {
             JSONObject result = new JSONObject();
-            User user = userService.getUserByAccount(account);
-            result.put("exists", user == null ? 0 : 1);
+            Member member = memberService.getMemberByAccount(account);
+            result.put("exists", member == null ? 0 : 1);
             renderJson(response, result);
         }
     }
 
     @RequestMapping("/login")
-    public void login(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String account = request.getParameter("account");
-        String password = request.getParameter("password");
-        if (chekValuesEmpty(new String[]{account, password}))
-            fail(response, Constants.ErrorMsg.Common.IllegalArgument);
-        else {
-            User param = new User();
-            param.setAccount(account);
-            param.setPassword(password);
-            User user = userService.getUserByAccountPassword(param);
-            if (user == null)
-                fail(response);
-            else {
-                request.getSession().setAttribute(Constants.Keys.Session.KeyUser, user);
-                JSONObject json = successJson();
-                json.put("user", user);
-                renderJson(response, json);
-            }
-        }
+    public String login(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (request.getSession().getAttribute(Constants.Keys.Session.KeyUser) != null)
+            redirect(response, "/");
+        else
+            return BATH_PATH + "login";
+        return null;
+//        String account = request.getParameter("account");
+//        String password = request.getParameter("password");
+//        if (chekValuesEmpty(new String[]{account, password}))
+//            fail(response, Constants.ErrorMsg.Common.IllegalArgument);
+//        else {
+//            Member param = new Member();
+//            param.setAccount(account);
+//            param.setPassword(password);
+//            Member member = memberService.getMemberByAccountPassword(param);
+//            if (member == null)
+//                fail(response);
+//            else {
+//                request.getSession().setAttribute(Constants.Keys.Session.KeyUser, member);
+//                JSONObject json = successJson();
+//                json.put("member", member);
+//                renderJson(response, json);
+//            }
+//        }
     }
 
     @RequestMapping("/uploadImg")
@@ -102,11 +109,11 @@ public class UserController extends BaseController {
                 String imgPath = userId + System.currentTimeMillis() +
                         fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length());
                 FileUtil.copyFile(request.getInputStream(), Constants.Path.UserImg + imgPath);
-                User user = new User();
-                user.setId(userId);
-                user.setImage_url(imgPath);
-                user.setLast_updated(new Date());
-                userService.updateUser(user);
+                Member member = new Member();
+                member.setId(userId);
+                member.setImage_url(imgPath);
+                member.setLast_updated(new Date());
+                memberService.updateMember(member);
                 JSONObject json = successJson();
                 json.put("url", imgPath);
                 renderJson(response, json);
@@ -122,13 +129,13 @@ public class UserController extends BaseController {
         if (chekValuesEmpty(new String[]{nick_name}))
             fail(response, Constants.ErrorMsg.Common.IllegalArgument);
         else {
-            User user = new User();
-            user.setId(getCurrentUser(request).getId());
-            user.setNick_name(nick_name);
-            user.setLast_updated(new Date());
-            userService.updateUser(user);
+            Member member = new Member();
+            member.setId(getCurrentUser(request).getId());
+            member.setNick_name(nick_name);
+            member.setLast_updated(new Date());
+            memberService.updateMember(member);
             JSONObject json = successJson();
-            json.put("user", user);
+            json.put("member", member);
             renderJson(response, json);
         }
     }

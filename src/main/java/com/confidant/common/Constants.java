@@ -12,7 +12,7 @@ public class Constants {
             public static String NotLogin = "not login";
         }
         public static class User {
-            public static String UserExists = "user exists";
+            public static String UserExists = "member exists";
         }
     }
 

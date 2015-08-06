@@ -2,10 +2,10 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">  
 <configuration>  
     <typeAliases>
-        <typeAlias alias="User" type="com.confidant.entity.User"/>
+        <typeAlias alias="Member" type="com.confidant.entity.Member"/>
     </typeAliases>
       
     <mappers>  
-        <mapper resource="sqlmap/user.xml" />
+        <mapper resource="sqlmap/member.xml" />
     </mappers>
 </configuration>  

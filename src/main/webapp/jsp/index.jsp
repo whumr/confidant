@@ -9,49 +9,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reactive - Free HTML5 Template</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/main.css" rel="stylesheet">
     <script src="/js/jquery-1.11.3.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
-    <style type="text/css">
-        body {
-            background-color: #333333;
-        }
-        .opacity75 {
-            opacity:0.75; /* firefox, opera, safari, chrome */
-            -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=75)"; /* IE 8 */
-            filter:alpha(opacity=75); /* IE 4, 5, 6 and 7 */
-            zoom:1 /* so the element "hasLayout"
-            /* or, to trigger "hasLayout" set a width or height */
-        }
-    </style>
 </head>
 <body>
 
-<nav class="navbar navbar-default navbar-fixed-top opacity75">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">肉思思</a>
-        </div>
-
-        <div id="navbar" class="navbar-collapse collapse">
-            <form class="navbar-form navbar-right">
-                <div class="form-group">
-                    <input type="text" placeholder="Email" class="form-control">
-                </div>
-                <div class="form-group">
-                    <input type="password" placeholder="Password" class="form-control">
-                </div>
-                <button type="submit" class="btn btn-success">Sign in</button>
-            </form>
-        </div><!--/.navbar-collapse -->
-    </div>
-</nav>
-
+<%@include file="common/header.jsp"%>
 
 <div id="myCarousel" class="carousel slide" data-ride="carousel">
     <ol class="carousel-indicators">
@@ -242,13 +206,9 @@
         </div>
     </div>
 
-
-    <hr>
-
-    <footer>
-        <p>&copy; Company 2014</p>
-    </footer>
 </div>
+
+<%@include file="common/footer.jsp"%>
 
 <script>
     $(function () {

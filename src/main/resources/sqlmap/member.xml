@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="member">
+    <insert id="insert" parameterType="Member" useGeneratedKeys="true" keyProperty="id">
+        insert into member (account, password, nick_name, image_url, create_time, last_updated
+        <if test="sex != null">, sex</if>
+        )
+        values (#{account}, #{password}, #{nick_name}, #{image_url}, #{create_time}, #{last_updated}
+        <if test="sex != null">, #{sex}</if>
+        )
+    </insert>
+
+    <select id="getMemberByAccount" parameterType="java.lang.String" resultType="Member">
+        select id from member where account = #{account} limit 1
+    </select>
+
+    <select id="getMemberByAccountPassword" parameterType="Member" resultType="Member">
+        select id, account, nick_name, image_url, sex, last_updated from member where account = #{account} and password = #{password} limit 1
+    </select>
+
+    <update id="updateMember" parameterType="Member">
+        update member set last_updated = #{last_updated}
+        <if test="nick_name != null">
+            , nick_name = #{nick_name}
+        </if>
+        <if test="image_url != null">
+            , image_url = #{image_url}
+        </if>
+        where id = #{id}
+    </update>
+</mapper>

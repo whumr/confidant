@@ -2,7 +2,7 @@ package com.confidant.common;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.confidant.entity.User;
+import com.confidant.entity.Member;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.RequestDispatcher;
@@ -103,9 +103,9 @@ public class BaseController {
         renderJson(response, fail);
     }
 
-    protected User getCurrentUser(HttpServletRequest request) {
+    protected Member getCurrentUser(HttpServletRequest request) {
         Object o = request.getSession().getAttribute(Constants.Keys.Session.KeyUser);
-        return o == null ? null : (User)o;
+        return o == null ? null : (Member)o;
     }
 
     protected JSONObject successJson() {

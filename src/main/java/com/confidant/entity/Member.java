@@ -7,13 +7,11 @@ import java.util.Date;
 /**
  * Created by Administrator on 2015/1/29.
  */
-public class User extends BaseEntity {
+public class Member extends BaseEntity {
 
-    public static int ACCOUNT_TYPE_MOBILE = 1, ACCOUNT_TYPE_DEFAULT = ACCOUNT_TYPE_MOBILE;
     public static String SEX_MAlE = "M", SEX_FEMALE = "F", SEX_DEFAULT = SEX_MAlE;
 
     private Long id;
-    private Integer account_type;// = ACCOUNT_TYPE_DEFAULT;
     private String account, password, nick_name, image_url, sex;// = SEX_DEFAULT;
     private Date create_time, last_updated;
 
@@ -23,14 +21,6 @@ public class User extends BaseEntity {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Integer getAccount_type() {
-        return account_type;
-    }
-
-    public void setAccount_type(Integer account_type) {
-        this.account_type = account_type;
     }
 
     public String getAccount() {
