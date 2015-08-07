@@ -104,7 +104,7 @@ public class BaseController {
     }
 
     protected Member getCurrentUser(HttpServletRequest request) {
-        Object o = request.getSession().getAttribute(Constants.Keys.Session.KeyUser);
+        Object o = request.getSession().getAttribute(Constants.Keys.Session.KeyMember);
         return o == null ? null : (Member)o;
     }
 

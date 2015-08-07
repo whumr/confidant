@@ -26,6 +26,7 @@
             <mvc:exclude-mapping path="/member/login"/>
             <mvc:exclude-mapping path="/member/checkAccount"/>
             <mvc:exclude-mapping path="/member/save"/>
+            <mvc:exclude-mapping path="/member/login_check"/>
             <bean class="com.confidant.interceptor.SessionInterceptor" />
         </mvc:interceptor>
     </mvc:interceptors>

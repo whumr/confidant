@@ -11,14 +11,16 @@ public class Constants {
             public static String FileTooLarge = "file too large";
             public static String NotLogin = "not login";
         }
-        public static class User {
-            public static String UserExists = "member exists";
+        public static class Member {
+            public static String AccountExists = "账号已存在";
+            public static String NotExists = "member not exists";
+            public static String LoginFail = "用户名或密码错误";
         }
     }
 
     public static class Keys {
         public static class Session {
-            public static String KeyUser = "USER";
+            public static String KeyMember = "MEMBER";
         }
     }
 

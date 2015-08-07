@@ -26,6 +26,55 @@ public class MemberController extends BaseController {
     @Autowired
     private MemberService<Member> memberService;
 
+    @RequestMapping("/login")
+    public String login(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (request.getSession().getAttribute(Constants.Keys.Session.KeyMember) != null)
+            redirect(response, "/");
+        else
+            return BATH_PATH + "login";
+        return null;
+    }
+
+    @RequestMapping("/login_check")
+    public String login_check(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (request.getSession().getAttribute(Constants.Keys.Session.KeyMember) != null)
+            redirect(response, "/");
+        else {
+            String account = request.getParameter("account");
+            String password = request.getParameter("password");
+            String error = null;
+            if (chekValuesEmpty(new String[]{account, password}))
+                error = Constants.ErrorMsg.Common.IllegalArgument;
+            else {
+                Member param = new Member();
+                param.setAccount(account);
+                param.setPassword(password);
+                Member member = memberService.getMemberByAccountPassword(param);
+                if (member == null)
+                    error = Constants.ErrorMsg.Member.LoginFail;
+                else {
+                    request.getSession().setAttribute(Constants.Keys.Session.KeyMember, member);
+                    redirect(response, "/");
+                }
+            }
+            if (error != null) {
+                request.setAttribute("account", account);
+                request.setAttribute("error", error);
+                return BATH_PATH + "login";
+            }
+        }
+        return null;
+    }
+
+    @RequestMapping("/reg")
+    public String reg(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (request.getSession().getAttribute(Constants.Keys.Session.KeyMember) != null)
+            redirect(response, "/");
+        else
+            return BATH_PATH + "reg";
+        return null;
+    }
+
     @RequestMapping("/save")
     public void saveUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String account = request.getParameter("account");
@@ -39,7 +88,7 @@ public class MemberController extends BaseController {
             member.setAccount(account);
             Member check_member = memberService.getMemberByAccount(account);
             if (check_member != null)
-                fail(response, Constants.ErrorMsg.User.UserExists);
+                fail(response, Constants.ErrorMsg.Member.AccountExists);
             else {
                 member.setPassword(password);
                 String nick_name = account.indexOf("@") > 0 ? account.substring(0, account.indexOf("@")) : account;
@@ -65,33 +114,6 @@ public class MemberController extends BaseController {
             result.put("exists", member == null ? 0 : 1);
             renderJson(response, result);
         }
-    }
-
-    @RequestMapping("/login")
-    public String login(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        if (request.getSession().getAttribute(Constants.Keys.Session.KeyUser) != null)
-            redirect(response, "/");
-        else
-            return BATH_PATH + "login";
-        return null;
-//        String account = request.getParameter("account");
-//        String password = request.getParameter("password");
-//        if (chekValuesEmpty(new String[]{account, password}))
-//            fail(response, Constants.ErrorMsg.Common.IllegalArgument);
-//        else {
-//            Member param = new Member();
-//            param.setAccount(account);
-//            param.setPassword(password);
-//            Member member = memberService.getMemberByAccountPassword(param);
-//            if (member == null)
-//                fail(response);
-//            else {
-//                request.getSession().setAttribute(Constants.Keys.Session.KeyUser, member);
-//                JSONObject json = successJson();
-//                json.put("member", member);
-//                renderJson(response, json);
-//            }
-//        }
     }
 
     @RequestMapping("/uploadImg")

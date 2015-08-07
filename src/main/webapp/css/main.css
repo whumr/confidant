@@ -5,3 +5,11 @@
     zoom:1 /* so the element "hasLayout"
             /* or, to trigger "hasLayout" set a width or height */
 }
+
+.top0 {
+    top:0;
+}
+
+.margin-bottom-20 {
+    margin-bottom: 20px;
+}

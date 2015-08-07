@@ -15,7 +15,7 @@ public class SessionInterceptor extends BaseController implements HandlerInterce
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse httpServletResponse, Object o) throws Exception {
-        if (request.getSession().getAttribute(Constants.Keys.Session.KeyUser) == null) {
+        if (request.getSession().getAttribute(Constants.Keys.Session.KeyMember) == null) {
             fail(httpServletResponse, Constants.ErrorMsg.Common.NotLogin);
             return false;
         }
