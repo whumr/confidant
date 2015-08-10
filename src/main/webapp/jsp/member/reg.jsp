@@ -25,7 +25,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading text-center">注册会员</div>
                 <div class="panel-body">
-                    <form id="login_form" action="reg" method="post">
+                    <form id="reg_form" action="save" method="post">
                         <div class="form-group alert <c:if test="${not empty error}">alert-danger</c:if>">
                             <label id="error"><c:out value="${error}" escapeXml="false"></c:out></label>
                         </div>
@@ -81,17 +81,24 @@
 
     function checkPassword() {
         var password = $('#password');
+        var msg = '';
         if (!Check.between(password.val(), 6, 30)) {
+            error = 'password';
+            msg = '请输入6-30位的密码';
+        } else if($('#password_ag').val() != '' && $('#password_ag').val() != password.val()) {
+            msg = '两次输入的密码不一致';
+            error = 'password_unmatch';
+        }
+        if (msg != '') {
             password.parent().removeClass("has-success");
             password.parent().addClass("has-error");
-            $('#error').text('请输入6-30位的密码');
+            $('#error').text(msg);
             $('#error').parent().addClass('alert-danger');
-            error = 'password';
             return false;
         } else {
             password.parent().removeClass("has-error");
             password.parent().addClass("has-success");
-            if (error == 'password' || error == '') {
+            if (error == 'password' || error == 'password_unmatch' || error == '') {
                 $('#error').text('');
                 $('#error').parent().removeClass('alert-danger');
                 error = '';
@@ -99,17 +106,49 @@
             return true;
         }
     }
+
+    function checkPasswordAg() {
+        var password = $('#password_ag');
+        var msg = '';
+        if (!Check.between(password.val(), 6, 30)) {
+            error = 'password_ag';
+            msg = '请输入6-30位的确认密码';
+        } else if($('#password').val() != '' && $('#password').val() != password.val()) {
+            msg = '两次输入的密码不一致';
+            error = 'password_unmatch';
+        }
+        if (msg != '') {
+            password.parent().removeClass("has-success");
+            password.parent().addClass("has-error");
+            $('#error').text(msg);
+            $('#error').parent().addClass('alert-danger');
+            return false;
+        } else {
+            password.parent().removeClass("has-error");
+            password.parent().addClass("has-success");
+            if (error == 'password_ag' || error == 'password_unmatch' || error == '') {
+                $('#error').text('');
+                $('#error').parent().removeClass('alert-danger');
+                error = '';
+            }
+            return true;
+        }
+    }
+
     $('#account').bind({
         blur:function() {checkAccount();}
     });
     $('#password').bind({
         blur:function() {checkPassword();}
     });
-    $('#login_btn').click(function() {
-        var btn = $('#login_btn');
+    $('#password_ag').bind({
+        blur:function() {checkPasswordAg();}
+    });
+    $('#reg_btn').click(function() {
+        var btn = $('#reg_btn');
         btn.attr('disabled', true);
-        if (checkAccount() && checkPassword())
-            $('#login_form').submit();
+        if (checkAccount() && checkPassword() && checkPasswordAg())
+            $('#reg_form').submit();
         else
             btn.attr('disabled', false);
     });

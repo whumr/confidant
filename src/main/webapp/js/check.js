@@ -7,6 +7,7 @@ var ruleRegex = /^(.+?)\[(.+)\]$/,
     integerRegex = /^\-?[0-9]+$/,
     decimalRegex = /^\-?[0-9]*\.?[0-9]+$/,
     emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+    passwordRegex = /^[a-zA-Z0-9_]+$/i,
     alphaRegex = /^[a-z]+$/i,
     alphaNumericRegex = /^[a-z0-9]+$/i,
     alphaDashRegex = /^[a-z0-9_\-]+$/i,
@@ -32,4 +33,8 @@ Check.between = function(value, min, max) {
 
 Check.email = function(value) {
     return emailRegex.test(value);
+};
+
+Check.password = function(value) {
+    return passwordRegex.test(value);
 };
