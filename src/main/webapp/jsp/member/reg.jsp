@@ -45,7 +45,7 @@
                             <button id="reg_btn" type="button" class="btn btn-primary form-control">登录</button>
                         </div>
                         <div class="form-group">
-                            <span class="col-md-3 col-md-offset-6">已注册?<a href="login">去登录</a></span>
+                            <span class="col-md-6 col-md-offset-6">已注册?<a href="login">去登录</a></span>
                         </div>
                     </form>
                 </div>
@@ -60,10 +60,10 @@
     var error = '';
     function checkAccount() {
         var account = $('#account');
-        if (Check.empty(account.val())) {
+        if (Check.empty(account.val()) || !Check.email(account.val().trim())) {
             account.parent().removeClass("has-success");
             account.parent().addClass("has-error");
-            $('#error').text('请输入账号');
+            $('#error').text('请输入正确的邮箱');
             $('#error').parent().addClass('alert-danger');
             error = 'account';
             return false;
@@ -75,8 +75,34 @@
                 $('#error').parent().removeClass('alert-danger');
                 error = '';
             }
+            checkAccountRepeat(function(succeed, exists) {
+                if (succeed && exists == 1) {
+                    $('#error').text('邮箱已经注册过了');
+                    $('#error').parent().addClass('alert-danger');
+                    error = 'account';
+                }
+            });
             return true;
         }
+    }
+
+    function checkAccountRepeat(callback) {
+        $.ajax({
+            url:'checkAccount',
+            type: 'get',
+            timeout: 5000,
+            dataType: 'json',
+            data: {account:$('#account').val().trim()},
+            success: function(result) {
+                if (result.status == 1)
+                    callback(true, result.exists);
+                else
+                    callback(false);
+            },
+            error: function(){
+                callback(false);
+            }
+        });
     }
 
     function checkPassword() {
@@ -85,6 +111,9 @@
         if (!Check.between(password.val(), 6, 30)) {
             error = 'password';
             msg = '请输入6-30位的密码';
+        } else if (!Check.password(password.val())) {
+            error = 'password';
+            msg = '密码只能包含数字、大小写字母、下划线';
         } else if($('#password_ag').val() != '' && $('#password_ag').val() != password.val()) {
             msg = '两次输入的密码不一致';
             error = 'password_unmatch';
@@ -113,6 +142,9 @@
         if (!Check.between(password.val(), 6, 30)) {
             error = 'password_ag';
             msg = '请输入6-30位的确认密码';
+        } else if (!Check.password(password.val())) {
+            error = 'password_ag';
+            msg = '密码只能包含数字、大小写字母、下划线';
         } else if($('#password').val() != '' && $('#password').val() != password.val()) {
             msg = '两次输入的密码不一致';
             error = 'password_unmatch';
@@ -147,9 +179,19 @@
     $('#reg_btn').click(function() {
         var btn = $('#reg_btn');
         btn.attr('disabled', true);
-        if (checkAccount() && checkPassword() && checkPasswordAg())
-            $('#reg_form').submit();
-        else
+        if (checkAccount() && checkPassword() && checkPasswordAg()) {
+            checkAccountRepeat(function(succeed, exists) {
+                if (succeed) {
+                    if (exists == 1) {
+                        $('#error').text('邮箱已经注册过了');
+                        $('#error').parent().addClass('alert-danger');
+                        error = 'account';
+                    } else
+                        $('#reg_form').submit();
+                } else
+                    alert('网络异常');
+            });
+        } else
             btn.attr('disabled', false);
     });
 </script>

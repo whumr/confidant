@@ -17,8 +17,8 @@ import java.io.PrintWriter;
 @Controller
 public class BaseController {
 
-    private static JSONObject SUCCESS_JSON = JSON.parseObject("{status:1}");
-    private static JSONObject FAIL_JSON = JSON.parseObject("{status:0}");
+    protected JSONObject SUCCESS_JSON = JSON.parseObject("{status:1}");
+    protected JSONObject FAIL_JSON = JSON.parseObject("{status:0}");
 
     private static String MESSAGE = "msg";
 

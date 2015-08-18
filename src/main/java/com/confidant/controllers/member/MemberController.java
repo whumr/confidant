@@ -7,6 +7,7 @@ import com.confidant.entity.Member;
 import com.confidant.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -109,7 +110,7 @@ public class MemberController extends BaseController {
         if (chekValuesEmpty(new String[]{account}))
             fail(response, Constants.ErrorMsg.Common.IllegalArgument);
         else {
-            JSONObject result = new JSONObject();
+            JSONObject result = successJson();
             Member member = memberService.getMemberByAccount(account);
             result.put("exists", member == null ? 0 : 1);
             renderJson(response, result);
