@@ -3,26 +3,28 @@
 <nav class="navbar navbar-default">
     <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
             <a class="navbar-brand" href="/">肉思思</a>
         </div>
 
-        <div id="navbar" class="navbar-collapse collapse">
-            <form class="navbar-form navbar-right">
-                <div class="form-group">
-                    <input type="text" placeholder="账号" class="form-control">
-                </div>
-                <div class="form-group">
-                    <input type="password" placeholder="密码" class="form-control">
-                </div>
-                <button type="submit" class="btn btn-success">登录</button>
-                <a href="/reg">没有账号?注册</a>
-            </form>
+<c:choose>
+    <c:when test="${not empty MEMBER}">
+        <div class="navbar-right navbar-form">
+            <span>
+                <a href="/member"><c:out value="${MEMBER.nick_name}"></c:out></a>
+                ，欢迎您
+                <a href="/logout">退出</a>
+            </span>
         </div>
+    </c:when>
+    <c:otherwise>
+        <div class="navbar-right navbar-form">
+            <span>
+                <a href="/login">马上登录</a>
+                没有账号?<a href="/reg">注册</a>
+            </span>
+        </div>
+    </c:otherwise>
+</c:choose>
+
     </div>
 </nav>

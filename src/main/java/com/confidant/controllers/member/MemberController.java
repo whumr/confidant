@@ -5,6 +5,7 @@ import com.confidant.common.BaseController;
 import com.confidant.common.Constants;
 import com.confidant.entity.Member;
 import com.confidant.util.FileUtil;
+import com.confidant.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,7 +44,7 @@ public class MemberController extends BaseController {
         else {
             String account = request.getParameter("account");
             String password = request.getParameter("password");
-            String error = null;
+            String error;
             if (chekValuesEmpty(new String[]{account, password}))
                 error = Constants.ErrorMsg.Common.IllegalArgument;
             else {
@@ -56,12 +57,13 @@ public class MemberController extends BaseController {
                 else {
                     request.getSession().setAttribute(Constants.Keys.Session.KeyMember, member);
                     redirect(response, "/");
+                    return null;
                 }
             }
             if (error != null) {
                 request.setAttribute("account", account);
                 request.setAttribute("error", error);
-                return BATH_PATH + "login";
+                return login(request, response);
             }
         }
         return null;
@@ -77,31 +79,41 @@ public class MemberController extends BaseController {
     }
 
     @RequestMapping("/save")
-    public void saveUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String account = request.getParameter("account");
-        String password = request.getParameter("password");
-//        String nick_name = request.getParameter("nick_name");
-//        String sex = request.getParameter("sex");
-        if (chekValuesEmpty(new String[]{account, password}))
-            fail(response, Constants.ErrorMsg.Common.IllegalArgument);
+    public String saveUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        if (request.getSession().getAttribute(Constants.Keys.Session.KeyMember) != null)
+            redirect(response, "/");
         else {
-            Member member = new Member();
-            member.setAccount(account);
-            Member check_member = memberService.getMemberByAccount(account);
-            if (check_member != null)
-                fail(response, Constants.ErrorMsg.Member.AccountExists);
+            String account = request.getParameter("account");
+            String password = request.getParameter("password");
+            String error;
+            if (chekValuesEmpty(new String[]{account, password}) || !Validator.isEmail(account) || !Validator.isPassword(password))
+                error = Constants.ErrorMsg.Common.IllegalArgument;
             else {
-                member.setPassword(password);
-                String nick_name = account.indexOf("@") > 0 ? account.substring(0, account.indexOf("@")) : account;
-                member.setNick_name(nick_name);
-//                member.setSex(sex);
-                Date now = new Date();
-                member.setCreate_time(now);
-                member.setLast_updated(now);
-                memberService.insert(member);
-                renderJson(response, member);
+                Member member = new Member();
+                member.setAccount(account);
+                Member check_member = memberService.getMemberByAccount(account);
+                if (check_member != null)
+                    error = Constants.ErrorMsg.Member.AccountExists;
+                else {
+                    member.setPassword(password);
+                    String nick_name = account.indexOf("@") > 0 ? account.substring(0, account.indexOf("@")) : account;
+                    member.setNick_name(nick_name);
+                    Date now = new Date();
+                    member.setCreate_time(now);
+                    member.setLast_updated(now);
+                    memberService.insert(member);
+                    request.getSession().setAttribute(Constants.Keys.Session.KeyMember, member);
+                    redirect(response, "/");
+                    return null;
+                }
+            }
+            if (error != null) {
+                request.setAttribute("account", account);
+                request.setAttribute("error", error);
+                return reg(request, response);
             }
         }
+        return null;
     }
 
     @RequestMapping("/checkAccount")
@@ -116,6 +128,27 @@ public class MemberController extends BaseController {
             renderJson(response, result);
         }
     }
+
+    @RequestMapping("/logout")
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        request.getSession().setAttribute(Constants.Keys.Session.KeyMember, null);
+        redirect(response, "/");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @RequestMapping("/uploadImg")
     public void uploadImg(HttpServletRequest request, HttpServletResponse response) throws Exception {

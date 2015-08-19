@@ -3,6 +3,7 @@ package com.confidant.common;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.confidant.entity.Member;
+import com.confidant.util.Validator;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.RequestDispatcher;
@@ -20,7 +21,7 @@ public class BaseController {
     protected JSONObject SUCCESS_JSON = JSON.parseObject("{status:1}");
     protected JSONObject FAIL_JSON = JSON.parseObject("{status:0}");
 
-    private static String MESSAGE = "msg";
+    private static String MESSAGE = "error";
 
     public void renderJson(HttpServletResponse response, Object object) {
         PrintWriter writer = null;
@@ -92,7 +93,7 @@ public class BaseController {
 
     protected boolean chekValuesEmpty(String[] values, boolean trim) {
         for (String value : values)
-            if (value == null || "".equals(trim ? value.trim() : value))
+            if (Validator.emptyString(value, trim))
                 return true;
         return false;
     }

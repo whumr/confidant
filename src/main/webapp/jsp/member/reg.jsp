@@ -42,10 +42,10 @@
                             <input id="password_ag" type="password" class="form-control" placeholder="请再次输入密码">
                         </div>
                         <div class="form-group">
-                            <button id="reg_btn" type="button" class="btn btn-primary form-control">登录</button>
+                            <button id="reg_btn" type="button" class="btn btn-primary form-control">注册</button>
                         </div>
                         <div class="form-group">
-                            <span class="col-md-6 col-md-offset-6">已注册?<a href="login">去登录</a></span>
+                            <span class="col-md-3 col-md-offset-6">已注册?<a href="login">去登录</a></span>
                         </div>
                     </form>
                 </div>
@@ -77,6 +77,8 @@
             }
             checkAccountRepeat(function(succeed, exists) {
                 if (succeed && exists == 1) {
+                    account.parent().removeClass("has-success");
+                    account.parent().addClass("has-error");
                     $('#error').text('邮箱已经注册过了');
                     $('#error').parent().addClass('alert-danger');
                     error = 'account';
@@ -183,6 +185,8 @@
             checkAccountRepeat(function(succeed, exists) {
                 if (succeed) {
                     if (exists == 1) {
+                        $('#account').parent().removeClass("has-success");
+                        $('#account').parent().addClass("has-error");
                         $('#error').text('邮箱已经注册过了');
                         $('#error').parent().addClass('alert-danger');
                         error = 'account';
@@ -190,6 +194,7 @@
                         $('#reg_form').submit();
                 } else
                     alert('网络异常');
+                btn.attr('disabled', false);
             });
         } else
             btn.attr('disabled', false);
