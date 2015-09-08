@@ -1,3 +1,7 @@
 .idea/
 target/
 *.iml
+app/tuding/bin/
+app/appcompat_v7/bin/
+app/xutils/bin/
+app/social_sdk_library_project/bin/
