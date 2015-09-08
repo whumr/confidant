@@ -1,10 +1,9 @@
 package com.fingertip.tuding.main.widget;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -136,27 +135,23 @@ public class AttentionSelectedActivity extends BaseActivity implements View.OnCl
 	
 	/** 消息发送 **/
 	private void requestSendMsg(){
-		HashMap<Integer, Boolean> hashMap_selected = adapterAttentions.getSelected();
-		if(hashMap_selected.isEmpty()){
-			Toast.makeText(AttentionSelectedActivity.this, "发送对象不能为空", Toast.LENGTH_SHORT).show();
-			return;
-		}
-		Set<Integer> keys = hashMap_selected.keySet();
-		showProgressDialog(false);
-		deleteCount = keys.size();
-		
-		WatchEntity watchEntity = null;
-		for (Integer position : keys) {
-			watchEntity = (WatchEntity)adapterAttentions.getItem(position);
-			try {
-				requestSendMsg(watchEntity.user.id);
-			} catch (Exception e) {
-				Toast.makeText(AttentionSelectedActivity.this, "" + watchEntity.user.nick_name + "发送失败", Toast.LENGTH_SHORT).show();
-				deleteReduce();
+		SparseBooleanArray selected_array = adapterAttentions.getSelected();
+		if (selected_array.size() <= 0)
+			toastShort("发送对象不能为空");
+		else {
+			showProgressDialog(false);
+			deleteCount = selected_array.size();
+			WatchEntity watchEntity = null;
+			for (int i = 0; i < deleteCount; i++) {
+				watchEntity = (WatchEntity)adapterAttentions.getItem(selected_array.keyAt(i));
+				try {
+					requestSendMsg(watchEntity.user.id);
+				} catch (Exception e) {
+					toastShort(watchEntity.user.nick_name + "发送失败");
+					deleteReduce();
+				}
 			}
-			
 		}
-		
 	}
 	
 	/** 单个消息发送 **/

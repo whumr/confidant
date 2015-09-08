@@ -49,6 +49,12 @@ import com.lidroid.xutils.exception.DbException;
 import com.umeng.analytics.MobclickAgent;
 
 public class Tools {
+	
+	public static Bitmap toRoundCorner(Bitmap bitmap) {
+		return toRoundCorner(bitmap, bitmap.getWidth() / 2);
+	}
+			
+	
 	/**
 	 * 
 	 * Í¼Æ¬Ô²½Ç

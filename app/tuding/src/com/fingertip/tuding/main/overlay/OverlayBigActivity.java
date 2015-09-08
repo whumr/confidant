@@ -183,7 +183,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 						String uri, Bitmap bitmap,
 						BitmapDisplayConfig config, BitmapLoadFrom from) {
 					try {
-						container.setImageBitmap(Tools.toRoundCorner(bitmap, bitmap.getWidth() / 2));
+						container.setImageBitmap(Tools.toRoundCorner(bitmap));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -355,7 +355,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 							public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap,
 									BitmapDisplayConfig config,BitmapLoadFrom from) {
 								try {
-									container.setImageBitmap(Tools.toRoundCorner(bitmap, bitmap.getWidth() / 2));
+									container.setImageBitmap(Tools.toRoundCorner(bitmap));
 								} catch (Exception e) {
 									e.printStackTrace();
 								}

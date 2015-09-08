@@ -1,13 +1,12 @@
 package com.fingertip.tuding.main.widget;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +28,7 @@ public class AdapterAttentions extends BaseAdapter {
 	private List<WatchEntity> arrayList = new ArrayList<WatchEntity>();
 	private BitmapUtils bitmapUtils;
 	
-	@SuppressLint("UseSparseArrays")
-	private HashMap<Integer, Boolean> hashMap_selected = new HashMap<Integer, Boolean>();
+	private SparseBooleanArray selected_array = new SparseBooleanArray();
 
 	public AdapterAttentions(Context c) {
 		context = c;
@@ -52,8 +50,8 @@ public class AdapterAttentions extends BaseAdapter {
 		notifyDataSetChanged();
 	}
 	
-	public HashMap<Integer, Boolean> getSelected(){
-		return hashMap_selected;
+	public SparseBooleanArray getSelected(){
+		return selected_array;
 	}
 
 	@Override
@@ -94,11 +92,11 @@ public class AdapterAttentions extends BaseAdapter {
 			@Override
 			public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
 				try {
-					container.setImageBitmap(Tools.toRoundCorner(bitmap, bitmap.getWidth() / 2));
+					container.setImageBitmap(Tools.toRoundCorner(bitmap));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}// end onLoadCompleted
+			}
 			
 			@Override
 			public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
@@ -111,30 +109,18 @@ public class AdapterAttentions extends BaseAdapter {
 		viewHoler.my_watcher_place.setText(watch.user.place);
 		viewHoler.my_watcher_up_count.setText(watch.up_count + "");
 
-		if(hashMap_selected.get(position) == null || !hashMap_selected.get(position)){
+		if (!selected_array.get(position, false))
 			viewHoler.iv_check.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_unchecked));
-		}else {
+		else
 			viewHoler.iv_check.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_checked));
-		}
-		
-		
-//		viewHoler.iv_check.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View arg0) {
-//				putSelectPosition(position);
-//			}
-//		});
-
 		return convertView;
-	}// end getView
+	}
 	
 	public void putSelectPosition(int position){
-		if(hashMap_selected.get(position) == null || !hashMap_selected.get(position)){
-			hashMap_selected.put(position, true);
-		}else {
-			hashMap_selected.remove(position);
-//			hashMap_selected.put(position, false);
-		}
+		if (!selected_array.get(position, false))
+			selected_array.put(position, true);
+		else
+			selected_array.delete(position);
 		notifyDataSetChanged();
 	}
 
