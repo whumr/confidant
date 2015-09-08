@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/gray_f6"
     android:orientation="vertical" >
 
@@ -12,7 +12,7 @@
     <ScrollView
         android:id="@+id/scrollview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="match_parent" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,7 +26,6 @@
                 android:orientation="vertical" >
 
                 <EditText
-                    
                     android:id="@+id/et_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -245,22 +244,26 @@
                 android:stretchMode="columnWidth"
                 android:verticalSpacing="3dp" >
             </com.fingertip.tuding.widget.view.GridViewForScroll>
-            
-            <!-- 
-            <LinearLayout
-                android:id="@+id/layout_img"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:orientation="vertical"
-                android:paddingLeft="31px"
-                android:paddingRight="8dp" >
-            </LinearLayout>
-             -->
 
             <TextView
-                android:id="@+id/tv_time_hint"
+                android:id="@+id/tv_start_time_hint"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="6dp"
+                android:background="@color/gray_e5"
+                android:drawableRight="@drawable/icon_arrow_down"
+                android:gravity="center_vertical"
+                android:hint="活动开始时间"
+                android:paddingBottom="6dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="16dp"
+                android:paddingTop="6dp"
+                android:textColor="@color/black" />
+            
+            <TextView
+                android:id="@+id/tv_end_time_hint"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -276,104 +279,21 @@
                 android:paddingTop="6dp"
                 android:textColor="@color/black" />
 
-            <LinearLayout
-                android:visibility="gone"
-                android:id="@+id/layout_time"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp" >
-
-                <!-- 布局添加一个滑轮视图 -->
-
-                <com.fingertip.tuding.common.wheelview.WheelView
-                    android:id="@+id/fast_year"
-                    android:layout_width="0dip"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1.0" />
-
-                <com.fingertip.tuding.common.wheelview.WheelView
-                    android:id="@+id/fast_month"
-                    android:layout_width="0dip"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1.0" />
-
-                <com.fingertip.tuding.common.wheelview.WheelView
-                    android:id="@+id/fast_day"
-                    android:layout_width="0dip"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1.0" />
-
-                <com.fingertip.tuding.common.wheelview.WheelView
-                    android:id="@+id/fast_hours"
-                    android:layout_width="0dip"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1.0" />
-
-                <com.fingertip.tuding.common.wheelview.WheelView
-                    android:id="@+id/fast_mintue"
-                    android:layout_width="0dip"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1.0" />
-            </LinearLayout>
-
-                <!-- 
-            <LinearLayout
-                android:id="@+id/layout_position"
+            <TextView
+                android:id="@+id/tv_position"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="6dp"
                 android:background="@color/gray_e5"
+                android:drawableRight="@drawable/icon_arrow_down"
+                android:gravity="center_vertical"
+                android:hint="标记活动位置"
                 android:paddingBottom="6dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:paddingTop="6dp" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="标记活动位置 "
-                    android:textColor="@color/black" />
-                 -->
-                
-                <TextView
-                    android:id="@+id/tv_position"
-	                android:layout_width="match_parent"
-	                android:layout_height="wrap_content"
-	                android:layout_marginBottom="6dp"
-	                android:layout_marginTop="6dp"
-	                android:background="@color/gray_e5"
-	                android:drawableRight="@drawable/icon_arrow_down"
-	                android:gravity="center_vertical"
-	                android:hint="标记活动位置"
-	                android:paddingBottom="6dp"
-	                android:paddingLeft="12dp"
-	                android:paddingRight="16dp"
-	                android:paddingTop="6dp"
-	                android:textColor="@color/black" />
-
-				<!-- 
-                <TextView
-                    android:id="@+id/tv_position"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="未知 "
-                    android:singleLine="true" />
-                <ImageView
-                    android:id="@+id/iv_position_arrow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="16dp"
-                    android:src="@drawable/icon_arrow_down" />
-            </LinearLayout>
-				 -->
+                android:paddingLeft="12dp"
+                android:paddingRight="16dp"
+                android:paddingTop="6dp"
+                android:textColor="@color/black" />
 
             <View
                 android:layout_width="match_parent"

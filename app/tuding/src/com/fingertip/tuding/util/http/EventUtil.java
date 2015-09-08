@@ -209,7 +209,7 @@ public class EventUtil extends BaseHttpUtil {
 		});
 	}
 	
-	public static void publishEvent(String title, String content, String type, String address, String timeto, String latitude, String longitude, 
+	public static void publishEvent(String title, String content, String type, String address, String start_time, String end_time, String latitude, String longitude, 
 			List<UploadImgEntity> entitys, final EntityCallback<String> callback) {
 		UserSession session = UserSession.getInstance();
 		JSONObject data = new JSONObject();
@@ -220,7 +220,7 @@ public class EventUtil extends BaseHttpUtil {
 			data.put(PARAM_KEYS.TITLEOF, title);
 			data.put(PARAM_KEYS.CONTENT, content);
 			data.put(PARAM_KEYS.KINDOF, type);
-			data.put(PARAM_KEYS.TIMETO, timeto);
+			data.put(PARAM_KEYS.TIMETO, start_time);
 			data.put(PARAM_KEYS.ADDRESS, address);
 			data.put(PARAM_KEYS.POSLAT, latitude);
 			data.put(PARAM_KEYS.POSLONG, longitude);

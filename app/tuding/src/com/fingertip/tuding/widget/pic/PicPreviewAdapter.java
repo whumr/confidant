@@ -50,7 +50,5 @@ public class PicPreviewAdapter extends PagerAdapter {
 	public Object instantiateItem(ViewGroup container, int position) {
 		container.addView(list_view.get(position), 0);
 		return list_view.get(position);
-
 	}
-
 }

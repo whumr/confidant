@@ -46,14 +46,14 @@ public class PublishInfoActivity extends BaseActivity{
 	private TextView tv_position;
 	private TextView tv_type_hint;
 	private TextView tv_img_hint;
-	private TextView tv_time_hint;
+	private TextView tv_start_time_hint, tv_end_time_hint;
 	
 	private TextView tv_special,tv_perform,tv_sociality,tv_sports,tv_study,tv_other;
 	
 	private EditText et_title;
 	private EditText et_content;
 	
-	private DialogDate dialogDate;
+	private DialogDate start_time_dialog, end_time_dialog;
 	
 	private EventType eventType = null;
 	
@@ -86,10 +86,12 @@ public class PublishInfoActivity extends BaseActivity{
 		
 		tv_type_hint = (TextView)findViewById(R.id.tv_type_hint);
 		tv_img_hint = (TextView)findViewById(R.id.tv_img_hint);
-		tv_time_hint = (TextView)findViewById(R.id.tv_time_hint);
+		tv_start_time_hint = (TextView)findViewById(R.id.tv_start_time_hint);
+		tv_end_time_hint = (TextView)findViewById(R.id.tv_end_time_hint);
 		tv_type_hint.setOnClickListener(onClickListener);
 		tv_img_hint.setOnClickListener(onClickListener);
-		tv_time_hint.setOnClickListener(onClickListener);
+		tv_start_time_hint.setOnClickListener(onClickListener);
+		tv_end_time_hint.setOnClickListener(onClickListener);
 		
 		tv_special = (TextView)findViewById(R.id.tv_special);
 		tv_perform = (TextView)findViewById(R.id.tv_perform);
@@ -118,20 +120,33 @@ public class PublishInfoActivity extends BaseActivity{
 	}
 	
 	private void initDialogDate(){
-		dialogDate = new DialogDate(this, new OnDateSelectdListener() {
+		start_time_dialog = new DialogDate(this, new OnDateSelectdListener() {
 			@Override
 			public void onDateSelectd(String time) {
-				tv_time_hint.setText("活动截止时间  (" + dialogDate.getTimeString() + ")");
+				tv_start_time_hint.setText("活动开始时间  (" + start_time_dialog.getTimeString() + ")");
 			}
 		});
-		
-		Window window = dialogDate.getWindow();
-		window.setGravity(Gravity.BOTTOM);
-		WindowManager.LayoutParams lParams = window.getAttributes();
+		Window start_window = start_time_dialog.getWindow();
+		start_window.setGravity(Gravity.BOTTOM);
+		WindowManager.LayoutParams lParams = start_window.getAttributes();
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		lParams.width = dm.widthPixels;
-		window.setAttributes(lParams);
+		start_window.setAttributes(lParams);
+
+		end_time_dialog = new DialogDate(this, new OnDateSelectdListener() {
+			@Override
+			public void onDateSelectd(String time) {
+				tv_end_time_hint.setText("活动截止时间  (" + end_time_dialog.getTimeString() + ")");
+			}
+		});
+		Window end_window = end_time_dialog.getWindow();
+		end_window.setGravity(Gravity.BOTTOM);
+		WindowManager.LayoutParams lParams1 = end_window.getAttributes();
+		DisplayMetrics dm1 = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm1);
+		lParams1.width = dm1.widthPixels;
+		end_window.setAttributes(lParams1);
 	}
 	
 	public void addImg() {
@@ -196,25 +211,27 @@ public class PublishInfoActivity extends BaseActivity{
 		@Override
 		public void onClick(View v) {
 			Context context = PublishInfoActivity.this;
-			if(v.getId() == R.id.iv_back){
+			if(v.getId() == R.id.iv_back)
 				finish();
-			}else if(v.getId() == R.id.tv_submit){
+			else if(v.getId() == R.id.tv_submit)
 				publicActivity();
-			}else if(v.getId() == R.id.tv_position){
+			else if(v.getId() == R.id.tv_position) {
 				Intent intent = new Intent();
 				intent.setClass(PublishInfoActivity.this, MapPositionSelectionActivity.class);
 				startActivityForResult(intent, REQUEST_POS);
-			}else if(v.getId() == R.id.tv_time_hint){
-				dialogDate.show();
-			}else if(v.getId() == R.id.tv_img_hint){
-				if(img_gridView.getVisibility() == View.VISIBLE){
+			} else if(v.getId() == R.id.tv_start_time_hint)
+				start_time_dialog.show();
+			else if(v.getId() == R.id.tv_end_time_hint)
+				end_time_dialog.show();
+			else if(v.getId() == R.id.tv_img_hint) {
+				if(img_gridView.getVisibility() == View.VISIBLE) {
 					img_gridView.setVisibility(View.GONE);
 					tv_img_hint.setCompoundDrawablesWithIntrinsicBounds(null, null, context.getResources().getDrawable(R.drawable.icon_arrow_top), null);
 				}else {
 					img_gridView.setVisibility(View.VISIBLE);
 					tv_img_hint.setCompoundDrawablesWithIntrinsicBounds(null, null, context.getResources().getDrawable(R.drawable.icon_arrow_down), null);
 				}
-			}else if(v.getId() == R.id.tv_type_hint){
+			} else if(v.getId() == R.id.tv_type_hint){
 				if(findViewById(R.id.layout_type).getVisibility() == View.VISIBLE){
 					findViewById(R.id.layout_type).setVisibility(View.GONE);
 					tv_type_hint.setCompoundDrawablesWithIntrinsicBounds(null, null, context.getResources().getDrawable(R.drawable.icon_arrow_top), null);
@@ -224,19 +241,18 @@ public class PublishInfoActivity extends BaseActivity{
 					tv_type_hint.setCompoundDrawablesWithIntrinsicBounds(null, null, context.getResources().getDrawable(R.drawable.icon_arrow_down), null);					
 					tv_type_hint.setText("活动类型");
 				}
-			}else if(v.getId() == R.id.tv_special){
+			} else if(v.getId() == R.id.tv_special)
 				setTypeBackground(EventType.SPECIAL);
-			}else if(v.getId() == R.id.tv_perform){
+			else if(v.getId() == R.id.tv_perform)
 				setTypeBackground(EventType.PERFORM);
-			}else if(v.getId() == R.id.tv_sociality){
+			else if(v.getId() == R.id.tv_sociality)
 				setTypeBackground(EventType.SOCIALITY);
-			}else if(v.getId() == R.id.tv_sports){
+			else if(v.getId() == R.id.tv_sports)
 				setTypeBackground(EventType.SPORTS);
-			}else if(v.getId() == R.id.tv_study){
+			else if(v.getId() == R.id.tv_study)
 				setTypeBackground(EventType.STUDY);
-			}else if(v.getId() == R.id.tv_other){
+			else if(v.getId() == R.id.tv_other)
 				setTypeBackground(EventType.OTHER);
-			}
 		}
 	};
 	
@@ -266,9 +282,15 @@ public class PublishInfoActivity extends BaseActivity{
 			toastShort("请选择活动图片");
 			return;
 		}
+		//开始时间
+		final String start_time = start_time_dialog.getTimeString();
+		if (Validator.isEmptyString(tv_start_time_hint.getText().toString().trim())) {
+			toastShort("请选择活动开始时间");
+			return;
+		}
 		//截止时间
-		final String timeto = dialogDate.getTimeString();
-		if (Validator.isEmptyString(tv_time_hint.getText().toString().trim())) {
+		final String end_time = end_time_dialog.getTimeString();
+		if (Validator.isEmptyString(tv_end_time_hint.getText().toString().trim())) {
 			toastShort("请选择活动截止时间");
 			return;
 		}
@@ -286,7 +308,7 @@ public class PublishInfoActivity extends BaseActivity{
 			
 			@Override
 			public void succeed() {
-				EventUtil.publishEvent(title, content, type, address, timeto, latitude + "", longitude + "", entitys, new EntityCallback<String>() {
+				EventUtil.publishEvent(title, content, type, address, start_time, end_time, latitude + "", longitude + "", entitys, new EntityCallback<String>() {
 					@Override
 					public void succeed(String event_id) {
 						dismissProgressDialog();

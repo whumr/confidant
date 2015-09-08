@@ -16,6 +16,7 @@ import com.fingertip.tuding.util.UmengConfig.PAGE;
 import com.fingertip.tuding.util.Validator;
 import com.fingertip.tuding.util.http.UserUtil;
 import com.fingertip.tuding.util.http.callback.EntityListCallback;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class MyWatchGroupActivity extends BaseNavActivity implements RefreshListener {
 	
@@ -43,14 +44,12 @@ public class MyWatchGroupActivity extends BaseNavActivity implements RefreshList
 		super.setupViews();
 		nav_title_txt.setText(R.string.my_watch_group);
 		adapter = new AdapterMyWatchGroup(this);
-		
-		listView.setBackgroundResource(R.color.white);
-		listView.setDividerHeight(0);
+//		listView.setBackgroundResource(R.color.white);
+//		listView.setDividerHeight(0);
 		listView.setAdapter(adapter);
 		listView.setOnItemClickListener(adapter);
 		listView.setRefreshListener(this);
 		listView.setPageSize(20);
-		
 		sp = new SharedPreferenceUtil(this);
 	}
 	
@@ -108,5 +107,11 @@ public class MyWatchGroupActivity extends BaseNavActivity implements RefreshList
 	public void onLoadMore() {
 		current_page++;
 		loadData(current_page, true);
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		ImageLoader.getInstance().clearMemoryCache();
 	}
 }

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,10 +23,9 @@ import com.fingertip.tuding.util.Validator;
 import com.lidroid.xutils.BitmapUtils;
 
 public class AdapterMyWatchGroup extends BaseAdapter implements OnItemClickListener {
+	
 	private Context context;
-	
-	private List<EventEntity> arrayList = new ArrayList<EventEntity>();
-	
+	private List<EventEntity> event_list = new ArrayList<EventEntity>();
 	private BitmapUtils bitmapUtils;
 	private SharedPreferenceUtil sp;
 	
@@ -36,96 +36,74 @@ public class AdapterMyWatchGroup extends BaseAdapter implements OnItemClickListe
 	}
 	
 	public void addAllData(List<EventEntity> list){
-		arrayList.clear();
+		event_list.clear();
 		if(list != null)
-			arrayList.addAll(list);
+			event_list.addAll(list);
 		notifyDataSetChanged();
 	}
 
 	public void appendAllData(List<EventEntity> list){
 		if(!Validator.isEmptyList(list)) {
-			arrayList.addAll(list);
+			event_list.addAll(list);
 			notifyDataSetChanged();
 		}
 	}
 
 	@Override
 	public int getCount() {
-		return arrayList.size();
+		return event_list.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return arrayList.get(position);
+		return event_list.get(position);
 	}
 
 	@Override
-	public long getItemId(int arg0) {
-		return arg0;
+	public long getItemId(int position) {
+		return position;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder viewHolder = null;
-		if(convertView == null){
-			convertView = LayoutInflater.from(context).inflate(R.layout.view_listitem_search, parent, false);
+		if (convertView == null) {
+			convertView = LayoutInflater.from(context).inflate(R.layout.list_item_watch_group, parent, false);
 			viewHolder = new ViewHolder();
-			viewHolder.iv_head = (ImageView)convertView.findViewById(R.id.iv_head);
-			viewHolder.iv_type = (ImageView)convertView.findViewById(R.id.iv_type);
-			viewHolder.iv_topic = (ImageView)convertView.findViewById(R.id.image);
-			viewHolder.tv_name = (TextView)convertView.findViewById(R.id.tv_name);
-			viewHolder.tv_title = (TextView)convertView.findViewById(R.id.tv_title);
-			viewHolder.tv_type = (TextView)convertView.findViewById(R.id.tv_type);
-			viewHolder.tv_popularity = (TextView)convertView.findViewById(R.id.tv_popularity);
-			viewHolder.tv_recommend = (TextView)convertView.findViewById(R.id.tv_recommend);
-			viewHolder.tv_time = (TextView)convertView.findViewById(R.id.tv_time);
+			viewHolder.watcher_head_img = (ImageView)convertView.findViewById(R.id.watcher_head_img);
+			viewHolder.watcher_name_txt = (TextView)convertView.findViewById(R.id.watcher_name_txt);
+			viewHolder.event_title_txt = (TextView)convertView.findViewById(R.id.event_title_txt);
+			viewHolder.event_content_txt = (TextView)convertView.findViewById(R.id.event_content_txt);
+			viewHolder.event_time_txt = (TextView)convertView.findViewById(R.id.event_time_txt);
+			viewHolder.event_address_txt = (TextView)convertView.findViewById(R.id.event_address_txt);
+			viewHolder.event_pics_grid = (GridView)convertView.findViewById(R.id.event_pics_grid);
 			convertView.setTag(viewHolder);
-		}else {
+		} else
 			viewHolder = (ViewHolder)convertView.getTag();
-		}
-		
-		final EventEntity event = (EventEntity)getItem(position);
-		viewHolder.tv_name.setText(event.sender.nick_name);
-	viewHolder.iv_head.setTag(event.sender.id);
-		try {
-			ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, viewHolder.iv_head);				
-		} catch (Exception e) {
-		}
-		try {
-			if (!Validator.isEmptyList(event.pics_small)) 
-				ImageCache.loadUrlImg(event.pics_small.get(0), viewHolder.iv_topic, bitmapUtils);
-			else
-				viewHolder.iv_topic.setVisibility(View.GONE);
-		} catch (Exception e) {
-		}
-		viewHolder.tv_title.setText(event.title);
-		viewHolder.iv_type.setImageDrawable(context.getResources().getDrawable(event.getKindImgInt()));
-		viewHolder.tv_type.setText(event.kindof);
-		//viewHolder.tv_popularity.setText("" + event.likedcount);
-		viewHolder.tv_popularity.setText(""+event.viewcount);
-		viewHolder.tv_recommend.setText("" + event.replycount);
-		viewHolder.iv_head.setOnClickListener(new View.OnClickListener() {
-			
+		EventEntity event = (EventEntity)getItem(position);
+		ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, viewHolder.watcher_head_img);				
+		viewHolder.watcher_head_img.setTag(event.sender.id);
+		viewHolder.watcher_name_txt.setText(event.sender.nick_name);
+		viewHolder.event_title_txt.setText(event.title);
+		viewHolder.event_content_txt.setText(event.content);
+		viewHolder.event_time_txt.setText(Tools.getTimeStr(event.send_time));
+		viewHolder.event_address_txt.setText(event.address);
+		viewHolder.watcher_head_img.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Tools.openUser(context, v.getTag().toString());
 			}
 		});
-		viewHolder.tv_time.setText(Tools.getTimeStr(event.send_time));
+		AdapterGridPic pic_adapter = new AdapterGridPic(context, (ArrayList<String>)event.pics_small, (ArrayList<String>)event.pics_big);
+		viewHolder.event_pics_grid.setAdapter(pic_adapter);
+		viewHolder.event_pics_grid.setOnItemClickListener(pic_adapter);
 		return convertView;
 	}
 
-	
 	class ViewHolder {
-		ImageView iv_head;
-		ImageView iv_type;
-		ImageView iv_topic;
-		TextView tv_name;
-		TextView tv_title;
-		TextView tv_type;
-		TextView tv_popularity;
-		TextView tv_recommend;
-		TextView tv_time;
+		ImageView watcher_head_img;
+		TextView watcher_name_txt, event_title_txt, event_content_txt, event_time_txt, event_address_txt;
+		GridView event_pics_grid;
 	}
 
 

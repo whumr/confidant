@@ -194,7 +194,7 @@ public class UserInfoActivity extends BaseNavActivity implements View.OnClickLis
 	}
 	
 	private void watch() {
-		if (Tools.checkLogin(this)) {
+		if (Tools.checkLogin(this) && user != null) {
 			showProgressDialog(false);
 			UserUtil.editWatch(user.id, PARAM_VALUES.LINK_WATCH, new DefaultCallback() {
 				@Override
