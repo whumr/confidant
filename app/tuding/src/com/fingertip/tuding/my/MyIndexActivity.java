@@ -30,7 +30,6 @@ import com.lidroid.xutils.BitmapUtils;
 public class MyIndexActivity extends BaseActivity implements View.OnClickListener {
 	
 	private ImageView my_head_img;
-	private ImageView hidden_img;
 	private ImageView msg_img;
 	private TextView my_nick_txt;
 	private TextView my_place_txt;
@@ -68,7 +67,6 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 	
 	private void findViews() {
 		my_head_img = (ImageView) findViewById(R.id.my_head_img);
-		hidden_img = (ImageView) findViewById(R.id.hidden_img);
 		msg_img = (ImageView) findViewById(R.id.msg_img);
 		my_nick_txt = (TextView) findViewById(R.id.my_nick_txt);
 		my_place_txt = (TextView) findViewById(R.id.my_place_txt);
@@ -175,7 +173,7 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 		String place = user.place;
 		if (!Validator.isEmptyString(head_img_url)) {
 			session.setHead_url(user.head_img_url);
-			ImageCache.loadUserHeadImg(head_img_url, session.getId(), sp, bitmapUtils, my_head_img, hidden_img);
+			ImageCache.loadUserHeadImg(head_img_url, session.getId(), sp, bitmapUtils, my_head_img);
 		}
 		if (!Validator.isEmptyString(nick_name)) {
 			session.setNick_name(nick_name);
@@ -211,6 +209,6 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 		my_place_txt.setText(session.getPlace());
 		String head_img_url = session.getHead_url();
 		if (!ImageCache.setUserHeadImg(session.getId(), my_head_img) && !Validator.isEmptyString(head_img_url))
-			ImageCache.loadUserHeadImg(head_img_url, session.getId(), sp, bitmapUtils, my_head_img, hidden_img);
+			ImageCache.loadUserHeadImg(head_img_url, session.getId(), sp, bitmapUtils, my_head_img);
 	}
 }

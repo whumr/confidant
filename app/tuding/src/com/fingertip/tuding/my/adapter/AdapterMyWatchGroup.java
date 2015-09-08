@@ -73,7 +73,6 @@ public class AdapterMyWatchGroup extends BaseAdapter implements OnItemClickListe
 			viewHolder.iv_head = (ImageView)convertView.findViewById(R.id.iv_head);
 			viewHolder.iv_type = (ImageView)convertView.findViewById(R.id.iv_type);
 			viewHolder.iv_topic = (ImageView)convertView.findViewById(R.id.image);
-			viewHolder.hidden_img = (ImageView)convertView.findViewById(R.id.hidden_img);
 			viewHolder.tv_name = (TextView)convertView.findViewById(R.id.tv_name);
 			viewHolder.tv_title = (TextView)convertView.findViewById(R.id.tv_title);
 			viewHolder.tv_type = (TextView)convertView.findViewById(R.id.tv_type);
@@ -89,7 +88,7 @@ public class AdapterMyWatchGroup extends BaseAdapter implements OnItemClickListe
 		viewHolder.tv_name.setText(event.sender.nick_name);
 	viewHolder.iv_head.setTag(event.sender.id);
 		try {
-			ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, viewHolder.iv_head, viewHolder.hidden_img);				
+			ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, viewHolder.iv_head);				
 		} catch (Exception e) {
 		}
 		try {
@@ -121,7 +120,6 @@ public class AdapterMyWatchGroup extends BaseAdapter implements OnItemClickListe
 		ImageView iv_head;
 		ImageView iv_type;
 		ImageView iv_topic;
-		ImageView hidden_img;
 		TextView tv_name;
 		TextView tv_title;
 		TextView tv_type;

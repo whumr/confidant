@@ -89,7 +89,6 @@ public class AdapterMyWatch extends BaseAdapter implements OnItemClickListener, 
 			convertView = LayoutInflater.from(activity).inflate(R.layout.list_item_my_watch, parent, false);
 			viewHoler = new ViewHoler();
 			viewHoler.my_watcher_head = (ImageView)convertView.findViewById(R.id.my_watcher_head);
-			viewHoler.hidden_img = (ImageView)convertView.findViewById(R.id.hidden_img);
 			viewHoler.my_watcher_name = (TextView)convertView.findViewById(R.id.my_watcher_name);
 			viewHoler.my_watcher_mark = (TextView)convertView.findViewById(R.id.my_watcher_mark);
 			viewHoler.my_watcher_place = (TextView)convertView.findViewById(R.id.my_watcher_place);
@@ -103,7 +102,7 @@ public class AdapterMyWatch extends BaseAdapter implements OnItemClickListener, 
 		}
 		WatchEntity watch = (WatchEntity)getItem(position);
 		try {
-			ImageCache.loadUserHeadImg(watch.user.head_img_url, watch.user.id, sp, bitmapUtils, viewHoler.my_watcher_head, viewHoler.hidden_img);
+			ImageCache.loadUserHeadImg(watch.user.head_img_url, watch.user.id, sp, bitmapUtils, viewHoler.my_watcher_head);
 		} catch (Exception e) {
 		}
 		viewHoler.my_watcher_name.setText(watch.user.nick_name);
@@ -125,7 +124,7 @@ public class AdapterMyWatch extends BaseAdapter implements OnItemClickListener, 
 	}
 
 	class ViewHoler{
-		ImageView my_watcher_head, hidden_img;;
+		ImageView my_watcher_head;
 		TextView my_watcher_name, my_watcher_mark, my_watcher_place, my_watcher_up_count;
 		LinearLayout v_delete_check;
 		ImageView iv_delete_check;

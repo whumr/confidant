@@ -88,7 +88,6 @@ public class AdapterMyFavorEvent extends BaseAdapter implements OnItemClickListe
 			convertView = LayoutInflater.from(activity).inflate(R.layout.list_item_my_favor_event, parent, false);
 			viewHoler = new ViewHoler();
 			viewHoler.head_img = (ImageView)convertView.findViewById(R.id.event_sender_head);
-			viewHoler.hidden_img = (ImageView)convertView.findViewById(R.id.hidden_img);
 			viewHoler.sender_name_text = (TextView)convertView.findViewById(R.id.event_sender_name);
 			viewHoler.event_title_text = (TextView)convertView.findViewById(R.id.event_title);
 			viewHoler.event_type_text = (TextView)convertView.findViewById(R.id.event_type);
@@ -107,7 +106,7 @@ public class AdapterMyFavorEvent extends BaseAdapter implements OnItemClickListe
 		
 		EventEntity event = (EventEntity)getItem(position);
 		try {
-			ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, viewHoler.head_img, viewHoler.hidden_img);
+			ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, viewHoler.head_img);
 		} catch (Exception e) {
 		}
 		viewHoler.sender_name_text.setText(event.sender.nick_name);
@@ -140,7 +139,6 @@ public class AdapterMyFavorEvent extends BaseAdapter implements OnItemClickListe
 
 	class ViewHoler{
 		ImageView head_img;
-		ImageView hidden_img;
 		TextView sender_name_text;
 		TextView event_title_text;
 		TextView event_type_text;

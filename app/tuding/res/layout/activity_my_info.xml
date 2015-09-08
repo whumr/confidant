@@ -32,7 +32,7 @@
 	        android:layout_height="wrap_content"  
 	        android:layout_weight="1" /> 
 	        
-        <com.fingertip.tuding.my.widget.RoundImageView android:id="@+id/my_head_img"
+        <ImageView android:id="@+id/my_head_img"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:src="@drawable/icon_head"
@@ -307,10 +307,5 @@
         android:paddingRight="20dp"
         android:paddingEnd="20dp"
         android:src="@drawable/line_setting"/>
-
-    <ImageView android:id="@+id/hidden_img"
-        android:layout_width="0dp" 
-        android:layout_height="0dp" 
-        android:visibility="gone"/>
     
 </LinearLayout>

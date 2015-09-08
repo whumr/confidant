@@ -82,7 +82,7 @@ public class ImageCache {
 	public static boolean setUserHeadImg(String user_id, ImageView head_img) {
 		String img_path = getUserImgPath(user_id);
 		if (new File(img_path).exists()) {
-			head_img.setImageBitmap(BitmapFactory.decodeFile(img_path));
+			head_img.setImageBitmap(Tools.toRoundCorner(BitmapFactory.decodeFile(img_path)));
 			return true;
 		}
 		return false;
@@ -96,10 +96,9 @@ public class ImageCache {
 	 * @param sp
 	 * @param bitmapUtils
 	 * @param image
-	 * @param hidden_image
 	 */
 	public static void loadUserHeadImg(final String down_url, final String user_id, final SharedPreferenceUtil sp,
-			final BitmapUtils bitmapUtils, final ImageView image, final ImageView hidden_image) {
+			final BitmapUtils bitmapUtils, final ImageView image) {
 		String last_url = sp.getStringValue(user_id, SharedPreferenceUtil.HEADIMAGE);
 		boolean download_img = false;
 		//本地缓存
@@ -123,40 +122,21 @@ public class ImageCache {
 		}
 		if (download_img) {
 			//bitmapUtils与RoundImageView不兼容，临时解决办法
-			bitmapUtils.display(hidden_image, down_url, new BitmapLoadCallBack<View>() {
-				
+			bitmapUtils.display(image, down_url, new BitmapLoadCallBack<ImageView>() {
 				@Override
-				public void onLoading(View container, String uri,
-						BitmapDisplayConfig config, long total, long current) {
-					super.onLoading(container, uri, config, total, current);
-				}
-				
-				@Override
-				public void onPreLoad(View container, String uri,
-						BitmapDisplayConfig config) {
-					super.onPreLoad(container, uri, config);
-				}
-				
-				@Override
-				public void onLoadStarted(View container, String uri,
-						BitmapDisplayConfig config) {
-					super.onLoadStarted(container, uri, config);
-				}
-				
-				@Override
-				public void onLoadCompleted(View container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
-					image.setImageBitmap(bitmap);
+				public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
+					container.setImageBitmap(Tools.toRoundCorner(bitmap));
 					if (saveUserImg(bitmap, user_id, true, false))
 						sp.setStringValue(user_id, SharedPreferenceUtil.HEADIMAGE, down_url);
 				}
 				
 				@Override
-				public void onLoadFailed(View container, String uri, Drawable drawable) {
+				public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
 					Log.e("ImageCache", "下载头像失败");
 				}
 			});
 		} else if (has_cache)
-			image.setImageBitmap(BitmapFactory.decodeFile(local_img_path));
+			image.setImageBitmap(Tools.toRoundCorner(BitmapFactory.decodeFile(local_img_path)));
 	}
 
 	/**
@@ -251,19 +231,6 @@ public class ImageCache {
 		return path;
 	}
 
-//	private static String compressImageForUpload(Bitmap image, boolean big, long kb) {
-//		int option = (int)(100 *  (big ? ServerConstants.BIG_PIC_KB : ServerConstants.SMALL_PIC_KB) / kb);
-//		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//		image.compress(Bitmap.CompressFormat.JPEG, option, baos);
-//		String path = getUploadImgPath(big);
-//		FileUtil.saveImage(BitmapFactory.decodeStream(new ByteArrayInputStream(baos.toByteArray()), null, null), path);
-//		if (big)
-//			Log.e("saveImage  big", (baos.toByteArray().length / 1024) + " " + path);
-//		else
-//			Log.e("saveImage  small", (baos.toByteArray().length / 1024) + " " + path);
-//		return path;
-//	}
-	
 	private static String getUploadImgPath(boolean big) {
 		File dir = new File(IMG_PATH + Globals.UPLOAD_CACH);
 		if (!dir.exists())

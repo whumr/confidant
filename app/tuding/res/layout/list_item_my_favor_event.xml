@@ -26,7 +26,7 @@
             android:src="@drawable/icon_unchecked" />
     </LinearLayout>
 
-    <com.fingertip.tuding.my.widget.RoundImageView
+    <ImageView
         android:id="@+id/event_sender_head"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -176,22 +176,5 @@
         android:text="进行中"
         android:textColor="@color/green_event"
         android:textSize="16sp" />
-
-    <!--
-    <TextView android:id="@+id/tv_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:paddingLeft="10dp"
-        android:textSize="15sp"
-        android:textColor="@color/red_event"
-        android:visibility="gone"
-        android:text="删除"/>
-    -->
-
-	<ImageView
-        android:id="@+id/hidden_img"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone" />
+    
 </LinearLayout>

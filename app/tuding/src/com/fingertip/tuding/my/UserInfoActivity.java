@@ -40,7 +40,7 @@ public class UserInfoActivity extends BaseNavActivity implements View.OnClickLis
 	public static String KEY_USER = "user";
 	public static String KEY_USER_ID = "user_id";
 	
-	private ImageView user_info_head_img, user_info_sex_img, hidden_img;
+	private ImageView user_info_head_img, user_info_sex_img;
 	private TextView user_info_name_txt, user_info_up_count_txt, user_info_place_txt, user_info_mark_txt, event_empty_txt;
 	private Button user_info_watch_btn, user_info_chat_btn, user_info_mask_btn;
 	private GifView gifView;
@@ -66,7 +66,6 @@ public class UserInfoActivity extends BaseNavActivity implements View.OnClickLis
 		super.findViews();
 		user_info_head_img = (ImageView) findViewById(R.id.user_info_head_img);
 		user_info_sex_img = (ImageView) findViewById(R.id.user_info_sex_img);
-		hidden_img = (ImageView) findViewById(R.id.hidden_img);
 		gifView = (GifView)findViewById(R.id.gifView);
 		
 		user_info_name_txt = (TextView) findViewById(R.id.user_info_name_txt);
@@ -154,7 +153,7 @@ public class UserInfoActivity extends BaseNavActivity implements View.OnClickLis
 	private void setUserInfo() {
 //		 user_info_head_img, user_info_sex_img;
 //		TextView user_info_name_txt, user_info_up_count_txt, user_info_province_txt, user_info_city_txt, user_info_mark_txt, user_info_event_empty_txt
-		ImageCache.loadUserHeadImg(user.head_img_url, user.id, sp, bitmapUtils, user_info_head_img, hidden_img);
+		ImageCache.loadUserHeadImg(user.head_img_url, user.id, sp, bitmapUtils, user_info_head_img);
 		if (ServerConstants.SEX_FEMALE.equals(user.sex))
 			user_info_sex_img.setImageDrawable(getResources().getDrawable(R.drawable.icon_female));
 		user_info_name_txt.setText(user.nick_name);

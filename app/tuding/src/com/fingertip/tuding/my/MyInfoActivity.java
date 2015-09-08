@@ -37,7 +37,7 @@ import com.lidroid.xutils.BitmapUtils;
 
 public class MyInfoActivity extends BaseNavActivity implements View.OnClickListener {
 	
-	private ImageView my_head_img, my_sex_img, hidden_img;
+	private ImageView my_head_img, my_sex_img;
 	private LinearLayout my_head, my_nick, my_sex, my_mark, my_place, my_reset_password;
 	private TextView my_nick_txt, my_sex_txt, my_mark_txt, my_place_txt;
 	
@@ -56,7 +56,6 @@ public class MyInfoActivity extends BaseNavActivity implements View.OnClickListe
 		super.findViews();
 		my_head_img = (ImageView) findViewById(R.id.my_head_img);
 		my_sex_img = (ImageView) findViewById(R.id.my_sex_img);
-		hidden_img = (ImageView) findViewById(R.id.hidden_img);
 		
 		my_head = (LinearLayout) findViewById(R.id.my_head);
 		my_nick = (LinearLayout) findViewById(R.id.my_nick);
@@ -104,7 +103,7 @@ public class MyInfoActivity extends BaseNavActivity implements View.OnClickListe
 		}
 		
 		if (!ImageCache.setUserHeadImg(session.getId(), my_head_img))
-			ImageCache.loadUserHeadImg(session.getHead_url(), session.getId(), getSP(), bitmapUtils, my_head_img, hidden_img);
+			ImageCache.loadUserHeadImg(session.getHead_url(), session.getId(), getSP(), bitmapUtils, my_head_img);
 	}
 
 	@Override

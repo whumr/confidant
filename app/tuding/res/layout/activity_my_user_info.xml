@@ -15,7 +15,7 @@
         android:paddingBottom="10dp"
         android:paddingTop="20dp" >
 
-        <com.fingertip.tuding.my.widget.RoundImageView
+        <ImageView
             android:id="@+id/user_info_head_img"
             android:layout_width="70dp"
             android:layout_height="70dp"
@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:text="关于我的个性签名，我想我不太习惯写文章，所以暂时就不写了"
+            android:text=""
             android:textColor="@color/gray_b9"
             android:textSize="12sp" />
     </LinearLayout>
@@ -220,11 +220,5 @@
             android:textColor="@color/white"
             android:textSize="18sp" />
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/hidden_img"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone" />
 
 </LinearLayout>

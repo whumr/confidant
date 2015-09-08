@@ -53,7 +53,6 @@ public class Tools {
 	public static Bitmap toRoundCorner(Bitmap bitmap) {
 		return toRoundCorner(bitmap, bitmap.getWidth() / 2);
 	}
-			
 	
 	/**
 	 * 

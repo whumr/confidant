@@ -99,7 +99,6 @@ public class AdapterMessage extends BaseAdapter implements OnItemClickListener, 
 			convertView = LayoutInflater.from(activity).inflate(R.layout.list_item_message, parent, false);
 			viewHoler = new ViewHoler();
 			viewHoler.head_img = (ImageView)convertView.findViewById(R.id.msg_sender_head);
-			viewHoler.hidden_img = (ImageView)convertView.findViewById(R.id.hidden_img);
 			viewHoler.sender_name_text = (TextView)convertView.findViewById(R.id.msg_sender_name);
 			viewHoler.msg_title_text = (TextView)convertView.findViewById(R.id.msg_title);
 			viewHoler.msg_type_text = (TextView)convertView.findViewById(R.id.msg_type);
@@ -114,7 +113,7 @@ public class AdapterMessage extends BaseAdapter implements OnItemClickListener, 
 		
 		MessageEntity msg = (MessageEntity)getItem(position);
 		try {
-			ImageCache.loadUserHeadImg(msg.sender.head_img_url, msg.sender.id, sp, bitmapUtils, viewHoler.head_img, viewHoler.hidden_img);
+			ImageCache.loadUserHeadImg(msg.sender.head_img_url, msg.sender.id, sp, bitmapUtils, viewHoler.head_img);
 		} catch (Exception e) {
 		}
 		viewHoler.sender_name_text.setText(msg.sender.nick_name);
@@ -142,7 +141,6 @@ public class AdapterMessage extends BaseAdapter implements OnItemClickListener, 
 
 	class ViewHoler{
 		ImageView head_img;
-		ImageView hidden_img;
 		TextView sender_name_text;
 		TextView msg_title_text;
 		TextView msg_type_text;

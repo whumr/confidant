@@ -18,7 +18,7 @@
         android:paddingStart="20dp"
         android:paddingTop="15dp" >
 
-        <com.fingertip.tuding.my.widget.RoundImageView
+        <ImageView
             android:id="@+id/my_head_img"
             android:layout_width="60dp"
             android:layout_height="60dp"
@@ -253,12 +253,5 @@
             android:textColor="@color/black_42"
             android:textSize="@dimen/pub_eventTextSize" />
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/hidden_img"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:contentDescription="@string/empty"
-        android:visibility="invisible" />
 
 </LinearLayout>
