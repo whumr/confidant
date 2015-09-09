@@ -176,17 +176,11 @@
         
         <activity  android:name="com.fingertip.tuding.info.PublishInfoActivity" />
         
-        <activity 
-            android:name="com.fingertip.tuding.attention.AddAttentionActivity" 
-            android:theme="@style/MyDialogStyleNull" />
-        
-        <!-- 图片选择(头像) -->
-        <activity
-            android:name="com.fingertip.tuding.common.SelectPicPopupWindow"
-            android:theme="@style/MyDialogStyleBottom" />		
-            
         <!-- 检索 -->
         <activity android:name="com.fingertip.tuding.search.SearchMainActivity" />
+        
+        <activity android:name="com.fingertip.tuding.search.KeyWordSearchActivity" />
+        
         <!-- 标记位置 -->
         <activity android:name="com.fingertip.tuding.main.widget.MapPositionSelectionActivity" />
         

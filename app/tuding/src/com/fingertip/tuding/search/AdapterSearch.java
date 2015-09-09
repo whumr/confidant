@@ -88,7 +88,7 @@ public class AdapterSearch extends BaseAdapter implements OnItemClickListener {
 		viewHolder.tv_name.setText(event.sender.nick_name);
 		viewHolder.iv_head.setTag(event.sender.id);
 		try {
-			ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, viewHolder.iv_head);				
+			ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, viewHolder.iv_head);
 		} catch (Exception e) {
 		}
 		try {

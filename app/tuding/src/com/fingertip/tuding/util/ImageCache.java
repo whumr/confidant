@@ -87,6 +87,10 @@ public class ImageCache {
 		}
 		return false;
 	}
+	public static void loadUserHeadImg(final String down_url, final String user_id, final SharedPreferenceUtil sp,
+			final BitmapUtils bitmapUtils, final ImageView image) {
+		loadUserHeadImg(down_url, user_id, sp, bitmapUtils, image, null);
+	}
 	
 	/**
 	 * 加载用户头像，优先从缓存加载
@@ -98,7 +102,7 @@ public class ImageCache {
 	 * @param image
 	 */
 	public static void loadUserHeadImg(final String down_url, final String user_id, final SharedPreferenceUtil sp,
-			final BitmapUtils bitmapUtils, final ImageView image) {
+			final BitmapUtils bitmapUtils, final ImageView image, final UserHeadCallback callback) {
 		String last_url = sp.getStringValue(user_id, SharedPreferenceUtil.HEADIMAGE);
 		boolean download_img = false;
 		//本地缓存
@@ -112,8 +116,11 @@ public class ImageCache {
 			//有头像，下载
 			if (!Validator.isEmptyString(down_url))
 				download_img = true;
-			else 
+			else {
+				if (callback != null)
+					callback.loadSucceed();
 				return;
+			}
 		//有缓存
 		} else {
 			//有头像
@@ -121,22 +128,28 @@ public class ImageCache {
 				download_img = !last_url.equals(down_url) || !has_cache;
 		}
 		if (download_img) {
-			//bitmapUtils与RoundImageView不兼容，临时解决办法
 			bitmapUtils.display(image, down_url, new BitmapLoadCallBack<ImageView>() {
 				@Override
 				public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
-					container.setImageBitmap(Tools.toRoundCorner(bitmap));
 					if (saveUserImg(bitmap, user_id, true, false))
 						sp.setStringValue(user_id, SharedPreferenceUtil.HEADIMAGE, down_url);
+					container.setImageBitmap(Tools.toRoundCorner(bitmap));
+					if (callback != null)
+						callback.loadSucceed();
 				}
 				
 				@Override
 				public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
 					Log.e("ImageCache", "下载头像失败");
+					if (callback != null)
+						callback.loadFail();
 				}
 			});
-		} else if (has_cache)
+		} else if (has_cache) {
 			image.setImageBitmap(Tools.toRoundCorner(BitmapFactory.decodeFile(local_img_path)));
+			if (callback != null)
+				callback.loadSucceed();
+		}
 	}
 
 	/**
@@ -243,5 +256,12 @@ public class ImageCache {
 		if (!dir.exists())
 			dir.mkdirs();
 		return IMG_PATH + IMG_CUT;
+	}
+	
+	public interface UserHeadCallback {
+		
+		public void loadSucceed();
+		
+		public void loadFail();
 	}
 }

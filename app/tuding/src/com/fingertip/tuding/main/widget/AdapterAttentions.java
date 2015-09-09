@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,24 +13,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fingertip.tuding.R;
+import com.fingertip.tuding.db.SharedPreferenceUtil;
 import com.fingertip.tuding.entity.WatchEntity;
-import com.fingertip.tuding.util.Tools;
+import com.fingertip.tuding.util.ImageCache;
 import com.lidroid.xutils.BitmapUtils;
-import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 
 public class AdapterAttentions extends BaseAdapter {
 
 	private Context context;
 	private List<WatchEntity> arrayList = new ArrayList<WatchEntity>();
 	private BitmapUtils bitmapUtils;
+	private SharedPreferenceUtil sp;
 	
 	private SparseBooleanArray selected_array = new SparseBooleanArray();
 
-	public AdapterAttentions(Context c) {
-		context = c;
+	public AdapterAttentions(Context context) {
+		this.context = context;
 		bitmapUtils = new BitmapUtils(context);
+		sp = new SharedPreferenceUtil(context);
 	}
 
 	public void addAllList(List<WatchEntity> list) {
@@ -87,23 +85,7 @@ public class AdapterAttentions extends BaseAdapter {
 			viewHoler = (ViewHoler) convertView.getTag();
 		}
 		WatchEntity watch = (WatchEntity) getItem(position);
-
-		bitmapUtils.display(viewHoler.iv_head, watch.user.head_img_url, new BitmapLoadCallBack<ImageView>() {
-			@Override
-			public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
-				try {
-					container.setImageBitmap(Tools.toRoundCorner(bitmap));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			
-			@Override
-			public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
-						
-			}
-		});
-
+		ImageCache.loadUserHeadImg(watch.user.head_img_url, watch.user.id, sp, bitmapUtils, viewHoler.iv_head);
 		viewHoler.my_watcher_name.setText(watch.user.nick_name);
 		viewHoler.my_watcher_mark.setText(watch.user.mark);
 		viewHoler.my_watcher_place.setText(watch.user.place);

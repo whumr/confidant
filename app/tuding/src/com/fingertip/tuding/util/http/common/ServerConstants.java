@@ -54,6 +54,7 @@ public class ServerConstants {
 		public static String FAV_EVENT = BASE_URL + "/_action/action_fav_add.php";
 		public static String COMMENT_EVENT = BASE_URL + "/_action/action_reply.php";
 		public static String COMMENT_REPLY_EVENT = BASE_URL + "/_action/action_reply_reply.php";
+		public static String SEARCH_EVENT = BASE_URL + "/_user/get_action_bysearch.php";
 		
 		/**
 		 * msg
@@ -142,6 +143,8 @@ public class ServerConstants {
 		public static String B = "b";
 		public static String S = "s";
 		public static String ACTIONINFOR = "actioninfor";
+		public static String KEYWORD = "keyword";
+		public static String DECODE_CONTENT = "decode_content";
 		
 		/**
 		 * comment
@@ -209,6 +212,7 @@ public class ServerConstants {
 		public static String FC_FAV_EVENT = "action_fav_add";
 		public static String FC_COMMENT_EVENT = "action_reply";
 		public static String FC_COMMENT_REPLY_EVENT = "action_reply_reply";
+		public static String FC_SEARCH_EVENT = "get_action_bysearch";
 		
 		/**
 		 * msg

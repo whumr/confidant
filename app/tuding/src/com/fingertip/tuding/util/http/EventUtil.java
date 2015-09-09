@@ -115,6 +115,53 @@ public class EventUtil extends BaseHttpUtil {
 		});
 	}
 	
+	public static void searchEventsByKeywords(String keyword, String poslong, String poslat, int page, final EntityListCallback<EventEntity> callback) {
+		UserSession session = UserSession.getInstance();
+		JSONObject data = new JSONObject();
+//		{"fc":"get_action_bysearch", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", 
+//			 "poslong":113.3124, "poslat":23.1428, "keyword":"深圳", "pageno":1 , "decode_content":"y"}
+		try {
+			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_SEARCH_EVENT);
+			data.put(PARAM_KEYS.USERID, session.getId() == null ? "" : session.getId());
+			data.put(PARAM_KEYS.LOGINID, session.getLogin_id() == null ? "" : session.getLogin_id());
+			data.put(PARAM_KEYS.POSLONG, poslong);
+			data.put(PARAM_KEYS.POSLAT, poslat);
+			data.put(PARAM_KEYS.KEYWORD, keyword);
+			data.put(PARAM_KEYS.PAGENO, page);
+		} catch (JSONException e) {
+		}
+		RequestParams params = new RequestParams();
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		HttpUtils http = Tools.getHttpUtils();
+		http.send(HttpRequest.HttpMethod.POST, URL.SEARCH_EVENT, params, new RequestCallBack<String>() {
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+				String error = null;
+				JSONObject json = null;
+				List<EventEntity> list = null;
+				try {
+					json = new JSONObject(result);
+					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
+						error = json.getString(PARAM_KEYS.RESULT_ERROR);
+					else
+						list = EventEntity.parseList(json);
+				} catch (JSONException e) {
+					error = "查询失败:" + e.getMessage();
+				}
+				if (error != null)
+					callback.fail(error);
+				else
+					callback.succeed(list);
+			}
+			
+			@Override
+			public void onFailure(HttpException error, String msg) {
+				callback.fail(ServerConstants.NET_ERROR_TIP);
+			}
+		});
+	}
+	
 	/**
 	 * 获取活动详情
 	 * @param id

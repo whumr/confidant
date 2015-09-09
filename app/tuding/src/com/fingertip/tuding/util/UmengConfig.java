@@ -18,7 +18,7 @@ public class UmengConfig {
 		//活动详情
 		public static String EVENT_DETAIL = "event_detail_page";
 		//搜索活动
-		public static String SEARCH_EVENT = "search_event_page";
+		public static String SEARCH_EVENT_BY_KEYWORD = "search_event_by_keyword";
 		//最近
 		public static String SEARCH_EVENT_NEAR = "search_event_near_page";
 		//最热

@@ -6,8 +6,6 @@ import java.util.List;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,6 +23,7 @@ import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseActivity;
 import com.fingertip.tuding.common.ShareDialog;
 import com.fingertip.tuding.common.UserSession;
+import com.fingertip.tuding.db.SharedPreferenceUtil;
 import com.fingertip.tuding.entity.CommentEntity;
 import com.fingertip.tuding.entity.EventEntity;
 import com.fingertip.tuding.entity.EventEntity.EventType;
@@ -33,17 +32,16 @@ import com.fingertip.tuding.entity.UserEntity;
 import com.fingertip.tuding.main.widget.PublicRecommendActivity;
 import com.fingertip.tuding.my.UserInfoActivity;
 import com.fingertip.tuding.setting.ReportActivity;
+import com.fingertip.tuding.util.ImageCache;
 import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.UmengConfig.EVENT;
 import com.fingertip.tuding.util.UmengConfig.PAGE;
 import com.fingertip.tuding.util.Validator;
 import com.fingertip.tuding.util.http.EventUtil;
+import com.fingertip.tuding.util.http.UserUtil;
 import com.fingertip.tuding.util.http.callback.DefaultCallback;
 import com.fingertip.tuding.util.http.callback.EntityListCallback;
 import com.lidroid.xutils.BitmapUtils;
-import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 import com.lidroid.xutils.util.LogUtils;
 import com.umeng.analytics.MobclickAgent;
 
@@ -78,6 +76,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 	private EventEntity event;
 
 	private BitmapUtils bitmapUtils;
+	private SharedPreferenceUtil sp;
 
 	// ÆÁÄ»×óÓÒ¼ä¸ô
 	private int screenMargin = 80;
@@ -102,8 +101,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 
 		WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
 		layoutParams.gravity = Gravity.CENTER;
-		layoutParams.width = getResources().getDisplayMetrics().widthPixels
-				- screenMargin;
+		layoutParams.width = getResources().getDisplayMetrics().widthPixels - screenMargin;
 
 		findViews();
 		setupViews();
@@ -176,44 +174,14 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		tv_time.setText(event.send_time_str);
 
 		bitmapUtils = new BitmapUtils(this);
-		bitmapUtils.display(iv_head, event.sender.head_img_url,
-			new BitmapLoadCallBack<ImageView>() {
-				@Override
-				public void onLoadCompleted(ImageView container,
-						String uri, Bitmap bitmap,
-						BitmapDisplayConfig config, BitmapLoadFrom from) {
-					try {
-						container.setImageBitmap(Tools.toRoundCorner(bitmap));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-
-				@Override
-				public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
-					LogUtils.i("head img load fail");
-				}
-			});
+		sp = new SharedPreferenceUtil(this);
+		
+		ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, iv_head);
 
 		String topImag = Validator.isEmptyList(event.pics_big) ? null : event.pics_big.get(0);
-		if (topImag != null) {
-			bitmapUtils.display(iv_topic, topImag, new BitmapLoadCallBack<ImageView>() {
-					@Override
-					public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap,
-							BitmapDisplayConfig config, BitmapLoadFrom from) {
-						try {
-							container.setImageBitmap(bitmap);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-
-					@Override
-					public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
-						LogUtils.i("head img load fail");
-					}
-				});
-		}
+		if (Validator.isEmptyString(topImag))
+			ImageCache.loadUrlImg(topImag, iv_topic, bitmapUtils);
+		
 		ImageView imageView = null;
 		LinearLayout layout_img_horizontal = null;
 		LayoutParams layoutParams_horizontal = null;
@@ -242,7 +210,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 			imageView.setScaleType(ScaleType.FIT_XY);
 			imageView.setAdjustViewBounds(true);
 			// imageView.setScaleType(ScaleType.CENTER);
-			bitmapUtils.display(imageView, event.pics_small.get(i));
+			ImageCache.loadUrlImg(event.pics_small.get(i), imageView, bitmapUtils);
 			imageView.setTag(i);
 			imageView.setOnClickListener(imgOnClickListener);
 			layout_img_horizontal.addView(imageView, layoutParams_horizontal);
@@ -263,7 +231,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 				if (session.getFavor_event_list().contains(event.id))
 					setCollected();
 			} else
-				session.isLoad_favor();
+				UserUtil.loadFavorList();
 		}
 	}
 
@@ -271,11 +239,6 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		@Override
 		public void onClick(View v) {
 			Tools.previewPics(OverlayBigActivity.this, (ArrayList<String>)event.pics_big, (Integer) v.getTag());
-//			Intent intent = new Intent();
-//			intent.setClass(OverlayBigActivity.this, ImageViewPagerActivity.class);
-//			intent.putExtra(EXTRA_PARAM, event.getImgList());
-//			intent.putExtra(ImageViewPagerActivity.INDEX_SHOW, (Integer) v.getTag());
-//			startActivity(intent);
 		}
 	};
 
@@ -349,23 +312,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 
 			try {
 				iv_commendHead.setImageDrawable(getResources().getDrawable(R.drawable.bg_head_default_little));
-				bitmapUtils.display(iv_commendHead, comment.userEntity.head_img_url,
-						new BitmapLoadCallBack<ImageView>() {
-							@Override
-							public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap,
-									BitmapDisplayConfig config,BitmapLoadFrom from) {
-								try {
-									container.setImageBitmap(Tools.toRoundCorner(bitmap));
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-							}
-
-							@Override
-							public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
-								LogUtils.i("head img load fail");
-							}
-						});
+				ImageCache.loadUserHeadImg(comment.userEntity.head_img_url, comment.userEntity.id, sp, bitmapUtils, iv_commendHead);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

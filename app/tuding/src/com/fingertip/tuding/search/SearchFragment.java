@@ -85,17 +85,12 @@ public class SearchFragment extends BaseFragment implements RefreshListener {
 	public void onResume() {
 		super.onResume();
 	}
-
-	public void refresh() {
-		loadData(1, false);
-		current_page = 1;
-	}
 	
-	private void loadData(final int page, final boolean append) {
+	private void loadData(final boolean append) {
 		float latitude = sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT);
 		float longitude = sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG);
 		if (latitude != 0 && longitude!= 0) {
-			EventUtil.searchEvents(seach_type, EventType.ALL.getType(), longitude + "", latitude + "", page, new EntityListCallback<EventEntity>() {
+			EventUtil.searchEvents(seach_type, EventType.ALL.getType(), longitude + "", latitude + "", current_page, new EntityListCallback<EventEntity>() {
 				@Override
 				public void succeed(List<EventEntity> list) {
 					if (append)
@@ -131,12 +126,13 @@ public class SearchFragment extends BaseFragment implements RefreshListener {
 
 	@Override
 	public void onRefresh() {
-		refresh();
+		current_page = 1;
+		loadData(false);
 	}
 
 	@Override
 	public void onLoadMore() {
 		current_page++;
-		loadData(current_page, true);
+		loadData(true);
 	}
 }

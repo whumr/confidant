@@ -1,8 +1,6 @@
 package com.fingertip.tuding.main.overlay;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
@@ -11,21 +9,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fingertip.tuding.R;
+import com.fingertip.tuding.db.SharedPreferenceUtil;
 import com.fingertip.tuding.entity.EventEntity;
 import com.fingertip.tuding.entity.EventEntity.EventType;
-import com.fingertip.tuding.util.Tools;
+import com.fingertip.tuding.util.ImageCache;
 import com.lidroid.xutils.BitmapUtils;
-import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
-import com.lidroid.xutils.util.LogUtils;
 
 /**
  * 地图marker子控件
  * @author Administrator
  *
  */
-public class ViewMapOverlay extends FrameLayout{
+public class ViewMapOverlay extends FrameLayout {
 	private LinearLayout layout_content;
 	private ImageView iv_head;
 	private ImageView iv_arrowDown;
@@ -35,8 +30,8 @@ public class ViewMapOverlay extends FrameLayout{
 	private TextView tv_time;
 	
 	private EventEntity event;
-	
 	private BitmapUtils bitmapUtils;
+	private SharedPreferenceUtil sp;
 
 	public ViewMapOverlay(Context context) {
 		super(context);
@@ -66,10 +61,11 @@ public class ViewMapOverlay extends FrameLayout{
 		tv_collection = (TextView)findViewById(R.id.tv_collection);
 		tv_time = (TextView)findViewById(R.id.tv_time);
 		
-//		int width = getContext().getResources().getDisplayMetrics().widthPixels - 180;
 		int width = getContext().getResources().getDisplayMetrics().widthPixels - 170;
-//		tv_title.setMaxWidth(width);
 		tv_name.setMaxWidth(width);
+		
+		bitmapUtils = new BitmapUtils(getContext());
+		sp = new SharedPreferenceUtil(getContext());
 	}
 	
 	public void setEventEntity(EventEntity event){
@@ -77,32 +73,15 @@ public class ViewMapOverlay extends FrameLayout{
 		setupViewsData();
 	}
 	
-	private void setupViewsData(){
-		if (event == null)
-			return;
-		tv_title.setText(event.title);
-		tv_name.setText(event.sender.nick_name);
-		tv_collection.setText("" + event.viewcount);//调用浏览量
-		//tv_collection.setText("" + overlayEntity.appraiseCount);
-		tv_time.setText(event.send_time_str);
-		if (bitmapUtils == null)
-			bitmapUtils = new BitmapUtils(getContext());
-		bitmapUtils.display(iv_head, event.sender.head_img_url, new BitmapLoadCallBack<ImageView>() {
-			@Override
-			public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {				
-				try {
-					container.setImageBitmap(Tools.toRoundCorner(bitmap));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-			@Override
-			public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
-				LogUtils.i("head img load fail");
-			}
-		});
-		setOverlayType();
+	private void setupViewsData() {
+		if (event != null) {
+			tv_title.setText(event.title);
+			tv_name.setText(event.sender.nick_name);
+			tv_collection.setText("" + event.viewcount);//调用浏览量
+			tv_time.setText(event.send_time_str);
+			ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, iv_head);
+			setOverlayType();
+		}
 	}
 	
 	private void setOverlayType(){

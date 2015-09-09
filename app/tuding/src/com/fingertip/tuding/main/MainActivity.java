@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -56,23 +55,28 @@ import com.fingertip.tuding.entity.EventEntity.EventType;
 import com.fingertip.tuding.main.overlay.OverlayBigActivity;
 import com.fingertip.tuding.main.overlay.ViewMapOverlay;
 import com.fingertip.tuding.my.MyIndexActivity;
+import com.fingertip.tuding.search.KeyWordSearchActivity;
 import com.fingertip.tuding.search.SearchMainActivity;
 import com.fingertip.tuding.services.MessageService;
+import com.fingertip.tuding.util.ImageCache;
+import com.fingertip.tuding.util.ImageCache.UserHeadCallback;
 import com.fingertip.tuding.util.UmengConfig.EVENT;
 import com.fingertip.tuding.util.UmengConfig.PAGE;
+import com.fingertip.tuding.util.Validator;
 import com.fingertip.tuding.util.http.EventUtil;
 import com.fingertip.tuding.util.http.callback.EntityCallback;
 import com.fingertip.tuding.util.http.callback.EntityListCallback;
 import com.fingertip.tuding.util.http.common.ServerConstants;
+import com.lidroid.xutils.BitmapUtils;
 import com.umeng.analytics.MobclickAgent;
 
 public class MainActivity extends BaseActivity implements UpdateNotify{
 	private static final String TAG = "MainActivity";
 	
-	private MapView mMapView = null;
+	private MapView mMapView;
 	private BaiduMap baiduMap;
 	private LocationClient mLocationClient;
-	private MyLocationListenner myLocationListenner = new MyLocationListenner();
+	private MyLocationListenner myLocationListenner;
 	private ScrollTouchView  view_tab;
 	
 	/** 地图数据 **/
@@ -80,7 +84,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	private ArrayList<Marker> marker_list = new ArrayList<Marker>();
 	private HashMap<Marker, EventEntity> marker_map = new HashMap<Marker, EventEntity>();
 	
-	private ImageView iv_icon_info;
+	private ImageView user_info_img;
 	private Intent service;
 	private Timer timer;
 	
@@ -90,10 +94,13 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	private SDKReceiver mSDKReceiver;
 	private String last_click_event_id = null;
 	
+	private BitmapUtils bitmapUtils;
+	private SharedPreferenceUtil sp;
+	
 	@SuppressLint("HandlerLeak")
 	private Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
-			iv_icon_info.setImageDrawable(getResources().getDrawable(R.drawable.icon_main_info_red));
+			user_info_img.setImageDrawable(getResources().getDrawable(R.drawable.icon_main_user_red));
 		};
 	};
 	
@@ -138,7 +145,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 			@Override
 			public void run() {
 				//有新消息
-				if (getSP().getBooleanValue(SharedPreferenceUtil.HAS_NEW_MESSAGE, false)) {
+				if (sp.getBooleanValue(SharedPreferenceUtil.HAS_NEW_MESSAGE, false)) {
 					Message msg = Message.obtain(handler, 0);
 					msg.sendToTarget();
 				}
@@ -147,7 +154,10 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	}
 
 	private void setupViews() {
-		iv_icon_info = (ImageView)findViewById(R.id.iv_icon_info);
+		bitmapUtils = new BitmapUtils(this);
+		sp = new SharedPreferenceUtil(this);
+		
+		user_info_img = (ImageView)findViewById(R.id.user_info_img);
 		
 		mMapView = (MapView)findViewById(R.id.bmapView);
 		baiduMap = mMapView.getMap();
@@ -156,6 +166,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		
 		baiduMap.setMyLocationEnabled(true);
 		mLocationClient = new LocationClient(this);
+		myLocationListenner = new MyLocationListenner();
 		mLocationClient.registerLocationListener(myLocationListenner);
 		baiduMap.setOnMapStatusChangeListener(onMapStatusChangeListener);
 		
@@ -171,7 +182,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		view_tab = (ScrollTouchView)findViewById(R.id.view_tab);
 		initTabeData();
 		
-		findViewById(R.id.iv_icon_info).setOnClickListener(new View.OnClickListener() {			
+		findViewById(R.id.user_info_img).setOnClickListener(new View.OnClickListener() {			
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent();
@@ -180,7 +191,18 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 			}
 		});
 		
-		findViewById(R.id.iv_search).setOnClickListener(new View.OnClickListener() {			
+		//关键词搜索
+		findViewById(R.id.key_search_img).setOnClickListener(new View.OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this, KeyWordSearchActivity.class);
+				startActivity(intent);
+			}
+		});
+		
+		//一般搜索
+		findViewById(R.id.common_search_img).setOnClickListener(new View.OnClickListener() {			
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent();
@@ -192,9 +214,9 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		findViewById(R.id.iv_position).setOnClickListener(new View.OnClickListener() {		
 			@Override
 			public void onClick(View v) {
-				if(getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT) > 0){
+				if(sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT) > 0){
 					isFirstLoc = false;
-					LatLng ll = new LatLng(getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT), getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG));
+					LatLng ll = new LatLng(sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT), sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG));
 					MapStatusUpdate u = MapStatusUpdateFactory.newLatLngZoom(ll ,16);
 					baiduMap.animateMapStatus(u);
 				}
@@ -203,14 +225,14 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 			}
 		});
 		
-		findViewById(R.id.iv_add).setOnClickListener(new View.OnClickListener() {		
+		findViewById(R.id.map_plus_img).setOnClickListener(new View.OnClickListener() {		
 			@Override
 			public void onClick(View v) {
 				MapStatus mapStatus = baiduMap.getMapStatus();
 				baiduMap.setMapStatus(MapStatusUpdateFactory.zoomTo(mapStatus.zoom + 1));
 			}
 		});
-		findViewById(R.id.iv_plus).setOnClickListener(new View.OnClickListener() {			
+		findViewById(R.id.map_minus_img).setOnClickListener(new View.OnClickListener() {			
 			@Override
 			public void onClick(View v) {
 				MapStatus mapStatus = baiduMap.getMapStatus();
@@ -227,12 +249,11 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		mSDKReceiver = new SDKReceiver();
 		registerReceiver(mSDKReceiver, iFilter);
 		
-		if(getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT) >= 0){
-			LatLng ll = new LatLng(getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT), getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG));
+		if(sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT) >= 0){
+			LatLng ll = new LatLng(sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT), sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG));
 			MapStatusUpdate u = MapStatusUpdateFactory.newLatLngZoom(ll ,16);
 			baiduMap.animateMapStatus(u);
 		}
-		
 	}
 	
 	/** 初始化底部数据 **/
@@ -290,10 +311,10 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	}
 	
 	@SuppressLint("InflateParams")
-	private Marker setOverlayData(EventEntity event){
-		LatLng point = new LatLng(event.poslat, event.poslong);
+	private Marker setOverlayData(final EventEntity event){
+		final LatLng point = new LatLng(event.poslat, event.poslong);
 		Context context = MainActivity.this;
-		View view_markerImage = LayoutInflater.from(context).inflate(R.layout.view_marker_img, null);
+		final View view_markerImage = LayoutInflater.from(context).inflate(R.layout.view_marker_img, null);
 		ImageView iv_markerImg = (ImageView)view_markerImage.findViewById(R.id.image);
 		
 		if (event.event_type == EventType.SPORTS) {
@@ -318,37 +339,36 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 			view_markerImage.setBackgroundResource(R.drawable.bg_icon_6);
 			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_all));
 		}
+		if (!Validator.isEmptyString(event.sender.head_img_url)) {
+			ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, iv_markerImg, new UserHeadCallback() {
+				
+				@Override
+				public void loadSucceed() {
+					addOverlay(event, view_markerImage, point);				
+				}
+				
+				@Override
+				public void loadFail() {
+					addOverlay(event, view_markerImage, point);
+				}
+			});
+		} else
+			return addOverlay(event, view_markerImage, point);
+		return null;
+	}
+	
+	private Marker addOverlay(EventEntity event, View view_markerImage, LatLng point) {
 		BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromView(view_markerImage);
-		
 		OverlayOptions options = new MarkerOptions().position(point).icon(bitmapDescriptor).draggable(false);
 		Marker marker = (Marker)(baiduMap.addOverlay(options));
 		if(!marker_list.contains(marker))
 			marker_list.add(marker);
 		marker_map.put(marker, event);
-		last_click_event_id = event.id;
 		return marker;
 	}
 	
-	/* 从view 得到图片
-	 * @param view
-	 * @return
-	 */
-	public static Bitmap getBitmapFromView(View view) {
-        view.destroyDrawingCache();
-        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), 
-        		View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-        view.setDrawingCacheEnabled(true);
-        Bitmap bitmap = view.getDrawingCache(true);
-        return bitmap;
-	}
-	
-	private void resetOverlay(MapStatus mapStatus){
+	private void resetOverlay(){
 		clearMarkerList();
-		resetOverlayData(mapStatus);
-	}
-	
-	private void resetOverlayData(MapStatus mapStatus){
 		for (int i = 0; i < event_list.size(); i++) {
 			setOverlayData(event_list.get(i));
 		}
@@ -358,23 +378,19 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	private OnMapStatusChangeListener onMapStatusChangeListener = new OnMapStatusChangeListener() {		
 		@Override
 		public void onMapStatusChangeStart(MapStatus mapStatus) {
-			Log.e("onMapStatusChangeStart", mapStatus.target.latitude + "  " + mapStatus.target.longitude);
 		}
 		
 		@Override
 		public void onMapStatusChangeFinish(MapStatus mapStatus) {
-			Log.e("onMapStatusChangeFinish", mapStatus.target.latitude + "  " + mapStatus.target.longitude);	
 			getPosData();
 		}
 		
 		@Override
 		public void onMapStatusChange(MapStatus mapStatus) {
-			if(lastZoom == mapStatus.zoom){
-				return;
+			if(lastZoom != mapStatus.zoom){
+				lastZoom = mapStatus.zoom;
+				resetOverlay();
 			}
-			lastZoom = mapStatus.zoom;
-			resetOverlay(mapStatus);
-			Log.e("onMapStatusChange", mapStatus.toString());	
 		}
 	};
 	
@@ -390,10 +406,6 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 				return;
 			}
 			
-			@SuppressWarnings("unused")
-			float zoom = baiduMap.getMapStatus().zoom;
-
-			
 			MyLocationData locData = new MyLocationData.Builder()
 					.accuracy(location.getRadius())
 					// 此处设置获取到的方向信息，顺时针0-360
@@ -407,29 +419,20 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 					MapStatusUpdate u = MapStatusUpdateFactory.newLatLngZoom(ll ,16);
 					baiduMap.animateMapStatus(u);
 					
-					getSP().setFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT, (float)location.getLatitude());
-					getSP().setFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG, (float)location.getLongitude());
+					sp.setFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT, (float)location.getLatitude());
+					sp.setFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG, (float)location.getLongitude());
 				}else {
-					if(getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT) > 0){
+					if(sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT) > 0){
 						isFirstLoc = false;
-						LatLng ll = new LatLng(getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT), getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG));
+						LatLng ll = new LatLng(sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT), sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG));
 						MapStatusUpdate u = MapStatusUpdateFactory.newLatLngZoom(ll ,16);
 						baiduMap.animateMapStatus(u);
-					}else {
-						//Toast.makeText(MainActivity.this, "定位失败", Toast.LENGTH_SHORT).show();
 					}
 				}
 			}
-		}//end onReceiveLocation
-		public void onReceivePoi(BDLocation poiLocation) { }
-	}//end MyLocationListenner class
-	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(data == null){
-			return;
 		}
-	}//end onActivityResult
+		public void onReceivePoi(BDLocation poiLocation) { }
+	}
 	
 	@Override
 	protected void onDestroy(){
@@ -450,17 +453,17 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		if (service != null)
 			stopService(service);
 		super.onDestroy();
-	}//end onDestroy
+	}
 	
 	@Override
 	protected void onResume(){
 		mMapView.onResume();
 		mLocationClient.start();
 		super.onResume();
-		if (getSP().getBooleanValue(SharedPreferenceUtil.HAS_NEW_MESSAGE, false))
-			iv_icon_info.setImageDrawable(getResources().getDrawable(R.drawable.icon_main_info_red));
+		if (sp.getBooleanValue(SharedPreferenceUtil.HAS_NEW_MESSAGE, false))
+			user_info_img.setImageDrawable(getResources().getDrawable(R.drawable.icon_main_user_red));
 		else
-			iv_icon_info.setImageDrawable(getResources().getDrawable(R.drawable.icon_main_info_black));
+			user_info_img.setImageDrawable(getResources().getDrawable(R.drawable.icon_main_user));
 	}
 	
 	@Override
@@ -477,11 +480,10 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		getPosData();
 	}
 	
-	
 	/** 获取地图数据 **/
 	private void getPosData(){
-		double latitude = getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT);
-		double longitude = getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG);
+		double latitude = sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT);
+		double longitude = sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG);
 		LatLng ll = mMapView.getMap().getMapStatus().bound.getCenter();
 		if (ll != null && ll.latitude != 0 && ll.longitude != 0) {
 			latitude = ll.latitude;
@@ -493,7 +495,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 					dismissProgressDialog();
 					event_list.clear();
 		            event_list.addAll(list);
-		            resetOverlay(null);
+		            resetOverlay();
 				}
 
 				@Override
@@ -556,6 +558,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 			startActivity(intent);
 			return true;
 		}
+		last_click_event_id = event.id;
 		ViewMapOverlay viewMapOverlay = new ViewMapOverlay(getApplicationContext());
 		viewMapOverlay.setEventEntity(event);
 		viewMapOverlay.setOnClickListener(new View.OnClickListener() {					
