@@ -136,7 +136,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="@drawable/selector_bg_gray"
-                        android:drawableLeft="@drawable/icon_to"
+                        android:drawableLeft="@drawable/icon_event_type_party"
                         android:gravity="center"
                         android:minHeight="45dp"
                         android:paddingLeft="2dp"

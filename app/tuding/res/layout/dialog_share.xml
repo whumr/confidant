@@ -33,7 +33,7 @@
             <ImageView
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:src="@drawable/icon1" />
+                android:src="@drawable/icon_share_tuding" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -58,7 +58,7 @@
             <ImageView
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:src="@drawable/icon2" />
+                android:src="@drawable/icon_share_qqzone" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -83,7 +83,7 @@
             <ImageView
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:src="@drawable/icon3" />
+                android:src="@drawable/icon_share_wechat" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -108,7 +108,7 @@
             <ImageView
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:src="@drawable/icon4" />
+                android:src="@drawable/icon_share_phone" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -133,7 +133,7 @@
             <ImageView
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:src="@drawable/icon5" />
+                android:src="@drawable/icon_share_qq" />
 
             <TextView
                 android:layout_width="wrap_content"
