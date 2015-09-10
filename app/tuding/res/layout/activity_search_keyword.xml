@@ -37,6 +37,7 @@
 	            android:background="@null"
 	            android:singleLine="true"
 	            android:layout_marginLeft="5dp"
+	            android:hint="输入关键词搜索"
 	            android:textColor="@color/black"/>
             
             <ImageView android:id="@+id/search_img"

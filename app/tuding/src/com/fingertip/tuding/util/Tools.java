@@ -403,4 +403,17 @@ public class Tools {
 		intent.setData(content_url);
 		context.startActivity(intent);
 	}
+	
+	public static String getShortString(String str, int length, int dot_count) {
+		if (Validator.isEmptyString(str) || str.length() <= length)
+			return str;
+		StringBuilder buffer = new StringBuilder(str.substring(0, length));
+		for (int i = 0; i < dot_count; i++)
+			buffer.append(".");
+		return buffer.toString();
+	}
+	
+	public static String convertLine(String str) {
+		return str.replaceAll("\\\\n", "\\\n");
+	}
 }

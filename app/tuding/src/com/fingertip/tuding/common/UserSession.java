@@ -1,17 +1,20 @@
 package com.fingertip.tuding.common;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fingertip.tuding.entity.EventTemplate;
 import com.fingertip.tuding.entity.WatchEntity;
 import com.fingertip.tuding.util.Validator;
 
 public class UserSession {
 	
 	private String id, login_id, nick_name, head_url, sex, place, mark;
-	private boolean login, load_info, load_watcher, load_favor;
-	private Set<String> watcher_list, favor_event_list;
+	private boolean login, load_info, load_watcher, load_favor, load_event_template;
+	private Set<String> watcher_list = new HashSet<String>(), favor_event_list = new HashSet<String>();
+	private List<EventTemplate> event_templates = new ArrayList<EventTemplate>();
 
 	private static UserSession session;
 	
@@ -105,8 +108,6 @@ public class UserSession {
 	}
 
 	public Set<String> getWatcher_list() {
-		if (watcher_list == null)
-			watcher_list = new HashSet<String>();
 		return watcher_list;
 	}
 
@@ -121,8 +122,6 @@ public class UserSession {
 	}
 
 	public Set<String> getFavor_event_list() {
-		if (favor_event_list == null)
-			favor_event_list = new HashSet<String>();
 		return favor_event_list;
 	}
 
@@ -144,5 +143,17 @@ public class UserSession {
 
 	public void setLoad_favor(boolean load_favor) {
 		this.load_favor = load_favor;
+	}
+
+	public boolean isLoad_event_template() {
+		return load_event_template;
+	}
+
+	public void setLoad_event_template(boolean load_event_template) {
+		this.load_event_template = load_event_template;
+	}
+
+	public List<EventTemplate> getEvent_templates() {
+		return event_templates;
 	}
 }

@@ -54,7 +54,8 @@ public class ServerConstants {
 		public static String FAV_EVENT = BASE_URL + "/_action/action_fav_add.php";
 		public static String COMMENT_EVENT = BASE_URL + "/_action/action_reply.php";
 		public static String COMMENT_REPLY_EVENT = BASE_URL + "/_action/action_reply_reply.php";
-		public static String SEARCH_EVENT = BASE_URL + "/_user/get_action_bysearch.php";
+		public static String SEARCH_EVENT = BASE_URL + "/_action/get_action_bysearch.php";
+		public static String GET_EVENT_TEMPLATE = BASE_URL + "/_system/get_action_template.php";
 		
 		/**
 		 * msg
@@ -138,6 +139,7 @@ public class ServerConstants {
 		public static String STATUSOF = "statusof";
 		public static String ACTIONID = "actionid";
 		public static String ADDRESS = "address";
+		public static String TIMEFROM = "timefrom";
 		public static String TIMETO = "timeto";
 		public static String KINDOF = "kindof";
 		public static String B = "b";
@@ -145,6 +147,7 @@ public class ServerConstants {
 		public static String ACTIONINFOR = "actioninfor";
 		public static String KEYWORD = "keyword";
 		public static String DECODE_CONTENT = "decode_content";
+		public static String SHOWMODE = "showmode";
 		
 		/**
 		 * comment
@@ -213,6 +216,10 @@ public class ServerConstants {
 		public static String FC_COMMENT_EVENT = "action_reply";
 		public static String FC_COMMENT_REPLY_EVENT = "action_reply_reply";
 		public static String FC_SEARCH_EVENT = "get_action_bysearch";
+		public static String FC_GET_EVENT_TEMPLATE = "get_action_template";
+
+		public static String SHOWMODE_DEFAULT = "mo";
+		public static String SHOWMODE_BIG = "big";
 		
 		/**
 		 * msg

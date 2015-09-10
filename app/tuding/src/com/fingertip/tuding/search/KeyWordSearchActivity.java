@@ -86,9 +86,10 @@ public class KeyWordSearchActivity extends BaseActivity implements RefreshListen
 	
 	private void search(final boolean new_search) {
 		String key_word = keyword_edt.getText().toString();
-		if (key_word.trim().length() == 0)
+		if (key_word.trim().length() == 0) {
 			toastShort("ÇëÊäÈëËÑË÷¹Ø¼ü´Ê");
-		else {
+			afterLoad(new_search, false, 0);
+		} else {
 			if (new_search)
 				last_keyword = key_word;
 			else

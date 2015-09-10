@@ -12,6 +12,7 @@ import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.entity.CommentEntity;
 import com.fingertip.tuding.entity.EventEntity;
 import com.fingertip.tuding.entity.EventEntity.EventType;
+import com.fingertip.tuding.entity.EventTemplate;
 import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.http.callback.DefaultCallback;
 import com.fingertip.tuding.util.http.callback.EntityCallback;
@@ -257,7 +258,7 @@ public class EventUtil extends BaseHttpUtil {
 	}
 	
 	public static void publishEvent(String title, String content, String type, String address, String start_time, String end_time, String latitude, String longitude, 
-			List<UploadImgEntity> entitys, final EntityCallback<String> callback) {
+			String show_mode, List<UploadImgEntity> entitys, final EntityCallback<String> callback) {
 		UserSession session = UserSession.getInstance();
 		JSONObject data = new JSONObject();
 		try {
@@ -267,10 +268,12 @@ public class EventUtil extends BaseHttpUtil {
 			data.put(PARAM_KEYS.TITLEOF, title);
 			data.put(PARAM_KEYS.CONTENT, content);
 			data.put(PARAM_KEYS.KINDOF, type);
-			data.put(PARAM_KEYS.TIMETO, start_time);
+			data.put(PARAM_KEYS.TIMEFROM, start_time);
+			data.put(PARAM_KEYS.TIMETO, end_time);
 			data.put(PARAM_KEYS.ADDRESS, address);
 			data.put(PARAM_KEYS.POSLAT, latitude);
 			data.put(PARAM_KEYS.POSLONG, longitude);
+			data.put(PARAM_KEYS.SHOWMODE, show_mode);
 			JSONArray pics = new JSONArray();
 			for (UploadImgEntity entity : entitys) {
 				JSONObject json = new JSONObject();
@@ -354,5 +357,49 @@ public class EventUtil extends BaseHttpUtil {
 		} catch (JSONException e) {
 		}
 		postDefalt(URL.COMMENT_REPLY_EVENT, data, "∆¿¬€ªÿ∏¥ ß∞‹:", callback);
+	}
+	
+	public static void loadEventTemplates(final EntityListCallback<EventTemplate> callback) {
+//		{"fc":"get_action_template", "userid":"18979528420", "loginid":"t4etskerghskdryhgsdfklhs", "kindof":""}
+		UserSession session = UserSession.getInstance();
+		JSONObject data = new JSONObject();
+		try {
+			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_GET_EVENT_TEMPLATE);
+			data.put(PARAM_KEYS.USERID, session.getId());
+			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
+			data.put(PARAM_KEYS.KINDOF, "");
+		} catch (JSONException e) {
+		}
+		RequestParams params = new RequestParams();
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		HttpUtils http = Tools.getHttpUtils();
+		http.send(HttpRequest.HttpMethod.POST, URL.GET_EVENT_TEMPLATE, params, new RequestCallBack<String>() {
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+				String error = null;
+				JSONObject json = null;
+				List<EventTemplate> list = null;
+				try {
+					json = new JSONObject(result);
+//					Log.e("getEventComments", json.toString());
+					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
+						error = json.getString(PARAM_KEYS.RESULT_ERROR);
+					else
+						list = EventTemplate.parseList(json);
+				} catch (Exception e) {
+					error = "≤È—Ø ß∞‹:" + e.getMessage();
+				}
+				if (error != null)
+					callback.fail(error);
+				else
+					callback.succeed(list);
+			}
+			
+			@Override
+			public void onFailure(HttpException error, String msg) {
+				callback.fail(ServerConstants.NET_ERROR_TIP);
+			}
+		});
 	}
 }

@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:textSize="18sp"
-                    android:digits="1234567890abcdefghijklmnopqrstuvwxyz"
+                    android:inputType="text"
                     android:hint="手机号/昵称"
                     android:imeOptions="actionSearch"
                     android:paddingLeft="8dp"
