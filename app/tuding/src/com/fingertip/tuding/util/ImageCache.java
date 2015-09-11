@@ -49,6 +49,14 @@ public class ImageCache {
 		return img_path += (small ? IMG_FORMAT : IMG_HD_FORMAT);
 	}
 	
+	public static Bitmap getUserImg(String user_id, boolean small) {
+		return getCompressImg(getUserImgPath(user_id, small, false), 0);
+	}
+	
+	public static Bitmap getUserImg(String user_id, boolean small, int kb) {
+		return getCompressImg(getUserImgPath(user_id, small, false), kb);
+	}
+	
 	public static boolean saveUserImg(Bitmap img, String user_id, boolean small, boolean tmp) {
 		if (checkImgDir())
 			return FileUtil.saveImage(img, getUserImgPath(user_id, small, tmp));
@@ -224,6 +232,23 @@ public class ImageCache {
 			entity.big_file = new File(compressImageForUpload(path, true, kb));
 		entity.small_file = new File(compressImageForUpload(path, false, kb));
 		return entity;
+	}
+	
+	private static Bitmap getCompressImg(String image_path, int result_kb) {
+		File file = new File(image_path);
+		if (!file.exists())
+			return null;
+		long kb = file.length() / 1024;
+		if (result_kb <= 0 || kb <= result_kb)
+			return BitmapFactory.decodeFile(image_path);
+		BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = false;
+        int size = (int) kb / result_kb;
+        int i = 1;
+        while (i < size)
+        	i = i<<1;
+        options.inSampleSize = i;
+        return BitmapFactory.decodeFile(image_path, options);
 	}
 	
 	private static String compressImageForUpload(String image_path, boolean big, long kb) {

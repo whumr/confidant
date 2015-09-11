@@ -2,6 +2,8 @@ package com.fingertip.tuding.main;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -80,8 +82,9 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	private ScrollTouchView  view_tab;
 	
 	/** µØÍ¼Êý¾Ý **/
-	private ArrayList<EventEntity> event_list = new ArrayList<EventEntity>();
-	private ArrayList<Marker> marker_list = new ArrayList<Marker>();
+//	private ArrayList<EventEntity> event_list = new ArrayList<EventEntity>();
+	private HashSet<String> event_id_set = new HashSet<String>();
+//	private ArrayList<Marker> marker_list = new ArrayList<Marker>();
 	private HashMap<Marker, EventEntity> marker_map = new HashMap<Marker, EventEntity>();
 	
 	private ImageView user_info_img;
@@ -96,6 +99,9 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	
 	private BitmapUtils bitmapUtils;
 	private SharedPreferenceUtil sp;
+	
+	private float lastZoom = 16;
+	private String current_type = EventType.ALL.getType();
 	
 	@SuppressLint("HandlerLeak")
 	private Handler handler = new Handler() {
@@ -279,7 +285,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	private void initMyData(){
 		MapStatus mapStatus = baiduMap.getMapStatus();
 		lastZoom = mapStatus.zoom;
-		clearMarkerList();
+//		clearMarkerList();
 		baiduMap.setOnMapClickListener(new OnMapClickListener() {			
 			@Override
 			public boolean onMapPoiClick(MapPoi arg0) {
@@ -298,17 +304,19 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 				return clickMarker(marker);
 			}
 		});
+		
+		getPosData();
 	}
 	
-	private void clearMarkerList(){
-		Marker marker = null;
-		for (int i = 0; i < marker_list.size(); i++) {
-			marker = marker_list.get(i);
-			marker.remove();
-		}
-		marker_list.clear();
-		marker_map.clear();
-	}
+//	private void clearMarkerList(){
+//		Marker marker = null;
+//		for (int i = 0; i < marker_list.size(); i++) {
+//			marker = marker_list.get(i);
+//			marker.remove();
+//		}
+//		marker_list.clear();
+//		marker_map.clear();
+//	}
 	
 	@SuppressLint("InflateParams")
 	private Marker setOverlayData(final EventEntity event){
@@ -361,20 +369,47 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromView(view_markerImage);
 		OverlayOptions options = new MarkerOptions().position(point).icon(bitmapDescriptor).draggable(false);
 		Marker marker = (Marker)(baiduMap.addOverlay(options));
-		if(!marker_list.contains(marker))
-			marker_list.add(marker);
+//		if(!marker_list.contains(marker))
+//			marker_list.add(marker);
 		marker_map.put(marker, event);
 		return marker;
 	}
 	
-	private void resetOverlay(){
-		clearMarkerList();
-		for (int i = 0; i < event_list.size(); i++) {
-			setOverlayData(event_list.get(i));
+//	private void resetOverlay() {
+//		clearMarkerList();
+//		for (int i = 0; i < event_list.size(); i++)
+//			setOverlayData(event_list.get(i));
+//	}
+
+	private void appendOverlay(List<EventEntity> append_list) {
+//		if (clear_type)
+//			clearUnmatchType();
+		for (int i = 0; i < append_list.size(); i++)
+			setOverlayData(append_list.get(i));
+		append_list.clear();
+	}
+	
+	private void clearUnmatchType() {
+		if (!EventType.ALL.getType().equals(current_type)) {
+			for (Iterator<Marker> it = marker_map.keySet().iterator(); it.hasNext();) {
+				Marker marker = it.next();
+				EventEntity event = marker_map.get(marker);
+				if (!current_type.equals(event.kindof)) {
+					marker.remove();
+//					marker_list.remove(marker);
+					it.remove();
+					marker = null;
+					event = null;
+				}
+			}
+			event_id_set.clear();
+			for (Marker marker : marker_map.keySet()) {
+				EventEntity event = marker_map.get(marker);
+				event_id_set.add(event.id);
+			}
 		}
 	}
 	
-	private float lastZoom = 16;
 	private OnMapStatusChangeListener onMapStatusChangeListener = new OnMapStatusChangeListener() {		
 		@Override
 		public void onMapStatusChangeStart(MapStatus mapStatus) {
@@ -389,7 +424,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		public void onMapStatusChange(MapStatus mapStatus) {
 			if(lastZoom != mapStatus.zoom){
 				lastZoom = mapStatus.zoom;
-				resetOverlay();
+//				resetOverlay();
 			}
 		}
 	};
@@ -475,8 +510,10 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 
 	@Override
 	public void notifyUpdata(int index) {
-		EventUtil.KINDOF = EventType.ALL.getType().equals(view_tab.getSelectedText()) ? "" : view_tab.getSelectedText();
+		current_type = view_tab.getSelectedText();
+		EventUtil.KINDOF = current_type;
 		showProgressDialog(false);
+		clearUnmatchType();
 		getPosData();
 	}
 	
@@ -493,9 +530,20 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 				@Override
 				public void succeed(List<EventEntity> list) {
 					dismissProgressDialog();
-					event_list.clear();
-		            event_list.addAll(list);
-		            resetOverlay();
+					if (!Validator.isEmptyList(list)) {
+						List<EventEntity> append_list = new ArrayList<EventEntity>();
+						for (EventEntity event :list) {
+							if (event_id_set.add(event.id)) {
+								append_list.add(event);
+//								event_list.add(event);
+							}
+						}
+						if (!append_list.isEmpty())
+							appendOverlay(append_list);
+//						event_list.clear();
+//						event_list.addAll(list);
+//		            	resetOverlay();
+					}
 				}
 
 				@Override

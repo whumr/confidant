@@ -1,6 +1,7 @@
 package com.fingertip.tuding.common;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -12,6 +13,7 @@ import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseActivity;
 import com.fingertip.tuding.entity.ShareEntity;
 import com.fingertip.tuding.main.widget.AttentionSelectedActivity;
+import com.fingertip.tuding.util.ImageCache;
 import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.http.common.ServerConstants.URL;
 import com.umeng.analytics.MobclickAgent;
@@ -38,8 +40,8 @@ import com.umeng.socialize.weixin.media.WeiXinShareContent;
 public class ShareDialog extends BaseActivity {
 
 	private ShareEntity shareEntity;
-
-	final UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.share");
+	private UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.share");
+	private static int WX_IMG_SIZE = 10;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -122,14 +124,21 @@ public class ShareDialog extends BaseActivity {
         qZoneSsoHandler.addToSocialSDK();
     }
 	
-	private void jumpToShare(SHARE_MEDIA shareMedia){
+	private void jumpToShare(SHARE_MEDIA shareMedia) {
+		Bitmap shar_img = BitmapFactory.decodeResource(getResources(), R.drawable.icon_share_img);
+		UserSession session = UserSession.getInstance();
+		if (session.isLogin()) {
+			Bitmap head = ImageCache.getUserImg(session.getId(), true, WX_IMG_SIZE);
+			if (head != null)
+				shar_img = head;
+		}
 		mController.getConfig().closeToast();
 		if (SHARE_MEDIA.WEIXIN == shareMedia) {
 			WeiXinShareContent weiXinShareContent = new WeiXinShareContent();
 			weiXinShareContent.setShareContent(shareEntity.shareContent);
 			weiXinShareContent.setTargetUrl(shareEntity.targetUrl);
 			weiXinShareContent.setTitle(shareEntity.shareTitle);
-			weiXinShareContent.setShareImage(new UMImage(this, BitmapFactory.decodeResource(getResources(), R.drawable.icon_share_img)));
+			weiXinShareContent.setShareImage(new UMImage(this, shar_img));
 			mController.setShareMedia(weiXinShareContent);
 			mController.directShare(ShareDialog.this, shareMedia, snsPostListener);
 		} else if (SHARE_MEDIA.WEIXIN_CIRCLE == shareMedia) {
@@ -137,7 +146,7 @@ public class ShareDialog extends BaseActivity {
 			circleShareContent.setShareContent(shareEntity.shareContent);
 			circleShareContent.setTargetUrl(shareEntity.targetUrl);
 			circleShareContent.setTitle(shareEntity.shareTitle);
-			circleShareContent.setShareImage(new UMImage(this, BitmapFactory.decodeResource(getResources(), R.drawable.icon_share_img)));
+			circleShareContent.setShareImage(new UMImage(this, shar_img));
 			mController.setShareMedia(circleShareContent);
 			mController.directShare(ShareDialog.this, shareMedia, snsPostListener);
 		} else if (SHARE_MEDIA.QQ == shareMedia) {
@@ -145,7 +154,7 @@ public class ShareDialog extends BaseActivity {
 			qqShareContent.setShareContent(shareEntity.shareContent);
 			qqShareContent.setTargetUrl(shareEntity.targetUrl);
 			qqShareContent.setTitle(shareEntity.shareTitle);
-			qqShareContent.setShareImage(new UMImage(this, BitmapFactory.decodeResource(getResources(), R.drawable.icon_share_img)));
+			qqShareContent.setShareImage(new UMImage(this, shar_img));
 			mController.setShareMedia(qqShareContent);
 			mController.directShare(ShareDialog.this, shareMedia, snsPostListener);
 		} else if (SHARE_MEDIA.SMS == shareMedia) {

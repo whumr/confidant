@@ -1,12 +1,8 @@
 package com.fingertip.tuding.my;
 
-import java.util.Timer;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -45,14 +41,6 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 	private BitmapUtils bitmapUtils;
 	private UserSession session;
 	private SharedPreferenceUtil sp;
-	
-	private Timer timer;
-	@SuppressLint("HandlerLeak")
-	private Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
-			msg_img.setImageDrawable(getResources().getDrawable(R.drawable.icon_my_msg_red));
-		};
-	};
 	
 	@SuppressLint("RtlHardcoded")
 	@Override
@@ -102,15 +90,6 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 				return true;
 		}
 		return super.onKeyDown(keyCode, event);
-	}
-
-	@Override
-	public void finish() {
-		if (timer != null) {
-			timer.cancel();
-			timer = null;
-		}
-		super.finish();
 	}
 
 	@Override
