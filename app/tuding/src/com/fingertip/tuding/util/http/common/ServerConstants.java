@@ -147,6 +147,7 @@ public class ServerConstants {
 		public static String ACTIONINFOR = "actioninfor";
 		public static String KEYWORD = "keyword";
 		public static String DECODE_CONTENT = "decode_content";
+		public static String METERS = "meters";
 		public static String SHOWMODE = "showmode";
 		
 		/**

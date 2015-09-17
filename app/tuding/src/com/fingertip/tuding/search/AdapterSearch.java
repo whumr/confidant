@@ -79,6 +79,7 @@ public class AdapterSearch extends BaseAdapter implements OnItemClickListener {
 			viewHolder.tv_popularity = (TextView)convertView.findViewById(R.id.tv_popularity);
 			viewHolder.tv_recommend = (TextView)convertView.findViewById(R.id.tv_recommend);
 			viewHolder.tv_time = (TextView)convertView.findViewById(R.id.tv_time);
+			viewHolder.tv_distince = (TextView)convertView.findViewById(R.id.tv_distince);
 			convertView.setTag(viewHolder);
 		}else {
 			viewHolder = (ViewHolder)convertView.getTag();
@@ -112,9 +113,9 @@ public class AdapterSearch extends BaseAdapter implements OnItemClickListener {
 			}
 		});
 		viewHolder.tv_time.setText(Tools.getTimeStr(event.send_time));
+		viewHolder.tv_distince.setText(Tools.getDistince(event.meters));
 		return convertView;
 	}
-
 	
 	class ViewHolder {
 		ImageView iv_head;
@@ -126,6 +127,7 @@ public class AdapterSearch extends BaseAdapter implements OnItemClickListener {
 		TextView tv_popularity;
 		TextView tv_recommend;
 		TextView tv_time;
+		TextView tv_distince;
 	}
 
 	@Override

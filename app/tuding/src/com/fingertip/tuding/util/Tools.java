@@ -416,4 +416,8 @@ public class Tools {
 	public static String convertLine(String str) {
 		return str.replaceAll("\\\\n", "\\\n");
 	}
+	
+	public static String getDistince(int meters) {
+		return meters < 1000 ? meters + "m" : (meters / 1000) + "km";
+	}
 }

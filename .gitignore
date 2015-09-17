@@ -2,6 +2,12 @@
 target/
 *.iml
 app/tuding/bin/
+app/tuding/gen/
 app/appcompat_v7/bin/
+app/appcompat_v7/gen/
 app/xutils/bin/
+app/xutils/gen/
 app/social_sdk_library_project/bin/
+app/social_sdk_library_project/gen/
+app/richEditor/bin/
+app/richEditor/gen/

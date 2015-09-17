@@ -36,7 +36,7 @@ public class EventEntity implements Serializable{
 
 	public String id, title, content, userid, statusof, address, kindof, send_time_str;
 	public long send_time, timeto;
-	public int likedcount, replycount, viewcount;
+	public int likedcount, replycount, viewcount, meters;
 	public double poslat, poslong;
 	public List<String> pics_small, pics_big;
 	public List<CommentEntity> comments = new ArrayList<CommentEntity>();
@@ -121,6 +121,7 @@ public class EventEntity implements Serializable{
 		event.likedcount = json.getInt(PARAM_KEYS.LIKEDCOUNT);
 		event.replycount = json.getInt(PARAM_KEYS.REPLYCOUNT);
 		event.viewcount = json.getInt(PARAM_KEYS.VIEWCOUNT);
+		event.meters = json.getInt(PARAM_KEYS.METERS);
 
 		event.poslat = json.getDouble(PARAM_KEYS.POSLAT);
 		event.poslong = json.getDouble(PARAM_KEYS.POSLONG);

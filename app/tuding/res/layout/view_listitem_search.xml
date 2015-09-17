@@ -90,14 +90,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:gravity="right|center_vertical"
+            android:gravity="center_vertical"
             android:paddingLeft="12dp"
             android:paddingRight="12dp" >
-
+            
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:src="@drawable/icon_distince" />
+            
+            <TextView android:id="@+id/tv_distince"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray_8d"
+                android:textSize="@dimen/tv_belowSize"
+                android:text="11km"/>
+
+            <TextView android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text=""/>
+            
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/black_heart" />
 
             <TextView
