@@ -2,6 +2,8 @@ package com.example.richeditor;
 
 import android.content.Context;
 import android.text.Editable;
+import android.text.Html;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.EditText;
@@ -19,9 +21,16 @@ public class RichEditText extends EditText {
 	//font flag
 	private boolean edting;
 	private String last_style;
-	private Editable last_editable;
+	private int last_start, last_count;
+	private Spanned last_spanned;
 	
 	private EditorListner editorListner;
+	
+	private EditorStatus status = EditorStatus.none;
+	
+	private enum EditorStatus {
+		none, edit, delete, insert
+	}
 
 	public RichEditText(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -43,29 +52,62 @@ public class RichEditText extends EditText {
 			
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				
+				System.out.println(s.toString() + "  " + start + "   " + before + "   " + count);
+				if (status == EditorStatus.none) {
+					last_start = start;
+					last_count = count;
+				}
 			}
 			
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-				
 			}
 			
 			@Override
 			public void afterTextChanged(Editable s) {
-				if (editorListner != null)
-					editorListner.afterEdit();
-				if (last_editable == null)
-					last_editable = s;
-				else {
-					last_editable.append(s.toString());
+				if (!isDefaultFont()) {
+					if (status == EditorStatus.none) {
+						status = EditorStatus.delete;
+						last_spanned = Html.fromHtml(getStyleStart() + 
+								s.subSequence(last_start, last_start + last_count).toString() + getStyleEnd());
+						s.delete(last_start, last_start + last_count);
+					} else if (status == EditorStatus.delete) {
+						status = EditorStatus.insert;
+						s.insert(getSelectionStart(), last_spanned);
+						if (editorListner != null)
+							editorListner.afterEdit(s.subSequence(last_start, last_start + last_count).toString());
+					} else if (status == EditorStatus.insert) {
+						status = EditorStatus.none;
+					}
 				}
+				
+//				if (!edting && !isDefaultFont()) {
+//					edting = true;
+//////					s.replace(last_start, last_start + last_count, getStyle() + s.subSequence(last_start, last_start + last_count) + "</p>");
+//////					s.replace(last_start, last_start + last_count, 
+//////							Html.fromHtml(getStyle() + s.subSequence(last_start, last_start + last_count) + "</p>"));
+//////					s.insert(getSelectionStart(), Html.fromHtml(getStyle() + s.subSequence(last_start, last_start + last_count) + "</p>"));
+//					
+//					//s.delete(last_start, last_start + last_count);
+//					
+//					s.insert(getSelectionStart(), Html.fromHtml(getStyleStart() + 
+//							s.subSequence(last_start, last_start + last_count).toString() + getStyleEnd()));
+//					if (editorListner != null)
+//						editorListner.afterEdit(s.subSequence(last_start, last_start + last_count).toString());
+//				} 
+//				else if (!isDefaultFont())
+//					edting = false;
+//				
+//				if (last_editable == null)
+//					last_editable = s;
+//				else {
+//					last_editable.append(s.toString());
+//				}
 			}
 		});
 	}
 	
 	private void ending() {
-		
 	}
 	
 	private void reset() {
@@ -75,15 +117,23 @@ public class RichEditText extends EditText {
 		edting = false;
 	}
 	
-	private String getStyle() {
+	public String getStyleStart() {
 		if (isDefaultFont())
-			return "<p>";
+			return "";
 		StringBuilder builder = new StringBuilder();
-		builder.append("<p style=\"")
-			.append(font_big ? "font-size:40;" : "")
-			.append(font_bold ? "font-weight:bold;" : "")
-			.append(COLOR_BLACK.equals(font_color) ? "color:" + font_color: "")
-			.append("\">");
+		builder.append(COLOR_BLACK.equals(font_color) ? "" : "<font color=\"" + font_color + "\">")
+			.append(font_big ? "<big>" : "")
+			.append(font_bold ? "<b>" : "");
+		return builder.toString();
+	}
+
+	public String getStyleEnd() {
+		if (isDefaultFont())
+			return "";
+		StringBuilder builder = new StringBuilder();
+		builder.append(font_bold ? "</b>" : "")
+			.append(font_big ? "</big>" : "")
+			.append(COLOR_BLACK.equals(font_color) ? "" : "</font>");
 		return builder.toString();
 	}
 	
@@ -97,6 +147,10 @@ public class RichEditText extends EditText {
 
 	public void setFont_bold(boolean font_bold) {
 		this.font_bold = font_bold;
+		
+//		getEditableText().insert(getSelectionStart(), Html.fromHtml(getStyleStart() + "this is a test" + getStyleEnd()));
+		
+//		moveCursorToVisibleOffset();
 	}
 
 	public boolean isFont_big() {
@@ -118,8 +172,8 @@ public class RichEditText extends EditText {
 	public void setEditorListner(EditorListner editorListner) {
 		this.editorListner = editorListner;
 	}
-
+	
 	public interface EditorListner {
-		public void afterEdit();
+		public void afterEdit(String str);
 	}
 }

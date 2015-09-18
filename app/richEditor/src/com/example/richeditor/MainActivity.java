@@ -2,10 +2,13 @@ package com.example.richeditor;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+
+import com.example.richeditor.RichEditText.EditorListner;
 
 public class MainActivity extends Activity implements OnClickListener {
 
@@ -28,7 +31,13 @@ public class MainActivity extends Activity implements OnClickListener {
 		big_txt.setOnClickListener(this);
 		color_txt.setOnClickListener(this);
 		
-		edt.setText(Html.fromHtml("<font color='red'>方式的发生的发生地方"));
+//		edt.setText(Html.fromHtml("<font color=\"red\"><b>th<big>i</big>s</b> is a <big>test</big></font>xxx"));
+		edt.setEditorListner(new EditorListner() {
+			@Override
+			public void afterEdit(String str) {
+//				txt.setText(Html.toHtml(edt.getText()));
+			}
+		});
 	}
 
 	@Override
@@ -40,15 +49,29 @@ public class MainActivity extends Activity implements OnClickListener {
 		case R.id.bold_txt:
 			if (!edt.isFont_bold()) {
 				edt.setFont_bold(true);
-				edt.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_dark));
+				bold_txt.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_dark));
 			} else {
 				edt.setFont_bold(false);
-				edt.setBackgroundColor(getResources().getColor(android.R.color.white));
+				bold_txt.setBackgroundColor(getResources().getColor(android.R.color.white));
 			}
 			break;
 		case R.id.big_txt:
+			if (!edt.isFont_big()) {
+				edt.setFont_big(true);
+				big_txt.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_dark));
+			} else {
+				edt.setFont_big(false);
+				big_txt.setBackgroundColor(getResources().getColor(android.R.color.white));
+			}
 			break;
 		case R.id.color_txt:
+			if (RichEditText.COLOR_BLACK.equals(edt.getFont_color())) {
+				edt.setFont_color(RichEditText.COLOR_BLUE);
+				color_txt.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_dark));
+			} else {
+				edt.setFont_color(RichEditText.COLOR_BLACK);
+				color_txt.setBackgroundColor(getResources().getColor(android.R.color.white));
+			}
 			break;
 		}
 	}
