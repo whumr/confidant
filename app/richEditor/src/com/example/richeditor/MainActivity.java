@@ -35,7 +35,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		edt.setEditorListner(new EditorListner() {
 			@Override
 			public void afterEdit(String str) {
-//				txt.setText(Html.toHtml(edt.getText()));
+				txt.setText(Html.toHtml(edt.getText()));
 			}
 		});
 	}

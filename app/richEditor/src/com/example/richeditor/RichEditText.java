@@ -20,7 +20,7 @@ public class RichEditText extends EditText {
 	
 	//font flag
 	private boolean edting;
-	private String last_style;
+	private String last_style = "";
 	private int last_start, last_count;
 	private Spanned last_spanned;
 	
@@ -67,19 +67,28 @@ public class RichEditText extends EditText {
 			public void afterTextChanged(Editable s) {
 				if (!isDefaultFont()) {
 					if (status == EditorStatus.none) {
-						status = EditorStatus.delete;
-						last_spanned = Html.fromHtml(getStyleStart() + 
-								s.subSequence(last_start, last_start + last_count).toString() + getStyleEnd());
-						s.delete(last_start, last_start + last_count);
-					} else if (status == EditorStatus.delete) {
 						status = EditorStatus.insert;
-						s.insert(getSelectionStart(), last_spanned);
+						String style = getStyleStart();
+//						if (!style.equals(last_style)) {
+							
+							last_spanned = Html.fromHtml(getStyleStart() + 
+									s.subSequence(last_start, last_start + last_count).toString());
+							s.replace(last_start, last_start + last_count, last_spanned, 0, last_spanned.length());
+							last_style = style;
+//						}
+						
+						
+//						s.delete(last_start, last_start + last_count);
+//					} else if (status == EditorStatus.delete) {
+//						status = EditorStatus.insert;
+//						s.insert(getSelectionStart(), last_spanned);
 						if (editorListner != null)
 							editorListner.afterEdit(s.subSequence(last_start, last_start + last_count).toString());
 					} else if (status == EditorStatus.insert) {
 						status = EditorStatus.none;
 					}
-				}
+				} else 
+					last_style = "";
 				
 //				if (!edting && !isDefaultFont()) {
 //					edting = true;
