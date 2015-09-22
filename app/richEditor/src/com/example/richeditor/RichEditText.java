@@ -1,22 +1,28 @@
 package com.example.richeditor;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
+import android.text.style.TextAppearanceSpan;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
 public class RichEditText extends EditText {
 	
-	public static String COLOR_BLACK = "#000000", COLOR_BLUE = "#3399db";
+	public static int COLOR_BLACK = 0x000000 | 0xFF000000, COLOR_BLUE = 0x3399db | 0xFF000000;
 	
 	/**
 	 * font settings
 	 */
 	private boolean font_bold, font_big;
-	private String font_color = COLOR_BLACK;
+	private int font_color = COLOR_BLACK;
 	
 	//font flag
 	private boolean edting;
@@ -53,10 +59,10 @@ public class RichEditText extends EditText {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				System.out.println(s.toString() + "  " + start + "   " + before + "   " + count);
-				if (status == EditorStatus.none) {
+//				if (status == EditorStatus.none) {
 					last_start = start;
 					last_count = count;
-				}
+//				}
 			}
 			
 			@Override
@@ -66,17 +72,18 @@ public class RichEditText extends EditText {
 			@Override
 			public void afterTextChanged(Editable s) {
 				if (!isDefaultFont()) {
-					if (status == EditorStatus.none) {
-						status = EditorStatus.insert;
-						String style = getStyleStart();
-//						if (!style.equals(last_style)) {
+//					if (status == EditorStatus.none) {
+//						status = EditorStatus.insert;
+//						String style = getStyleStart();
+////						if (!style.equals(last_style)) {
+//							
+//							last_spanned = Html.fromHtml(getStyleStart() + 
+//									s.subSequence(last_start, last_start + last_count).toString());
+//							s.replace(last_start, last_start + last_count, last_spanned, 0, last_spanned.length());
+//							last_style = style;
 							
-							last_spanned = Html.fromHtml(getStyleStart() + 
-									s.subSequence(last_start, last_start + last_count).toString());
-							s.replace(last_start, last_start + last_count, last_spanned, 0, last_spanned.length());
-							last_style = style;
+							setFontStyle(s);
 //						}
-						
 						
 //						s.delete(last_start, last_start + last_count);
 //					} else if (status == EditorStatus.delete) {
@@ -84,11 +91,10 @@ public class RichEditText extends EditText {
 //						s.insert(getSelectionStart(), last_spanned);
 						if (editorListner != null)
 							editorListner.afterEdit(s.subSequence(last_start, last_start + last_count).toString());
-					} else if (status == EditorStatus.insert) {
-						status = EditorStatus.none;
-					}
-				} else 
-					last_style = "";
+//					} else if (status == EditorStatus.insert) {
+//						status = EditorStatus.none;
+//					}
+				}
 				
 //				if (!edting && !isDefaultFont()) {
 //					edting = true;
@@ -126,11 +132,21 @@ public class RichEditText extends EditText {
 		edting = false;
 	}
 	
+	private void setFontStyle(Editable s) {
+		if (COLOR_BLACK != font_color)
+			s.setSpan(new TextAppearanceSpan(null, 0, 0, ColorStateList.valueOf(font_color), null), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+//		s.setSpan(new BackgroundColorSpan(font_color), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+		if (font_big)
+			s.setSpan(new RelativeSizeSpan(1.25f), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+		if (font_bold)
+			s.setSpan(new StyleSpan(Typeface.BOLD), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+	}
+	
 	public String getStyleStart() {
 		if (isDefaultFont())
 			return "";
 		StringBuilder builder = new StringBuilder();
-		builder.append(COLOR_BLACK.equals(font_color) ? "" : "<font color=\"" + font_color + "\">")
+		builder.append(COLOR_BLACK == font_color ? "" : "<font color=\"" + font_color + "\">")
 			.append(font_big ? "<big>" : "")
 			.append(font_bold ? "<b>" : "");
 		return builder.toString();
@@ -142,12 +158,12 @@ public class RichEditText extends EditText {
 		StringBuilder builder = new StringBuilder();
 		builder.append(font_bold ? "</b>" : "")
 			.append(font_big ? "</big>" : "")
-			.append(COLOR_BLACK.equals(font_color) ? "" : "</font>");
+			.append(COLOR_BLACK == font_color ? "" : "</font>");
 		return builder.toString();
 	}
 	
 	private boolean isDefaultFont() {
-		return !font_bold && !font_big && COLOR_BLACK.equals(font_color);
+		return !font_bold && !font_big && COLOR_BLACK == font_color;
 	}
 	
 	public boolean isFont_bold() {
@@ -170,11 +186,11 @@ public class RichEditText extends EditText {
 		this.font_big = font_big;
 	}
 
-	public String getFont_color() {
+	public int getFont_color() {
 		return font_color;
 	}
 
-	public void setFont_color(String font_color) {
+	public void setFont_color(int font_color) {
 		this.font_color = font_color;
 	}
 

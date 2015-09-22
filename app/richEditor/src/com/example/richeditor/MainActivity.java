@@ -65,7 +65,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			}
 			break;
 		case R.id.color_txt:
-			if (RichEditText.COLOR_BLACK.equals(edt.getFont_color())) {
+			if (RichEditText.COLOR_BLACK == edt.getFont_color()) {
 				edt.setFont_color(RichEditText.COLOR_BLUE);
 				color_txt.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_dark));
 			} else {
