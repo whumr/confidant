@@ -70,7 +70,7 @@ public class RichEditText extends EditText {
 			
 			@Override
 			public void afterTextChanged(Editable s) {
-				if (!isDefaultFont()) {
+//				if (!isDefaultFont()) {
 //					if (status == EditorStatus.none) {
 //						status = EditorStatus.insert;
 //						String style = getStyleStart();
@@ -80,11 +80,11 @@ public class RichEditText extends EditText {
 //									s.subSequence(last_start, last_start + last_count).toString());
 //							s.replace(last_start, last_start + last_count, last_spanned, 0, last_spanned.length());
 //							last_style = style;
-					MetricAffectingSpan[] spans = null;
-					if (last_start >= 1 || last_count > 1) {
-						spans = s.getSpans(last_start + last_count - 2, last_start + last_count - 1, MetricAffectingSpan.class);
-						System.out.println(spans.length);
-					}
+				MetricAffectingSpan[] spans = null;
+				if (last_start >= 1 || last_count > 1) {
+					spans = s.getSpans(last_start + last_count - 2, last_start + last_count - 1, MetricAffectingSpan.class);
+					System.out.println(spans.length);
+				}
 							setFontStyle(s, spans);
 //						}
 						
@@ -97,8 +97,9 @@ public class RichEditText extends EditText {
 //					} else if (status == EditorStatus.insert) {
 //						status = EditorStatus.none;
 //					}
-				}
-				
+//				}
+//				else
+//					s.clearSpans();
 //				if (!edting && !isDefaultFont()) {
 //					edting = true;
 //////					s.replace(last_start, last_start + last_count, getStyle() + s.subSequence(last_start, last_start + last_count) + "</p>");
@@ -135,14 +136,77 @@ public class RichEditText extends EditText {
 		edting = false;
 	}
 	
+	private static RelativeSizeSpan FONT_BIG = new RelativeSizeSpan(1.25f), FONT_NORMAL = new RelativeSizeSpan(1.0f);
+	private static StyleSpan bold = new StyleSpan(Typeface.BOLD), normal = new StyleSpan(Typeface.NORMAL);
+	private static TextAppearanceSpan black = new TextAppearanceSpan(null, 0, 0, ColorStateList.valueOf(COLOR_BLACK), null),
+			blue = new TextAppearanceSpan(null, 0, 0, ColorStateList.valueOf(COLOR_BLUE), null);
+	
 	private void setFontStyle(Editable s, MetricAffectingSpan[] spans) {
-		if (COLOR_BLACK != font_color)
-			s.setSpan(new TextAppearanceSpan(null, 0, 0, ColorStateList.valueOf(font_color), null), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-//		s.setSpan(new BackgroundColorSpan(font_color), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-		if (font_big)
-			s.setSpan(new RelativeSizeSpan(1.25f), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-		if (font_bold)
-			s.setSpan(new StyleSpan(Typeface.BOLD), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+//		if (COLOR_BLACK != font_color)
+//			s.setSpan(new TextAppearanceSpan(null, 0, 0, ColorStateList.valueOf(font_color), null), last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+//			s.setSpan(font_color == COLOR_BLACK ? black : blue, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+////		s.setSpan(new BackgroundColorSpan(font_color), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+////		if (font_big)
+//			s.setSpan(font_big ? FONT_BIG : FONT_NORMAL, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+////		if (font_bold)
+////			s.setSpan(new StyleSpan(font_bold ? Typeface.BOLD : Typeface.NORMAL), last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+//			s.setSpan(font_bold ? bold : normal, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+			
+		
+		if (spans == null || spans.length == 0) {
+			if (font_color != COLOR_BLACK)
+				s.setSpan(blue, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+			if (font_big)
+				s.setSpan(FONT_BIG, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+			if (font_bold)
+				s.setSpan(bold, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+		} else {
+			boolean _big = false, _bold = false, _blue = false;
+			for (int i = 0; i < spans.length; i++) {
+				MetricAffectingSpan span = spans[i];
+				if (span instanceof RelativeSizeSpan) {
+					float size = ((RelativeSizeSpan)span).getSizeChange();
+					if (font_big && size != 1.25)
+						s.setSpan(FONT_BIG, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+					else if (!font_big && size == 1.25)
+						s.setSpan(FONT_NORMAL, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+//						s.removeSpan(FONT_BIG);
+					_big = true;
+				} else if (span instanceof StyleSpan) {
+//					int style = ((StyleSpan)span).getStyle();
+//					Typeface.BOLD
+//					if (!font_bold)
+//						s.removeSpan(bold);
+					_bold = true;
+				} else if (span instanceof TextAppearanceSpan) {
+//					((TextAppearanceSpan)span).getTextColor().getDefaultColor() == COLOR_BLUE
+//					if (font_color != COLOR_BLUE)
+//						s.removeSpan(blue);
+					_blue = true;
+				}
+			}
+			if (font_big && !_big)
+				s.setSpan(FONT_BIG, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+			if (font_bold && !_bold)
+				s.setSpan(bold, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+			if (font_color == COLOR_BLUE && !_blue)
+				s.setSpan(blue, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+		}
+			
+//		if (font_color == COLOR_BLACK)
+//			s.removeSpan(blue);
+//		else
+//			s.setSpan(blue, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+//		
+//		if (font_big)
+//			s.setSpan(FONT_BIG, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+//		else
+//			s.removeSpan(FONT_BIG);
+//		
+//		if (font_bold)
+//			s.setSpan(bold, last_start, last_start + last_count, Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+//		else
+//			s.removeSpan(bold);
 	}
 	
 	public String getStyleStart() {
