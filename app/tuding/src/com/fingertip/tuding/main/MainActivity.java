@@ -326,25 +326,25 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		ImageView iv_markerImg = (ImageView)view_markerImage.findViewById(R.id.image);
 		
 		if (event.event_type == EventType.SPORTS) {
-			view_markerImage.setBackgroundResource(R.drawable.bg_icon_5);
+			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_5);
 			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_sports));
 		} else if (event.event_type == EventType.SOCIALITY) {
-			view_markerImage.setBackgroundResource(R.drawable.bg_icon_3);
+			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_3);
 			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_party));
 		} else if (event.event_type == EventType.PERFORM) {
-			view_markerImage.setBackgroundResource(R.drawable.bg_icon_4);
+			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_4);
 			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_show));
 		} else if (event.event_type == EventType.STUDY) {
-			view_markerImage.setBackgroundResource(R.drawable.bg_icon_1);
+			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_1);
 			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_study));
 		} else if (event.event_type == EventType.SPECIAL) {
-			view_markerImage.setBackgroundResource(R.drawable.bg_icon_2);
+			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_2);
 			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_special_selling));
 		} else if (event.event_type == EventType.OTHER) {
-			view_markerImage.setBackgroundResource(R.drawable.bg_icon_4);
+			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_4);
 			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_others));
 		} else {
-			view_markerImage.setBackgroundResource(R.drawable.bg_icon_6);
+			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_6);
 			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_all));
 		}
 		if (!Validator.isEmptyString(event.sender.head_img_url)) {
