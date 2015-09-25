@@ -54,6 +54,7 @@ import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.db.SharedPreferenceUtil;
 import com.fingertip.tuding.entity.EventEntity;
 import com.fingertip.tuding.entity.EventEntity.EventType;
+import com.fingertip.tuding.entity.UserEntity.UserType;
 import com.fingertip.tuding.main.overlay.OverlayBigActivity;
 import com.fingertip.tuding.main.overlay.ViewMapOverlay;
 import com.fingertip.tuding.my.MyIndexActivity;
@@ -347,7 +348,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_6);
 			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_all));
 		}
-		if (!Validator.isEmptyString(event.sender.head_img_url)) {
+		if (event.sender.type == UserType.BUSINESS && !Validator.isEmptyString(event.sender.head_img_url)) {
 			ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, iv_markerImg, new UserHeadCallback() {
 				
 				@Override

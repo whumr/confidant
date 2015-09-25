@@ -22,6 +22,8 @@ public class UserEntity implements Serializable{
 	public String place;
 	public String sex;
 	public String mark;
+	public String userkind;
+	public UserType type;
 	public int up_count;
 	
 //	{"userid": "1257053","nick": "Jim","sex": "m","head": "","address": "广州市体育东路1号","aboutme": "我就是我","headbig": "http://x/v922l-6313D63.jpg",
@@ -34,9 +36,34 @@ public class UserEntity implements Serializable{
 		user.head_img_url = json.getString(PARAM_KEYS.USER_HEAD);
 		try {user.place = json.getString(PARAM_KEYS.USER_PLACE);} catch (Exception e) { }	
 		user.sex = json.getString(PARAM_KEYS.USER_SEX);
+		user.userkind = json.getString(PARAM_KEYS.USER_KIND);
+		user.type = UserType.getUserType(user.userkind);
 		try { user.mark = json.getString(PARAM_KEYS.USER_MARK);} catch (Exception e) { }	
 		try { user.up_count = json.getJSONObject(PARAM_KEYS.USER_FANS).getInt(PARAM_KEYS.USER_FANS_F);} catch (Exception e) { }	
 		return user;
 	}
 	
+	public enum UserType {
+		
+		PERSON("p"),
+		BUSINESS("b");
+		
+		private String type;
+
+		private UserType(String type) {
+			this.type = type;
+		}
+		
+		public String getType() {
+			return type;
+		}
+
+		public static UserType getUserType(String type) {
+			for (UserType user_type : values()) {
+				if (user_type.getType().equals(type))
+					return user_type;
+			}
+			return null;
+		}
+	}
 }

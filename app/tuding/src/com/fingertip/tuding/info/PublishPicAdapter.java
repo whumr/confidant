@@ -100,7 +100,9 @@ public class PublishPicAdapter extends BaseAdapter implements OnClickListener, O
 			imageLoader.displayImage("drawable://" + R.drawable.icon_add_big, viewHolder.img, options);
 			viewHolder.check_img.setVisibility(View.GONE);
 		} else {
-			imageLoader.displayImage("file://" + path, viewHolder.img, options);
+			if (!path.startsWith("http"))
+				path = "file://" + path;
+			imageLoader.displayImage(path, viewHolder.img, options);
 			imageLoader.displayImage("drawable://" + R.drawable.icon_delete, viewHolder.check_img, options);
 			viewHolder.check_img.setVisibility(View.VISIBLE);
 			viewHolder.check_img.setTag(position);

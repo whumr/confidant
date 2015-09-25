@@ -418,6 +418,8 @@ public class Tools {
 	}
 	
 	public static String getDistince(int meters) {
+		if (meters <= 0)
+			return "δ֪";
 		return meters < 1000 ? meters + "m" : (meters / 1000) + "km";
 	}
 }

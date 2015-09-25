@@ -116,6 +116,7 @@ public class ServerConstants {
 		public static String USER_FANS = "fans";
 		public static String USER_FANS_G = "g";
 		public static String USER_FANS_F = "f";
+		public static String USER_KIND = "userkind";
 		
 		/**
 		 * upload file

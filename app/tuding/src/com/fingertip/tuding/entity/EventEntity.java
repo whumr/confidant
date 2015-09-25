@@ -121,7 +121,8 @@ public class EventEntity implements Serializable{
 		event.likedcount = json.getInt(PARAM_KEYS.LIKEDCOUNT);
 		event.replycount = json.getInt(PARAM_KEYS.REPLYCOUNT);
 		event.viewcount = json.getInt(PARAM_KEYS.VIEWCOUNT);
-		event.meters = json.getInt(PARAM_KEYS.METERS);
+		if (json.has(PARAM_KEYS.METERS))
+			event.meters = json.getInt(PARAM_KEYS.METERS);
 
 		event.poslat = json.getDouble(PARAM_KEYS.POSLAT);
 		event.poslong = json.getDouble(PARAM_KEYS.POSLONG);

@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import android.util.Base64;
 
+import com.fingertip.tuding.entity.EventEntity.EventType;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
 
 public class EventTemplate implements Serializable {
@@ -17,6 +18,7 @@ public class EventTemplate implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public String titleof, content, picof;
+	public EventType kindof;
 	
 	public static List<EventTemplate> parseList(JSONObject json) {
 		List<EventTemplate> list = new ArrayList<EventTemplate>();
@@ -40,6 +42,7 @@ public class EventTemplate implements Serializable {
 		template.titleof = new String(Base64.decode(json.getString(PARAM_KEYS.TITLEOF), Base64.DEFAULT));
 		template.content = new String(Base64.decode(json.getString(PARAM_KEYS.CONTENT), Base64.DEFAULT));
 		template.picof = json.getString(PARAM_KEYS.PICOF);
+		template.kindof = EventType.getEventType(json.getString(PARAM_KEYS.KINDOF));
 		return template;
 	}
 }

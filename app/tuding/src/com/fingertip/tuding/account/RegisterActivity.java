@@ -12,7 +12,6 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,8 +42,6 @@ public class RegisterActivity extends BaseNavActivity implements
 	private Button btn_send_emscode;
 	private TimeCount time;// 倒计时
 	private EditText et_emscode;// 验证码输入框
-
-	private RelativeLayout relativeLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +107,6 @@ public class RegisterActivity extends BaseNavActivity implements
 	@Override
 	public void onClick(View v) {
 		String account = et_account.getText().toString().trim();
-		String password = et_password.getText().toString();
 		int id = v.getId();
 		switch (id) {
 
@@ -135,8 +131,6 @@ public class RegisterActivity extends BaseNavActivity implements
 		case R.id.btn_next:
 			if (reset_pwd) {
 				resetPassword();
-				
-				
 			} else {
 				checkMsg();
 			}

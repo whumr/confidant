@@ -178,6 +178,14 @@ public class PublishInfoActivity extends BaseActivity{
 				EventTemplate template = session.getEvent_templates().get(index);
 				et_title.setText(template.titleof);
 				et_content.setText(Tools.convertLine(template.content));
+				setTypeBackground(template.kindof);
+				//ͼƬ
+				List<String> pics = pic_adapter.getPics();
+				if (Validator.isEmptyList(pics) && !Validator.isEmptyString(template.picof)) {
+					List<String> list = new ArrayList<String>();
+					list.add(template.picof);
+					pic_adapter.addPics(list);
+				}
 				event_template_dialog.dismiss();
 			}
 		});

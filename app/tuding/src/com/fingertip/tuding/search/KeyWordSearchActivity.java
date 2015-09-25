@@ -65,6 +65,9 @@ public class KeyWordSearchActivity extends BaseActivity implements RefreshListen
 		search_img.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+				if (imm.isActive())
+					imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
 				search(true);
 			}
 		});
