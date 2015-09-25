@@ -1,9 +1,11 @@
 package com.fingertip.tuding.my;
 
 import java.io.Serializable;
+import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -15,18 +17,21 @@ import com.fingertip.tuding.barcode.ScanBarcodeActivity;
 import com.fingertip.tuding.barcode.ScanBarcodeActivity.BarcodeValidator;
 import com.fingertip.tuding.base.BaseNavActivity;
 import com.fingertip.tuding.entity.UserEntity;
+import com.fingertip.tuding.my.widget.UserSearchDialog;
+import com.fingertip.tuding.my.widget.UserSearchDialog.OnUserSelected;
 import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.Validator;
 import com.fingertip.tuding.util.http.UserUtil;
 import com.fingertip.tuding.util.http.callback.EntityCallback;
+import com.fingertip.tuding.util.http.callback.EntityListCallback;
 import com.google.zxing.Result;
 
 public class AddWatchActivity extends BaseNavActivity implements View.OnClickListener {
 	
 	private EditText search_edit;
 	private LinearLayout my_watch_myinfo, my_watch_scan, my_watch_contacts;
-	
 	private BarcodeValidater barcodeValidater;
+	private UserSearchDialog user_search_dialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,16 @@ public class AddWatchActivity extends BaseNavActivity implements View.OnClickLis
 		my_watch_contacts.setOnClickListener(this);
 		
 		barcodeValidater = new BarcodeValidater();
+		
+		DisplayMetrics outMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
+		user_search_dialog = new UserSearchDialog(this, outMetrics.widthPixels, outMetrics.heightPixels, new OnUserSelected() {
+			
+			@Override
+			public void onSelected(UserEntity user) {
+				Tools.openUser(AddWatchActivity.this, user);
+			}
+		});
 	}
 
 	@Override
@@ -93,19 +108,40 @@ public class AddWatchActivity extends BaseNavActivity implements View.OnClickLis
 			toastShort("请输入手机号码或昵称");
 		} else {
 			showProgressDialog(false);
-			UserUtil.getUserInfo(search_key, new EntityCallback<UserEntity>() {
-				@Override
-				public void succeed(UserEntity user) {
-					Tools.openUser(AddWatchActivity.this, user);
-					dismissProgressDialog();
-				}
-				
-				@Override
-				public void fail(String error) {
-					toastShort(error);
-					dismissProgressDialog();
-				}
-			});
+			//如果是手机号直接查id
+			if (Validator.isMobilePhone(search_key)) {
+				UserUtil.getUserInfo(search_key, new EntityCallback<UserEntity>() {
+					@Override
+					public void succeed(UserEntity user) {
+						Tools.openUser(AddWatchActivity.this, user);
+						dismissProgressDialog();
+					}
+					
+					@Override
+					public void fail(String error) {
+						toastShort(error);
+						dismissProgressDialog();
+					}
+				});
+			//否则按昵称查
+			} else {
+				UserUtil.searchUserByNick(search_key, new EntityListCallback<UserEntity>() {
+					
+					@Override
+					public void succeed(List<UserEntity> list) {
+						user_search_dialog.setList(list);
+						user_search_dialog.show();
+						dismissProgressDialog();
+					}
+					
+					@Override
+					public void fail(String error) {
+						toastShort(error);
+						dismissProgressDialog();
+					}
+				});
+			}
+			
 		}
 	}
 	

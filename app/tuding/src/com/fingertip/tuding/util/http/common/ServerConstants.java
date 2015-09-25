@@ -36,6 +36,7 @@ public class ServerConstants {
 		public static String EDIT_USER_PASS = BASE_URL + "/_user/user_pass_edit.php";
 		public static String CHECK_PHONE_REG = BASE_URL + "/_user/phonelist_reg_check.php";
 		public static String GET_WATCH_GROUP = BASE_URL + "/_user/get_myfriend_action.php";
+		public static String SEARCH_USER = BASE_URL + "/_user/get_user_bysearch.php";
 
 		public static String USER_BARCODE_BASE = BASE_URL + "/_user/info/";
 		
@@ -206,6 +207,7 @@ public class ServerConstants {
 		public static String FC_EDIT_USER_PASS = "user_pass_edit";
 		public static String FC_CHECK_PHONE_REG = "phonelist_reg_check";
 		public static String FC_GET_WATCH_GROUP = "get_myfriend_action";
+		public static String FC_SEARCH_USER = "get_user_bysearch";
 		
 		/**
 		 * event

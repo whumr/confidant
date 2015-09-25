@@ -83,7 +83,6 @@ public class UserUtil extends BaseHttpUtil {
 				UserEntity user = null;
 				try {
 					JSONObject json = new JSONObject(result);
-					Log.e("getUserInfo", json.toString());
 					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
 						error = json.getString(PARAM_KEYS.RESULT_ERROR);
 					if (error == null) 
@@ -100,6 +99,56 @@ public class UserUtil extends BaseHttpUtil {
 					error = "未找到该用户";
 				if (error != null)
 					callback.fail(error);
+			}
+			
+			@Override
+			public void onFailure(HttpException error, String msg) {
+				callback.fail(ServerConstants.NET_ERROR_TIP);
+			}
+		});
+	}
+
+	/**
+	 * 昵称查询用户
+	 * @param nick
+	 * @param callback
+	 */
+	public static void searchUserByNick(String nick, final EntityListCallback<UserEntity> callback) {
+		UserSession session = UserSession.getInstance();
+		JSONObject data = new JSONObject();
+//		{"fc":"get_user_bysearch", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", "nick":"Jim"}
+		try {
+			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_SEARCH_USER);
+			data.put(PARAM_KEYS.USERID, session.getId() == null ? "" : session.getId());
+			data.put(PARAM_KEYS.LOGINID, session.getLogin_id() == null ? "" : session.getLogin_id());
+			data.put(PARAM_KEYS.USER_NICK_NAME, nick);
+		} catch (JSONException e) {
+		}
+		RequestParams params = new RequestParams();
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		HttpUtils http = Tools.getHttpUtils();
+		http.send(HttpRequest.HttpMethod.POST, URL.SEARCH_USER, params, new RequestCallBack<String>() {
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+				String error = null;
+				List<UserEntity> list = null;
+				try {
+					JSONObject json = new JSONObject(result);
+					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
+						error = json.getString(PARAM_KEYS.RESULT_ERROR);
+					else
+						list = UserEntity.parseList(json);
+				} catch (JSONException e) {
+					e.printStackTrace();
+					error = "查询用户失败:" + e.getMessage();
+				}
+				if (Validator.isEmptyList(list))
+					error = "用户不存在";
+				if (error != null)
+					callback.fail(error);
+				else
+					callback.succeed(list);
 			}
 			
 			@Override

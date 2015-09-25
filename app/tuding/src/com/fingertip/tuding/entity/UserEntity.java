@@ -1,7 +1,10 @@
 package com.fingertip.tuding.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,6 +28,23 @@ public class UserEntity implements Serializable{
 	public String userkind;
 	public UserType type;
 	public int up_count;
+	
+	public static List<UserEntity> parseList(JSONObject json) throws JSONException {
+		List<UserEntity> list = new ArrayList<UserEntity>();
+		try {
+			JSONArray array = json.getJSONArray(PARAM_KEYS.LIST);
+			for (int i = 0; i < array.length(); i++) {
+				try {
+					list.add(parseJson(array.getJSONObject(i)));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 	
 //	{"userid": "1257053","nick": "Jim","sex": "m","head": "","address": "广州市体育东路1号","aboutme": "我就是我","headbig": "http://x/v922l-6313D63.jpg",
 //    "fans": {"f": "3","h": "0","g": "3","x": "0"}}
