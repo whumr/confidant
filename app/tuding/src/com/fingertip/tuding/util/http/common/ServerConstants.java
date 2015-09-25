@@ -25,8 +25,12 @@ public class ServerConstants {
 		 */
 		public static String UPLOAD_IMG = BASE_URL + "/_upload/upload_file_oss.php";
 		public static String LOGIN = BASE_URL + "/_user/user_login.php";
-		public static String REG_SENDMSG = BASE_URL + "/_user/user_reg_sendmsg.php";
-		public static String RESET_PASSWORD = BASE_URL + "/_user/user_pass_reset.php";
+		public static String REG_SENDMSG = BASE_URL + "/_user/reg_phone_verify_code.php";
+		public static String CHECK_SENDMSG= BASE_URL + "/_user/reg_phone_password_verify.php";
+//		public static String REG_SENDMSG = BASE_URL + "/_user/user_reg_sendmsg.php";
+//		public static String RESET_PASSWORD = BASE_URL + "/_user/user_pass_reset.php";
+		public static String RESET_PASSWORD = BASE_URL + "/_user/reset_phone_verify_code.php";
+		public static String RESET_UESRPASSWORD = BASE_URL + "/_user/reset_phone_password_verify.php";
 		public static String GET_USER_INFO = BASE_URL + "/_user/get_user_infor.php";
 		public static String EDIT_USER_INFO = BASE_URL + "/_user/user_infor_edit.php";
 		public static String EDIT_USER_PASS = BASE_URL + "/_user/user_pass_edit.php";
@@ -96,6 +100,7 @@ public class ServerConstants {
 		public static String CHECKED = "checked";
 		public static String FEEDBACK = "feedback";
 		public static String PARAMOF = "paramof";
+		public static String MSGCODE = "verifycode";
 		
 		/**
 		 * user info
@@ -188,8 +193,12 @@ public class ServerConstants {
 		 * user
 		 */
 		public static String FC_LOGIN = "user_login";
-		public static String FC_REG_SENDMSG = "user_reg_sendmsg";
-		public static String FC_RESET_PASSWORD = "user_pass_reset";
+		public static String FC_REG_SENDMSG = "reg_phone_verify_code";
+		public static String FC_REG_PHONE_PASSWORD="reg_phone_password_verify";
+//		public static String FC_REG_SENDMSG = "user_reg_sendmsg";
+//		public static String FC_RESET_PASSWORD = "user_pass_reset";
+		public static String FC_RESET_PASSWORD = "reset_phone_verify_code";
+		public static String FC_RESET_PHONE_PASSWPRD = "reset_phone_password_verify";
 		public static String FC_GET_USER_INFO = "get_user_infor";
 		public static String FC_UPLOAD_FILE = "upload_file";
 		public static String FC_EDIT_USER_INFO = "user_infor_edit";

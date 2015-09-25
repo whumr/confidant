@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,6 +48,8 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getWindow().setFlags(LayoutParams.FLAG_NOT_TOUCH_MODAL, LayoutParams.FLAG_NOT_TOUCH_MODAL);
+	    getWindow().setFlags(LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
 		setContentView(R.layout.activity_my_index);
 		this.getWindow().setGravity(Gravity.LEFT);
 		findViews();
@@ -87,6 +91,7 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 		switch (keyCode) {
 			case KeyEvent.KEYCODE_BACK:
 				finish();
+				overridePendingTransition(R.anim.mytranslucent_enter, R.anim.mytranslucent_exit);
 				return true;
 		}
 		return super.onKeyDown(keyCode, event);
@@ -189,5 +194,15 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 		String head_img_url = session.getHead_url();
 		if (!ImageCache.setUserHeadImg(session.getId(), my_head_img) && !Validator.isEmptyString(head_img_url))
 			ImageCache.loadUserHeadImg(head_img_url, session.getId(), sp, bitmapUtils, my_head_img);
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		if (MotionEvent.ACTION_OUTSIDE == event.getAction()) {
+		finish();
+		overridePendingTransition(R.anim.mytranslucent_enter, R.anim.mytranslucent_exit);
+		return true;
+		}
+		return super.onTouchEvent(event);
 	}
 }

@@ -5,7 +5,6 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
@@ -15,6 +14,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fingertip.tuding.R;
@@ -43,7 +44,9 @@ public class LoginActivity extends BaseNavActivity implements View.OnClickListen
 	private TextView btn_submit;
 	private EditText et_account;
 	private EditText et_pwd;
+	private ImageView iv_login_back;
 	
+	private RelativeLayout relativeLayout;
 	private SharedPreferenceUtil sp;
 	
 	public static String KEY_BACK = "back";
@@ -64,6 +67,10 @@ public class LoginActivity extends BaseNavActivity implements View.OnClickListen
 		btn_submit = (TextView)findViewById(R.id.btn_submit);
 		et_account = (EditText)findViewById(R.id.et_phonenum);
 		et_pwd = (EditText)findViewById(R.id.et_pwd);
+		iv_login_back=(ImageView) findViewById(R.id.iv_login_back);
+		//将登陆框的NavTitle隐藏
+		relativeLayout=(RelativeLayout) findViewById(R.id.relayout_nav_title);
+		relativeLayout.setVisibility(View.GONE);
 	}
 
 	protected void setupViews() {
@@ -80,10 +87,11 @@ public class LoginActivity extends BaseNavActivity implements View.OnClickListen
 		et_account.setText(last_account == null ? "" : last_account);
 		
 		//下划线
-		tv_forgetPwd.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+//		tv_forgetPwd.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
 		tv_forgetPwd.setOnClickListener(this);
 		tv_register.setOnClickListener(this);
 		btn_submit.setOnClickListener(this);
+		iv_login_back.setOnClickListener(this);
 		
 		et_account.addTextChangedListener(new TextWatcher() {		
 			private String string_before = "";
@@ -110,7 +118,7 @@ public class LoginActivity extends BaseNavActivity implements View.OnClickListen
 			private String string_before = "";
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				if(et_pwd.getText().toString().length() > 8){
+				if(et_pwd.getText().toString().length() > 12){
 					et_pwd.setText(string_before);
 					et_pwd.setSelection(start);
 					toastShort(getResources().getString(R.string.enterRightPwd));
@@ -162,6 +170,8 @@ public class LoginActivity extends BaseNavActivity implements View.OnClickListen
 			
 			login();
 			break;
+		case R.id.iv_login_back:
+			finish();
 		}
 	}
 	

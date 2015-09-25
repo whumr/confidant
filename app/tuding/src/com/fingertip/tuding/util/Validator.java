@@ -23,7 +23,7 @@ public class Validator {
 	}
 	
 	public static boolean isPassword(String password) {
-		if (password != null && password.length() > 3)
+		if (password != null && password.length() > 5)
 			return true;
 		return false;
 	}

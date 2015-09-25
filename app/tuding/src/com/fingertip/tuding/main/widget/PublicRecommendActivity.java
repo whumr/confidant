@@ -1,7 +1,10 @@
 package com.fingertip.tuding.main.widget;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,8 +26,13 @@ public class PublicRecommendActivity extends BaseActivity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_publicrecommend);
+		getWindow().setFlags(LayoutParams.FLAG_NOT_TOUCH_MODAL, LayoutParams.FLAG_NOT_TOUCH_MODAL);
+	    getWindow().setFlags(LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
+		setContentView(R.layout.dialog_publiccrecoomend);
 		setupViews();
+		WindowManager.LayoutParams layoutParams = getWindow().getAttributes(); 
+		layoutParams.gravity = Gravity.BOTTOM;
+		layoutParams.width = getResources().getDisplayMetrics().widthPixels;
 		initData();
 	}
 

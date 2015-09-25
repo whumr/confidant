@@ -38,6 +38,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
+                android:singleLine="false"
+                android:maxEms="7"
                 android:textColor="@color/black_39"
                 android:textSize="@dimen/my_nick_txtSize" />
 

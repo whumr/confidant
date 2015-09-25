@@ -174,7 +174,8 @@
             android:name="com.fingertip.tuding.widget.PicPreviewActivity"
             android:theme="@style/NothingTheme"  />
         
-        <activity  android:name="com.fingertip.tuding.info.PublishInfoActivity" />
+        <activity  android:name="com.fingertip.tuding.info.PublishInfoActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" />
         
         <!-- 检索 -->
         <activity android:name="com.fingertip.tuding.search.SearchMainActivity" />
@@ -193,7 +194,9 @@
         <activity android:name="com.fingertip.tuding.main.widget.AttentionSelectedActivity" />
         
         <!-- 发布评论 -->
-        <activity android:name="com.fingertip.tuding.main.widget.PublicRecommendActivity" />
+        <activity android:name="com.fingertip.tuding.main.widget.PublicRecommendActivity" 
+            android:theme="@style/MyDialogStyleBottom"
+            android:windowSoftInputMode="adjustResize"/>
         
         
         <!-- ###################注册SDK使用的Activity###################### -->

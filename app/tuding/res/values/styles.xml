@@ -151,4 +151,8 @@
         <!-- 模糊 -->
         <item name="android:backgroundDimEnabled">true</item>
     </style>
+    
+    <style name="myAnimEnter" >  
+        <item name="android:windowEnterAnimation">@anim/mytranslucent_enter</item>  
+    </style>  
 </resources>

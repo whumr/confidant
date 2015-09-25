@@ -45,7 +45,7 @@
         
         <Button android:id="@+id/my_event_pub_btn"
             android:layout_width="130dp"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/blue_button"
             android:textColor="@color/white"
             android:textSize="20sp"
