@@ -21,6 +21,60 @@
 
 
 #
+# libs
+#
+-libraryjars libs/android-core-3.2.0.jar
+-libraryjars libs/android-integration-3.2.0.jar
+-libraryjars libs/BaiduLBS_Android.jar
+-libraryjars libs/core-3.2.0.jar
+-libraryjars libs/locSDK_5.2.jar
+-libraryjars libs/umeng-analytics-v5.5.3.jar
+-libraryjars libs/universal-image-loader-1.9.4-with-sources.jar
+-libraryjars libs/arm64-v8a/libBaiduMapSDK_v3_5_0_31.so
+-libraryjars libs/arm64-v8a/liblocSDK5.so
+-libraryjars libs/armeabi/libBaiduMapSDK_v3_5_0_31.so
+-libraryjars libs/armeabi/liblocSDK5.so
+-libraryjars libs/armeabi-v7a/libBaiduMapSDK_v3_5_0_31.so
+-libraryjars libs/armeabi-v7a/liblocSDK5.so
+-libraryjars libs/x86/libBaiduMapSDK_v3_5_0_31.so
+-libraryjars libs/x86/liblocSDK5.so
+-libraryjars libs/x86_64/libBaiduMapSDK_v3_5_0_31.so
+-libraryjars libs/x86_64/liblocSDK5.so
+
+
+#
+# base
+#
+-keep public class * extends android.app.Fragment  
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.app.backup.BackupAgentHelper
+-keep public class * extends android.preference.Preference
+-keep public class * extends android.support.v4.**
+-keep public class com.android.vending.licensing.ILicensingService
+
+-keep public class com.fingertip.tuding.R$*{
+    public static final int *;
+}
+
+
+#
+# xutils
+#
+-keep class * extends java.lang.annotation.Annotation { *; } 
+
+
+#
+# baidu map
+#
+-keep class com.baidu.** { *; }
+-keep class vi.com.gdi.bgl.android.**{*;}
+
+
+#
 # umeng config
 #
 -dontshrink
@@ -58,14 +112,3 @@
 
 -keep class im.yixin.sdk.api.YXMessage {*;}
 -keep class im.yixin.sdk.api.** implements im.yixin.sdk.api.YXMessage$YXMessageData{*;}
-
--keep public class com.fingertip.tuding.R$*{
-    public static final int *;
-}
-
-
-
-
-
-
-

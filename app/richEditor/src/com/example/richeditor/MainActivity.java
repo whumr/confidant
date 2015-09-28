@@ -2,10 +2,10 @@ package com.example.richeditor;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.example.richeditor.RichEditText.EditorListner;
@@ -14,6 +14,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	TextView txt, img_txt, bold_txt, big_txt, color_txt;
 	RichEditText edt;
+	WebView web;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		bold_txt = (TextView) findViewById(R.id.bold_txt);
 		big_txt = (TextView) findViewById(R.id.big_txt);
 		color_txt = (TextView) findViewById(R.id.color_txt);
+		web = (WebView) findViewById(R.id.web);
 		img_txt.setOnClickListener(this);
 		bold_txt.setOnClickListener(this);
 		big_txt.setOnClickListener(this);
@@ -35,7 +37,9 @@ public class MainActivity extends Activity implements OnClickListener {
 		edt.setEditorListner(new EditorListner() {
 			@Override
 			public void afterEdit(String str) {
-				txt.setText(Html.toHtml(edt.getText()));
+				String html = Html.toHtml(edt.getText());
+				txt.setText(html);
+				web.loadData(html, "text/html", "UTF-8");
 			}
 		});
 	}

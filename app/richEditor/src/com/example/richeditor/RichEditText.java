@@ -1,5 +1,7 @@
 package com.example.richeditor;
 
+import java.util.Arrays;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
@@ -12,6 +14,7 @@ import android.text.style.MetricAffectingSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TextAppearanceSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.EditText;
 
 public class RichEditText extends EditText {
@@ -58,81 +61,61 @@ public class RichEditText extends EditText {
 			
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				System.out.println(s.toString() + "  " + start + "   " + before + "   " + count);
-//				if (status == EditorStatus.none) {
-					last_start = start;
-					last_count = count;
-//				}
+				Log.e("onTextChanged", s.toString() + "  " + start + "   " + before + "   " + count);
+				last_start = start;
+				last_count = count;
 			}
 			
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+				Log.e("beforeTextChanged", s.toString() + "  " + start + "   " + after + "   " + count);
+				//删除时删掉spans
+				if (count == 1 && after == 0) {
+					boolean delete = true;
+					MetricAffectingSpan[] spans = getEditableText().getSpans(start, start + 1, MetricAffectingSpan.class);
+					if (start > 0) {
+						MetricAffectingSpan[] front_spans = getEditableText().getSpans(start - 1, start, MetricAffectingSpan.class);
+						if (Arrays.equals(spans, front_spans))
+							delete = false;
+					}
+					if (delete && start + 1 < s.length()) {
+						MetricAffectingSpan[] end_spans = getEditableText().getSpans(start + 1, start + 2, MetricAffectingSpan.class);
+						if (Arrays.equals(spans, end_spans))
+							delete = false;
+					}
+					if (delete) {
+						for (MetricAffectingSpan span : spans)
+							getEditableText().removeSpan(span);
+					}
+				}
 			}
 			
 			@Override
 			public void afterTextChanged(Editable s) {
-//				if (!isDefaultFont()) {
-//					if (status == EditorStatus.none) {
-//						status = EditorStatus.insert;
-//						String style = getStyleStart();
-////						if (!style.equals(last_style)) {
-//							
-//							last_spanned = Html.fromHtml(getStyleStart() + 
-//									s.subSequence(last_start, last_start + last_count).toString());
-//							s.replace(last_start, last_start + last_count, last_spanned, 0, last_spanned.length());
-//							last_style = style;
 				if (last_count > 0) {
-					
 					MetricAffectingSpan[] spans1 = null, spans2 = null;
-					//前面有
-					if (last_start >= 1 || last_count > 1)
+					if (last_count == 1) {
+						//前面样式
 						spans1 = s.getSpans(last_start - 2, last_start - 1, MetricAffectingSpan.class);
-					//后面有
-					if (s.length() > last_start + last_count)
-						spans2 = s.getSpans(last_start + last_count, last_start + last_count + 1, MetricAffectingSpan.class);
-					setFontStyle(s, spans1, spans2);
-				} else if (s.length() == 0) {
-					MetricAffectingSpan[] spans = s.getSpans(0, s.length(), MetricAffectingSpan.class);
-					for (MetricAffectingSpan span : spans) {
-						s.removeSpan(span);
+						//后面样式
+						if (s.length() > last_start + last_count)
+							spans2 = s.getSpans(last_start + last_count, last_start + last_count + 1, MetricAffectingSpan.class);
+						setFontStyle(s, spans1, spans2);
 					}
-				}
-//						}
-						
-//						s.delete(last_start, last_start + last_count);
-//					} else if (status == EditorStatus.delete) {
-//						status = EditorStatus.insert;
-//						s.insert(getSelectionStart(), last_spanned);
-						if (editorListner != null)
-							editorListner.afterEdit(s.subSequence(last_start, last_start + last_count).toString());
-						
-//					} else if (status == EditorStatus.insert) {
-//						status = EditorStatus.none;
+				} else {
+					if (s.length() == 0) {
+						MetricAffectingSpan[] spans = s.getSpans(0, s.length(), MetricAffectingSpan.class);
+						for (MetricAffectingSpan span : spans)
+							s.removeSpan(span);
+					} 
+//					else {
+//						MetricAffectingSpan[] spans = s.getSpans(last_start, last_start, MetricAffectingSpan.class);
+//						for (MetricAffectingSpan span : spans)
+//							s.removeSpan(span);
 //					}
-//				}
-				
-//				if (!edting && !isDefaultFont()) {
-//					edting = true;
-//////					s.replace(last_start, last_start + last_count, getStyle() + s.subSequence(last_start, last_start + last_count) + "</p>");
-//////					s.replace(last_start, last_start + last_count, 
-//////							Html.fromHtml(getStyle() + s.subSequence(last_start, last_start + last_count) + "</p>"));
-//////					s.insert(getSelectionStart(), Html.fromHtml(getStyle() + s.subSequence(last_start, last_start + last_count) + "</p>"));
-//					
-//					//s.delete(last_start, last_start + last_count);
-//					
-//					s.insert(getSelectionStart(), Html.fromHtml(getStyleStart() + 
-//							s.subSequence(last_start, last_start + last_count).toString() + getStyleEnd()));
-//					if (editorListner != null)
-//						editorListner.afterEdit(s.subSequence(last_start, last_start + last_count).toString());
-//				} 
-//				else if (!isDefaultFont())
-//					edting = false;
-//				
-//				if (last_editable == null)
-//					last_editable = s;
-//				else {
-//					last_editable.append(s.toString());
-//				}
+				}
+				if (editorListner != null)
+					editorListner.afterEdit(s.subSequence(last_start, last_start + last_count).toString());
 			}
 		});
 	}

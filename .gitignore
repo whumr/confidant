@@ -3,6 +3,7 @@ target/
 *.iml
 app/tuding/bin/
 app/tuding/gen/
+app/tuding/proguard/
 app/appcompat_v7/bin/
 app/appcompat_v7/gen/
 app/xutils/bin/
