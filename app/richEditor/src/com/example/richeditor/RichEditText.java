@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.text.Editable;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.style.AbsoluteSizeSpan;
@@ -82,12 +83,19 @@ public class RichEditText extends EditText {
 //							last_style = style;
 				if (last_count > 0) {
 					
-					MetricAffectingSpan[] spans = null;
-					if (last_start >= 1 || last_count > 1) {
-						spans = s.getSpans(last_start + last_count - 2, last_start + last_count - 1, MetricAffectingSpan.class);
-						System.out.println(spans.length);
+					MetricAffectingSpan[] spans1 = null, spans2 = null;
+					//前面有
+					if (last_start >= 1 || last_count > 1)
+						spans1 = s.getSpans(last_start - 2, last_start - 1, MetricAffectingSpan.class);
+					//后面有
+					if (s.length() > last_start + last_count)
+						spans2 = s.getSpans(last_start + last_count, last_start + last_count + 1, MetricAffectingSpan.class);
+					setFontStyle(s, spans1, spans2);
+				} else if (s.length() == 0) {
+					MetricAffectingSpan[] spans = s.getSpans(0, s.length(), MetricAffectingSpan.class);
+					for (MetricAffectingSpan span : spans) {
+						s.removeSpan(span);
 					}
-					setFontStyle(s, spans);
 				}
 //						}
 						
@@ -139,7 +147,7 @@ public class RichEditText extends EditText {
 		edting = false;
 	}
 	
-	private void setFontStyle(Editable s, MetricAffectingSpan[] spans) {
+	private void setFontStyle(Editable s, MetricAffectingSpan[] spans1, MetricAffectingSpan[] spans2) {
 //		if (COLOR_BLACK != font_color)
 //			s.setSpan(new TextAppearanceSpan(null, 0, 0, ColorStateList.valueOf(font_color), null), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 //		if (font_big)
@@ -149,7 +157,7 @@ public class RichEditText extends EditText {
 //		if (font_bold)
 //			s.setSpan(new StyleSpan(Typeface.BOLD), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
 		
-		if (spans == null || spans.length == 0) {
+		if (spans1 == null || spans1.length == 0) {
 			if (COLOR_BLACK != font_color)
 				s.setSpan(new TextAppearanceSpan(null, 0, 0, ColorStateList.valueOf(font_color), null), last_start, last_start + last_count, 0);
 			if (font_big)
@@ -158,8 +166,8 @@ public class RichEditText extends EditText {
 				s.setSpan(new StyleSpan(Typeface.BOLD), last_start, last_start + last_count, 0);
 		} else {
 			boolean _big = false, _bold = false, _blue = false;
-			for (int i = 0; i < spans.length; i++) {
-				MetricAffectingSpan span = spans[i];
+			for (int i = 0; i < spans1.length; i++) {
+				MetricAffectingSpan span = spans1[i];
 				if (span instanceof AbsoluteSizeSpan) {
 					int size = ((AbsoluteSizeSpan)span).getSize();
 					if (font_big)// && size != 30)
