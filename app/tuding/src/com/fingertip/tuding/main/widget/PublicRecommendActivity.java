@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseActivity;
@@ -37,14 +36,7 @@ public class PublicRecommendActivity extends BaseActivity{
 	}
 
 	private void setupViews() {
-		findViewById(R.id.tv_more).setVisibility(View.GONE);
 		et_content = (EditText)findViewById(R.id.et_content);
-		findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {			
-			@Override
-			public void onClick(View arg0) {
-				finish();
-			}
-		});
 		
 		findViewById(R.id.tv_config).setOnClickListener(new View.OnClickListener() {			
 			@Override
@@ -72,11 +64,10 @@ public class PublicRecommendActivity extends BaseActivity{
 			finish();
 		}
 		commentEntity = (CommentEntity) getIntent().getSerializableExtra(EXTRA_COMMENT);
-		TextView tv_title = (TextView)findViewById(R.id.tv_title);
-		if(commentEntity != null)
-			tv_title.setText("评论回复");
-		else 
-			tv_title.setText("发布评论");
+		if (commentEntity != null)
+			et_content.setHint("回复用户" + commentEntity.userEntity.nick_name + "的评论：");
+		else
+			et_content.setHint("请输入评论");
 	}
 	
 	/** 发布评论 **/

@@ -104,6 +104,8 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	private float lastZoom = 16;
 	private String current_type = EventType.ALL.getType();
 	
+	private boolean load_data = false;
+	
 	@SuppressLint("HandlerLeak")
 	private Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -449,7 +451,8 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 					.longitude(location.getLongitude()).build();
 			baiduMap.setMyLocationData(locData);
 			if (isFirstLoc) {
-				if(BDLocation.TypeCacheLocation == location.getLocType() || BDLocation.TypeGpsLocation == location.getLocType()|| BDLocation.TypeNetWorkLocation == location.getLocType() || BDLocation.TypeOffLineLocation == location.getLocType()){
+				if(BDLocation.TypeCacheLocation == location.getLocType() || BDLocation.TypeGpsLocation == location.getLocType() 
+						|| BDLocation.TypeNetWorkLocation == location.getLocType() || BDLocation.TypeOffLineLocation == location.getLocType()){
 					isFirstLoc = false;
 					LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
 					MapStatusUpdate u = MapStatusUpdateFactory.newLatLngZoom(ll ,16);
@@ -457,7 +460,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 					
 					sp.setFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT, (float)location.getLatitude());
 					sp.setFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG, (float)location.getLongitude());
-				}else {
+				} else {
 					if(sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT) > 0){
 						isFirstLoc = false;
 						LatLng ll = new LatLng(sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT), sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG));
@@ -466,6 +469,9 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 					}
 				}
 			}
+			
+			if (!load_data)
+				getPosData();
 		}
 		public void onReceivePoi(BDLocation poiLocation) { }
 	}
@@ -527,7 +533,8 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 			latitude = ll.latitude;
 			longitude = ll.longitude;
 		}
-		EventUtil.searchEvents(EventUtil.Type.nearest, longitude + "", latitude + "", 1, new EntityListCallback<EventEntity>(){
+		if (latitude > 0 && longitude > 0) {
+			EventUtil.searchEvents(EventUtil.Type.nearest, longitude + "", latitude + "", 1, new EntityListCallback<EventEntity>(){
 				@Override
 				public void succeed(List<EventEntity> list) {
 					dismissProgressDialog();
@@ -546,14 +553,15 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 //		            	resetOverlay();
 					}
 				}
-
+				
 				@Override
 				public void fail(String error) {
 					dismissProgressDialog();
 					toastShort(error);
 				}
-			
-		});
+			});
+			load_data = true;
+		}
 	}
 	
 	@Override

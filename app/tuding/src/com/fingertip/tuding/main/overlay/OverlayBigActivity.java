@@ -376,6 +376,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 			shareEntity.shareContent = event.getShareContent();
 			shareEntity.targetUrl = event.getShareUrl();
 			shareEntity.aid = event.id;
+			shareEntity.sender_id = event.sender.id;
 			intent = new Intent();
 			intent.setClass(this, ShareDialog.class);
 			intent.putExtra(EXTRA_PARAM, shareEntity);

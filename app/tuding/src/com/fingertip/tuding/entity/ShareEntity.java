@@ -22,4 +22,6 @@ public class ShareEntity implements Serializable{
 	/** 若为分享应用时的下载地址 **/
 	public String downloadUrl;
 	
+	public String sender_id;
+	
 }

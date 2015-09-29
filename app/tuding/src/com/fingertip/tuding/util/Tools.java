@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -36,8 +37,9 @@ import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.entity.MessageEntity;
 import com.fingertip.tuding.entity.MessageEntity.MessageDbEntity;
 import com.fingertip.tuding.entity.UserEntity;
-import com.fingertip.tuding.info.PublishInfoActivity;
+import com.fingertip.tuding.info.PublishEventActivity;
 import com.fingertip.tuding.main.MainActivity;
+import com.fingertip.tuding.main.widget.MapPositionSelectionActivity;
 import com.fingertip.tuding.my.UserInfoActivity;
 import com.fingertip.tuding.util.UmengConfig.EVENT;
 import com.fingertip.tuding.util.http.common.ServerConstants;
@@ -191,10 +193,22 @@ public class Tools {
 	 */
 	public static void pubEvent(Context context) {
 		Intent intent = new Intent();
-		intent.setClass(context, PublishInfoActivity.class);
+//		intent.setClass(context, PublishInfoActivity.class);
+		intent.setClass(context, PublishEventActivity.class);
 		context.startActivity(intent);
 	}
 
+	/**
+	 * 选择坐标
+	 * @param context
+	 * @param request_code
+	 */
+	public static void choosePosition(Activity context, int request_code) {
+		Intent intent = new Intent();
+		intent.setClass(context, MapPositionSelectionActivity.class);
+		context.startActivityForResult(intent, request_code);
+	}
+	
 	/**
 	 * 找活动，跳转到首页
 	 * @param context

@@ -126,12 +126,9 @@ public class ShareDialog extends BaseActivity {
 	
 	private void jumpToShare(SHARE_MEDIA shareMedia) {
 		Bitmap shar_img = BitmapFactory.decodeResource(getResources(), R.drawable.icon_share_img);
-		UserSession session = UserSession.getInstance();
-		if (session.isLogin()) {
-			Bitmap head = ImageCache.getUserImg(session.getId(), true, WX_IMG_SIZE);
-			if (head != null)
-				shar_img = head;
-		}
+		Bitmap sender_head = ImageCache.getUserImg(shareEntity.sender_id, true, WX_IMG_SIZE);
+		if (sender_head != null)
+			shar_img = sender_head;
 		mController.getConfig().closeToast();
 		if (SHARE_MEDIA.WEIXIN == shareMedia) {
 			WeiXinShareContent weiXinShareContent = new WeiXinShareContent();
