@@ -16,9 +16,17 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseActivity;
 import com.fingertip.tuding.common.UserSession;
+import com.fingertip.tuding.db.SharedPreferenceUtil;
 import com.fingertip.tuding.entity.EventEntity.EventType;
 import com.fingertip.tuding.entity.EventTemplate;
 import com.fingertip.tuding.info.EventTemplateDialog.OnTemplateSelected;
@@ -141,6 +149,7 @@ public class PublishInfoActivity extends BaseActivity{
 			});
 		} else
 			tv_more.setVisibility(View.VISIBLE);
+		locateAddress();
 	}
 	
 	private void initDialog(){
@@ -336,11 +345,14 @@ public class PublishInfoActivity extends BaseActivity{
 			return;
 		}
 		//坐标
-		final String address = tv_position.getText().toString();
+		String address = tv_position.getText().toString();
 		if (Validator.isEmptyString(address) || latitude == 0 || longitude == 0) {
 			toastShort("请标记活动位置");
 			return;
 		}
+		if (address.indexOf(":") > 0)
+			address = address.split(":")[1];
+		final String fianl_address = address;
 		//发布活动
 		showProgressDialog(false);
 		//先上传图片
@@ -349,7 +361,7 @@ public class PublishInfoActivity extends BaseActivity{
 			
 			@Override
 			public void succeed() {
-				EventUtil.publishEvent(title, content, type, address, start_time, end_time, latitude + "", longitude + "", 
+				EventUtil.publishEvent(title, content, type, fianl_address, start_time, end_time, latitude + "", longitude + "", 
 						PARAM_VALUES.SHOWMODE_DEFAULT, entitys, new EntityCallback<String>() {
 					@Override
 					public void succeed(String event_id) {
@@ -379,5 +391,32 @@ public class PublishInfoActivity extends BaseActivity{
 	protected void onDestroy() {
 		super.onDestroy();
 		ImageLoader.getInstance().clearMemoryCache();
+	}
+	
+	private void locateAddress() {
+		final float lat = getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT);
+		final float lon = getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG);
+		if (lat > 0 && lon > 0) {
+			final GeoCoder mSearch = GeoCoder.newInstance();
+			mSearch.setOnGetGeoCodeResultListener(new OnGetGeoCoderResultListener() {
+				
+				@Override
+				public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
+					if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+						toastShort("未能确定当前位置");
+					} else {
+						tv_position.setText("当前位置:" + result.getAddress());
+						latitude = lat;
+						longitude = lon;
+					}
+					mSearch.destroy();
+				}
+				
+				@Override
+				public void onGetGeoCodeResult(GeoCodeResult result) {
+				}
+			});
+			mSearch.reverseGeoCode(new ReverseGeoCodeOption().location(new LatLng(lat, lon)));
+		}
 	}
 }
