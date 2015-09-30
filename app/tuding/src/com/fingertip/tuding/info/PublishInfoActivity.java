@@ -192,10 +192,7 @@ public class PublishInfoActivity extends BaseActivity{
 	}
 	
 	public void addImg() {
-		Intent intent = new Intent();
-		intent.setClass(PublishInfoActivity.this, SelectPicActivity.class);
-		intent.putExtra(SelectPicActivity.KEY_MAX_COUNT, MAX_PIC_SIZE - pic_adapter.getCount() + 1);
-		startActivityForResult(intent, REQUEST_PIC);
+		Tools.selectPics(this, MAX_PIC_SIZE - pic_adapter.getCount() + 1, REQUEST_PIC);
 	}
 	
 	private void setTypeBackground(EventType type){

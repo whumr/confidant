@@ -27,12 +27,12 @@ import com.fingertip.tuding.my.widget.SetPasswordActivity;
 import com.fingertip.tuding.my.widget.SetSexActivity;
 import com.fingertip.tuding.my.widget.zoom.SetZoomActivity;
 import com.fingertip.tuding.util.ImageCache;
+import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.http.UserUtil;
 import com.fingertip.tuding.util.http.callback.DefaultCallback;
 import com.fingertip.tuding.util.http.callback.JsonCallback;
 import com.fingertip.tuding.util.http.common.ServerConstants;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
-import com.fingertip.tuding.widget.SelectPicActivity;
 import com.lidroid.xutils.BitmapUtils;
 
 public class MyInfoActivity extends BaseNavActivity implements View.OnClickListener {
@@ -110,7 +110,7 @@ public class MyInfoActivity extends BaseNavActivity implements View.OnClickListe
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.my_head:
-			setHead();
+			Tools.selectSinglePic(this, R.id.my_info_set_head, true);
 			break;
 		case R.id.my_nick:
 			setNick();
@@ -148,14 +148,6 @@ public class MyInfoActivity extends BaseNavActivity implements View.OnClickListe
 		intent.setClass(this, SetMarkActivity.class);
 		intent.putExtra(PARAM_KEYS.USER_MARK, my_mark_txt.getText().toString());
 		startActivityForResult(intent, R.id.my_info_set_mark);
-	}
-	
-	private void setHead() {
-		Intent intent = new Intent();
-		intent.setClass(this, SelectPicActivity.class);
-		intent.putExtra(SelectPicActivity.KEY_SINGLE, true);
-		intent.putExtra(SelectPicActivity.KEY_CUT, true);
-		startActivityForResult(intent, R.id.my_info_set_head);
 	}
 	
 	private void setPlace() {

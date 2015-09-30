@@ -37,13 +37,14 @@ import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.entity.MessageEntity;
 import com.fingertip.tuding.entity.MessageEntity.MessageDbEntity;
 import com.fingertip.tuding.entity.UserEntity;
-import com.fingertip.tuding.info.PublishEventActivity;
+import com.fingertip.tuding.info.PublishInfoActivity;
 import com.fingertip.tuding.main.MainActivity;
 import com.fingertip.tuding.main.widget.MapPositionSelectionActivity;
 import com.fingertip.tuding.my.UserInfoActivity;
 import com.fingertip.tuding.util.UmengConfig.EVENT;
 import com.fingertip.tuding.util.http.common.ServerConstants;
 import com.fingertip.tuding.widget.PicPreviewActivity;
+import com.fingertip.tuding.widget.SelectPicActivity;
 import com.lidroid.xutils.DbUtils;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.db.sqlite.Selector;
@@ -193,8 +194,8 @@ public class Tools {
 	 */
 	public static void pubEvent(Context context) {
 		Intent intent = new Intent();
-//		intent.setClass(context, PublishInfoActivity.class);
-		intent.setClass(context, PublishEventActivity.class);
+		intent.setClass(context, PublishInfoActivity.class);
+//		intent.setClass(context, PublishEventActivity.class);
 		context.startActivity(intent);
 	}
 
@@ -435,5 +436,24 @@ public class Tools {
 		if (meters <= 0)
 			return "δ֪";
 		return meters < 1000 ? meters + "m" : (meters / 1000) + "km";
+	}
+	
+	public static void selectSinglePic(Activity activity, int request_code) {
+		selectSinglePic(activity, request_code, false);
+	}
+	
+	public static void selectSinglePic(Activity activity, int request_code, boolean cut) {
+		Intent intent = new Intent();
+		intent.setClass(activity, SelectPicActivity.class);
+		intent.putExtra(SelectPicActivity.KEY_SINGLE, true);
+		intent.putExtra(SelectPicActivity.KEY_CUT, cut);
+		activity.startActivityForResult(intent, request_code);
+	}
+	
+	public static void selectPics(Activity activity, int max_count, int request_code) {
+		Intent intent = new Intent();
+		intent.setClass(activity, SelectPicActivity.class);
+		intent.putExtra(SelectPicActivity.KEY_MAX_COUNT, max_count);
+		activity.startActivityForResult(intent, request_code);
 	}
 }

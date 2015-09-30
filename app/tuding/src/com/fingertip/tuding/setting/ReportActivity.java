@@ -128,6 +128,7 @@ public class ReportActivity extends BaseNavActivity implements View.OnClickListe
 				public void succeed() {
 					dismissProgressDialog();
 					toastShort("感谢您的举报，我们将尽快核实相关信息");
+					finish();
 				}
 				
 				@Override

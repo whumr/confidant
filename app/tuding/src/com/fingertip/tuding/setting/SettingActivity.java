@@ -3,6 +3,8 @@ package com.fingertip.tuding.setting;
 import java.io.File;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -19,7 +21,7 @@ import com.fingertip.tuding.util.FileUtil;
 
 public class SettingActivity extends BaseNavActivity implements View.OnClickListener {
 	
-	private TextView cache_size_txt;
+	private TextView cache_size_txt, version_txt;
 	private LinearLayout about;
 	private LinearLayout suggest;
 	private LinearLayout clear_cache;
@@ -39,6 +41,7 @@ public class SettingActivity extends BaseNavActivity implements View.OnClickList
 	protected void findViews() {
 		super.findViews();
 		cache_size_txt = (TextView) findViewById(R.id.cache_size_txt);
+		version_txt = (TextView) findViewById(R.id.version_txt);
 		about = (LinearLayout) findViewById(R.id.setting_about);
 		suggest = (LinearLayout) findViewById(R.id.setting_suggest);
 		clear_cache = (LinearLayout) findViewById(R.id.setting_delete_cache);
@@ -58,6 +61,12 @@ public class SettingActivity extends BaseNavActivity implements View.OnClickList
 		cache_dir = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + Globals.PATH_CACH;
 		
 		getCacheSize();
+		try {
+			PackageManager pm = getPackageManager();
+			PackageInfo info = pm.getPackageInfo(getPackageName(), 0);
+			version_txt.setText("V" + info.versionName);
+		} catch (Exception e) {
+		}
 	}
 
 	@Override

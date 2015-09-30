@@ -53,7 +53,8 @@
                     android:paddingRight="12dp"
                     android:paddingTop="8dp"
                     android:singleLine="false"
-                    android:text="活动介绍:\n活动地点:\n活动时间:\n报名方式:\n活动费用:\n提示:\n\n"
+                    android:hint="活动详情"
+                    android:text=""
                     android:textSize="18sp" />
                 
                 <LinearLayout android:layout_width="match_parent"

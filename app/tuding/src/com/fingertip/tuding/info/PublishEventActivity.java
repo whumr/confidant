@@ -41,7 +41,6 @@ public class PublishEventActivity extends BaseActivity{
 	private UserSession session;
 	private EventType eventType = null;
 	
-	private static String hintText = "活动介绍：\n活动地点：\n活动时间：\n报名方式：\n活动费用：\n提示： \n";
 	private double latitude = 0, longitude = 0;
 	
 	private TextView img_txt, bold_txt, big_txt, color_txt;
@@ -51,7 +50,7 @@ public class PublishEventActivity extends BaseActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_publishinfo_customer);
 		setupViews();
-		initData();
+		initDialog();
 	}
 
 	private void setupViews() {
@@ -99,12 +98,6 @@ public class PublishEventActivity extends BaseActivity{
 		bold_txt.setOnClickListener(onClickListener);
 		big_txt.setOnClickListener(onClickListener);
 		color_txt.setOnClickListener(onClickListener);
-	}
-	
-	
-	private void initData() {
-		et_content.setText(hintText);
-		initDialog();
 	}
 	
 	private void initDialog(){

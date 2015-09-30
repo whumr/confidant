@@ -179,7 +179,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, iv_head);
 
 		String topImag = Validator.isEmptyList(event.pics_big) ? null : event.pics_big.get(0);
-		if (Validator.isEmptyString(topImag))
+		if (!Validator.isEmptyString(topImag))
 			ImageCache.loadUrlImg(topImag, iv_topic, bitmapUtils);
 		
 		ImageView imageView = null;

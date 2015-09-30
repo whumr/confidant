@@ -54,14 +54,14 @@ public class RichEditText extends EditText {
 				Editable editable = getEditableText();
 				if (last_count > 0) {
 					MetricAffectingSpan[] spans1 = null, spans2 = null;
-					if (last_count == 1) {
-						//鍓嶉潰鏍峰紡
+//					if (last_count == 1) {
+						//前面样式
 						spans1 = editable.getSpans(last_start - 2, last_start - 1, MetricAffectingSpan.class);
-						//鍚庨潰鏍峰紡
+						//后面样式
 						if (editable.length() > last_start + last_count)
 							spans2 = editable.getSpans(last_start + last_count, last_start + last_count + 1, MetricAffectingSpan.class);
 						setFontStyle(editable, spans1, spans2);
-					}
+//					}
 				} else {
 					if (editable.length() == 0) {
 						MetricAffectingSpan[] spans = editable.getSpans(0, editable.length(), MetricAffectingSpan.class);
@@ -79,7 +79,7 @@ public class RichEditText extends EditText {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 				Log.e("beforeTextChanged", s.toString() + "  " + start + "   " + after + "   " + count);
-				//鍒犻櫎鏃跺垹鎺塻pans
+				//删除时删掉spans
 				if (count == 1 && after == 0) {
 					boolean delete = true;
 					MetricAffectingSpan[] spans = getEditableText().getSpans(start, start + 1, MetricAffectingSpan.class);
@@ -106,12 +106,6 @@ public class RichEditText extends EditText {
 					editorListner.afterEdit(s.subSequence(last_start, last_start + last_count).toString());
 			}
 		});
-	}
-	
-	private void reset() {
-		font_bold = false;
-		font_big = false;
-		font_color = COLOR_BLACK;
 	}
 	
 	private void setFontStyle(Editable s, MetricAffectingSpan[] spans1, MetricAffectingSpan[] spans2) {

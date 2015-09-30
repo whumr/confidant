@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.fingertip.tuding.Globals;
 import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseNavActivity;
-import com.fingertip.tuding.widget.SelectPicActivity;
+import com.fingertip.tuding.util.Tools;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.RGBLuminanceSource;
@@ -256,10 +256,7 @@ public class ScanBarcodeActivity extends BaseNavActivity implements SurfaceHolde
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.nav_right_btn:
-			Intent intent = new Intent();
-			intent.setClass(this, SelectPicActivity.class);
-			intent.putExtra(SelectPicActivity.KEY_SINGLE, true);
-			startActivityForResult(intent, R.id.decode);
+			Tools.selectSinglePic(this, R.id.decode);
 			break;
 		}
 	}

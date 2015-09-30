@@ -137,6 +137,7 @@ public class MyEventActivity extends BaseFragmentActivity implements View.OnClic
 		btn_delete.setVisibility(View.GONE);
 		deleteable.endDelete();
 		delete = false;
+		toastShort("É¾³ý³É¹¦");
 	}
 	
 	public void setSelectedCount(int count) {
