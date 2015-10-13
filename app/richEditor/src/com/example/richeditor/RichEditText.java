@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.text.Editable;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.MetricAffectingSpan;
@@ -26,20 +24,8 @@ public class RichEditText extends EditText {
 	 */
 	private boolean font_bold, font_big;
 	private int font_color = COLOR_BLACK;
-	
-	//font flag
-	private boolean edting;
-	private String last_style = "";
 	private int last_start, last_count;
-	private Spanned last_spanned;
-	
 	private EditorListner editorListner;
-	
-	private EditorStatus status = EditorStatus.none;
-	
-	private enum EditorStatus {
-		none, edit, delete, insert
-	}
 
 	public RichEditText(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -64,6 +50,30 @@ public class RichEditText extends EditText {
 				Log.e("onTextChanged", s.toString() + "  " + start + "   " + before + "   " + count);
 				last_start = start;
 				last_count = count;
+				
+				Editable editable = getEditableText();
+				if (last_count > 0) {
+					MetricAffectingSpan[] spans1 = null, spans2 = null;
+//					if (last_count == 1) {
+						//前面样式
+						spans1 = editable.getSpans(last_start - 2, last_start - 1, MetricAffectingSpan.class);
+						//后面样式
+						if (editable.length() > last_start + last_count)
+							spans2 = editable.getSpans(last_start + last_count, last_start + last_count + 1, MetricAffectingSpan.class);
+						setFontStyle(editable, spans1, spans2);
+//					}
+				} else {
+					if (editable.length() == 0) {
+						MetricAffectingSpan[] spans = editable.getSpans(0, editable.length(), MetricAffectingSpan.class);
+						for (MetricAffectingSpan span : spans)
+							editable.removeSpan(span);
+					} 
+//					else {
+//						MetricAffectingSpan[] spans = s.getSpans(last_start, last_start, MetricAffectingSpan.class);
+//						for (MetricAffectingSpan span : spans)
+//							s.removeSpan(span);
+//					}
+				}
 			}
 			
 			@Override
@@ -92,54 +102,13 @@ public class RichEditText extends EditText {
 			
 			@Override
 			public void afterTextChanged(Editable s) {
-				if (last_count > 0) {
-					MetricAffectingSpan[] spans1 = null, spans2 = null;
-					if (last_count == 1) {
-						//前面样式
-						spans1 = s.getSpans(last_start - 2, last_start - 1, MetricAffectingSpan.class);
-						//后面样式
-						if (s.length() > last_start + last_count)
-							spans2 = s.getSpans(last_start + last_count, last_start + last_count + 1, MetricAffectingSpan.class);
-						setFontStyle(s, spans1, spans2);
-					}
-				} else {
-					if (s.length() == 0) {
-						MetricAffectingSpan[] spans = s.getSpans(0, s.length(), MetricAffectingSpan.class);
-						for (MetricAffectingSpan span : spans)
-							s.removeSpan(span);
-					} 
-//					else {
-//						MetricAffectingSpan[] spans = s.getSpans(last_start, last_start, MetricAffectingSpan.class);
-//						for (MetricAffectingSpan span : spans)
-//							s.removeSpan(span);
-//					}
-				}
 				if (editorListner != null)
 					editorListner.afterEdit(s.subSequence(last_start, last_start + last_count).toString());
 			}
 		});
 	}
 	
-	private void ending() {
-	}
-	
-	private void reset() {
-		font_bold = false;
-		font_big = false;
-		font_color = COLOR_BLACK;
-		edting = false;
-	}
-	
 	private void setFontStyle(Editable s, MetricAffectingSpan[] spans1, MetricAffectingSpan[] spans2) {
-//		if (COLOR_BLACK != font_color)
-//			s.setSpan(new TextAppearanceSpan(null, 0, 0, ColorStateList.valueOf(font_color), null), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-//		if (font_big)
-//			s.setSpan(new AbsoluteSizeSpan(20, true), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-//		else
-//			s.setSpan(new AbsoluteSizeSpan(15, true), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-//		if (font_bold)
-//			s.setSpan(new StyleSpan(Typeface.BOLD), last_start, last_start + last_count, 0); //Spanned.SPAN_INCLUSIVE_INCLUSIVE);
-		
 		if (spans1 == null || spans1.length == 0) {
 			if (COLOR_BLACK != font_color)
 				s.setSpan(new TextAppearanceSpan(null, 0, 0, ColorStateList.valueOf(font_color), null), last_start, last_start + last_count, 0);
@@ -185,6 +154,14 @@ public class RichEditText extends EditText {
 		}
 	}
 	
+	public String getHtmlContent() {
+		Editable editable = getEditableText();
+		for (int i = 0; i < editable.length(); i++) {
+			MetricAffectingSpan[] spans = editable.getSpans(i, i + 1, MetricAffectingSpan.class);
+		}
+		return null;
+	}
+	
 	public String getStyleStart() {
 		if (isDefaultFont())
 			return "";
@@ -215,10 +192,6 @@ public class RichEditText extends EditText {
 
 	public void setFont_bold(boolean font_bold) {
 		this.font_bold = font_bold;
-		
-//		getEditableText().insert(getSelectionStart(), Html.fromHtml(getStyleStart() + "this is a test" + getStyleEnd()));
-		
-//		moveCursorToVisibleOffset();
 	}
 
 	public boolean isFont_big() {

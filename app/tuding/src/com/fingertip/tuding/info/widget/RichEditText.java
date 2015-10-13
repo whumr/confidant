@@ -154,6 +154,14 @@ public class RichEditText extends EditText {
 		}
 	}
 	
+	public String getHtmlContent() {
+		Editable editable = getEditableText();
+		for (int i = 0; i < editable.length(); i++) {
+			MetricAffectingSpan[] spans = editable.getSpans(i, i + 1, MetricAffectingSpan.class);
+		}
+		return null;
+	}
+	
 	public String getStyleStart() {
 		if (isDefaultFont())
 			return "";
