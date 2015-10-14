@@ -461,7 +461,8 @@ public class Tools {
 		activity.startActivityForResult(intent, request_code);
 	}
 	
-	public static int getDistance(double long1, double lat1, double long2, double lat2) {
-		return (int)(Math.sqrt((long1 - long2) * (long1 - long2) + (lat1 - lat2) * (lat1 - lat2)));
+	public static double getDistance(double long1, double lat1, double long2, double lat2) {
+		return Math.sqrt((long1 * 10000 - long2 * 10000) * (long1 * 10000 - long2 * 10000) 
+				+ (lat1 * 10000 - lat2 * 10000) * (lat1 * 10000 - lat2 * 10000));
 	}
 }

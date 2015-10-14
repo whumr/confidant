@@ -11,11 +11,11 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseActivity;
-import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.entity.EventEntity.EventType;
 import com.fingertip.tuding.info.widget.RichEditText;
 import com.fingertip.tuding.main.widget.DialogDate;
@@ -32,13 +32,13 @@ public class PublishEventActivity extends BaseActivity{
 	private static final int REQUEST_PIC = 1001;
 	public static int MAX_PIC_SIZE = 9;
 	
-	private TextView tv_submit, tv_title,
+	private TextView tv_submit,
 		tv_position, tv_type_hint, tv_start_time_hint, tv_end_time_hint,
 		tv_special, tv_perform, tv_sociality, tv_sports, tv_study, tv_other;
 	private EditText et_title;
 	private RichEditText et_content;
+	private RadioButton radio_default;
 	private DialogDate start_time_dialog, end_time_dialog;
-	private UserSession session;
 	private EventType eventType = null;
 	
 	private double latitude = 0, longitude = 0;
@@ -59,8 +59,8 @@ public class PublishEventActivity extends BaseActivity{
 		et_title = (EditText)findViewById(R.id.et_title);
 		et_content = (RichEditText)findViewById(R.id.et_content);
 		
-		tv_title = (TextView)findViewById(R.id.tv_title);
-		tv_title.setText("发布活动");
+		radio_default = (RadioButton)findViewById(R.id.radio_default);
+		radio_default.setOnClickListener(onClickListener);
 		
 		findViewById(R.id.iv_back).setOnClickListener(onClickListener);
 		tv_submit.setOnClickListener(onClickListener);
@@ -87,8 +87,6 @@ public class PublishEventActivity extends BaseActivity{
 		tv_other.setOnClickListener(onClickListener);
 		tv_position.setOnClickListener(onClickListener);
 		setTypeBackground(EventType.SOCIALITY);
-		
-		session = UserSession.getInstance();
 		
 		img_txt = (TextView) findViewById(R.id.img_txt);
 		bold_txt = (TextView) findViewById(R.id.bold_txt);
@@ -174,8 +172,9 @@ public class PublishEventActivity extends BaseActivity{
 			longitude = data.getDoubleExtra(MapPositionSelectionActivity.KEY_LONG, 0);
 		} else if (requestCode == REQUEST_PIC) {
 			ArrayList<String> pics = data.getStringArrayListExtra(SelectPicActivity.KEY_PICS);
-			if (!Validator.isEmptyList(pics))
-				;
+			if (!Validator.isEmptyList(pics)) {
+				String picString = pics.get(0);
+			}
 		}
 	}
 	
@@ -201,6 +200,12 @@ public class PublishEventActivity extends BaseActivity{
 			case R.id.tv_end_time_hint:
 				end_time_dialog.show();
 				break;
+			case R.id.radio_default:
+				Intent intent = new Intent();
+				intent.setClass(PublishEventActivity.this, PublishInfoActivity.class);
+				startActivity(intent);
+				finish();
+				break;
 			case R.id.tv_type_hint:
 				if (findViewById(R.id.layout_type).getVisibility() == View.VISIBLE){
 					findViewById(R.id.layout_type).setVisibility(View.GONE);
@@ -217,6 +222,7 @@ public class PublishEventActivity extends BaseActivity{
 //				big_txt = (TextView) findViewById(R.id.big_txt);
 //				color_txt = (TextView) findViewById(R.id.color_txt);
 			case R.id.img_txt:
+				Tools.selectSinglePic(PublishEventActivity.this, REQUEST_PIC);
 				break;
 			case R.id.bold_txt:
 				if (!et_content.isFont_bold()) {

@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ImageSpan;
 import android.text.style.MetricAffectingSpan;
 import android.text.style.StyleSpan;
 import android.text.style.TextAppearanceSpan;
@@ -26,6 +28,7 @@ public class RichEditText extends EditText {
 	private int font_color = COLOR_BLACK;
 	private int last_start, last_count;
 	private EditorListner editorListner;
+	private int default_text_size = 20, big_text_size = 30;
 
 	public RichEditText(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -43,6 +46,8 @@ public class RichEditText extends EditText {
 	}
 
 	private void init() {
+		default_text_size = (int)this.getTextSize();
+		big_text_size = (int) (default_text_size * 3 / 2);
 		this.addTextChangedListener(new TextWatcher() {
 			
 			@Override
@@ -113,7 +118,7 @@ public class RichEditText extends EditText {
 			if (COLOR_BLACK != font_color)
 				s.setSpan(new TextAppearanceSpan(null, 0, 0, ColorStateList.valueOf(font_color), null), last_start, last_start + last_count, 0);
 			if (font_big)
-				s.setSpan(new AbsoluteSizeSpan(30), last_start, last_start + last_count, 0);
+				s.setSpan(new AbsoluteSizeSpan(big_text_size), last_start, last_start + last_count, 0);
 			if (font_bold)
 				s.setSpan(new StyleSpan(Typeface.BOLD), last_start, last_start + last_count, 0);
 		} else {
@@ -121,31 +126,19 @@ public class RichEditText extends EditText {
 			for (int i = 0; i < spans1.length; i++) {
 				MetricAffectingSpan span = spans1[i];
 				if (span instanceof AbsoluteSizeSpan) {
-					int size = ((AbsoluteSizeSpan)span).getSize();
-					if (font_big)// && size != 30)
-						s.setSpan(new AbsoluteSizeSpan(30), last_start, last_start + last_count, 0);
-					else if (!font_big)// && size == 30)
-						s.setSpan(new AbsoluteSizeSpan(20), last_start, last_start + last_count, 0);
-//					else
-//						s.setSpan(span, last_start, last_start + last_count, 0);
+					if (font_big)
+						s.setSpan(new AbsoluteSizeSpan(big_text_size), last_start, last_start + last_count, 0);
+					else
+						s.setSpan(new AbsoluteSizeSpan(default_text_size), last_start, last_start + last_count, 0);
 					_big = true;
 				} else if (span instanceof StyleSpan) {
-//					int style = ((StyleSpan)span).getStyle();
-//					Typeface.BOLD
-//					if (!font_bold)
-//						s.removeSpan(bold);
-//					if (font_bold)
-//						s.setSpan(span, last_start, last_start + last_count, 0);
 					_bold = true;
 				} else if (span instanceof TextAppearanceSpan) {
-//					((TextAppearanceSpan)span).getTextColor().getDefaultColor() == COLOR_BLUE
-//					if (font_color == COLOR_BLUE)
-//						s.setSpan(span, last_start, last_start + last_count, 0);
 					_blue = true;
 				}
 			}
 			if (font_big && !_big)
-				s.setSpan(new AbsoluteSizeSpan(30), last_start, last_start + last_count, 0);
+				s.setSpan(new AbsoluteSizeSpan(big_text_size), last_start, last_start + last_count, 0);
 			if (font_bold)// && !_bold)
 				s.setSpan(new StyleSpan(Typeface.BOLD), last_start, last_start + last_count, 0);
 			if (font_color == COLOR_BLUE)// && !_blue)
@@ -160,14 +153,18 @@ public class RichEditText extends EditText {
 		MetricAffectingSpan[] last_spans = null;
 		for (int i = 0; i < editable.length(); i++) {
 			MetricAffectingSpan[] spans = editable.getSpans(i, i + 1, MetricAffectingSpan.class);
-			String text = toHtml(editable.subSequence(i, i + 1).toString());
-			if (!spansEquals(last_spans, spans)) {
-				buffer.append(getHtmlEnd(last_spans))
-					.append(getHtmlStart(spans))
-					.append(text);
-				last_spans = spans;
-			} else
-				buffer.append(text);
+			if (spans != null && spans.length == 1 && spans[0] instanceof ImageSpan)
+				buffer.append(getHtmlImg((ImageSpan)spans[0]));
+			else {
+				String text = toHtml(editable.subSequence(i, i + 1).toString());
+				if (!spansEquals(last_spans, spans)) {
+					buffer.append(getHtmlEnd(last_spans))
+						.append(getHtmlStart(spans))
+						.append(text);
+					last_spans = spans;
+				} else
+					buffer.append(text);
+			}
 		}
 		buffer.append(getHtmlEnd(last_spans));
 		return buffer.toString();
@@ -189,6 +186,13 @@ public class RichEditText extends EditText {
 	
 	private static final int[] EMPTY = new int[0];
 	
+	private String getHtmlImg(ImageSpan imgSpan) {
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("<img src=\"").append(imgSpan.getSource())
+			.append("\" width=\"100%\" />");
+		return buffer.toString();
+	}
+	
 	private String getHtmlStart(MetricAffectingSpan[] spans) {
 		if (spans == null || spans.length == 0)
 			return "";
@@ -200,7 +204,7 @@ public class RichEditText extends EditText {
 				Log.e("getTextColor", Integer.toHexString(color));
 			} else if (span instanceof AbsoluteSizeSpan) {
 				int font_size = ((AbsoluteSizeSpan) span).getSize();
-				_big = font_size == 30;
+				_big = font_size == big_text_size;
 			} else if (span instanceof StyleSpan)
 				_bold = true;
 		}
@@ -222,7 +226,7 @@ public class RichEditText extends EditText {
 				Log.e("getTextColor", Integer.toHexString(color));
 			} else if (span instanceof AbsoluteSizeSpan) {
 				int font_size = ((AbsoluteSizeSpan) span).getSize();
-				_big = font_size == 30;
+				_big = font_size == big_text_size;
 			} else if (span instanceof StyleSpan)
 				_bold = true;
 		}
@@ -251,6 +255,12 @@ public class RichEditText extends EditText {
 			.append(font_big ? "</big>" : "")
 			.append(COLOR_BLACK == font_color ? "" : "</font>");
 		return builder.toString();
+	}
+	
+	public void insertPic() {
+		String url = "http://gb.cri.cn/mmsource/images/2015/10/14/be0c24c01f924b5784112a92446136fe.jpg";
+		int nowLocation = getSelectionStart();  
+        getText().insert(nowLocation, Html.fromHtml("<img src=\"" + url + "\" width=\"100%\"/>"));
 	}
 	
 	private boolean isDefaultFont() {

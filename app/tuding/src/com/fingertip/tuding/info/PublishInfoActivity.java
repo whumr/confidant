@@ -14,6 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.baidu.mapapi.model.LatLng;
@@ -53,10 +54,12 @@ public class PublishInfoActivity extends BaseActivity{
 	
 	private GridView img_gridView;
 	private PublishPicAdapter pic_adapter;
-	private TextView tv_submit, tv_title, tv_more,
+	private TextView tv_submit, tv_template,
 		tv_position, tv_type_hint, tv_img_hint, tv_start_time_hint, tv_end_time_hint,
 		tv_special,tv_perform,tv_sociality,tv_sports,tv_study,tv_other;
 	private EditText et_title, et_content;
+	private RadioButton radio_customer;
+	
 	private DialogDate start_time_dialog, end_time_dialog;
 	private EventTemplateDialog event_template_dialog;
 	private UserSession session;
@@ -80,13 +83,11 @@ public class PublishInfoActivity extends BaseActivity{
 		tv_position = (TextView)findViewById(R.id.tv_position);
 		et_title = (EditText)findViewById(R.id.et_title);
 		et_content =(EditText)findViewById(R.id.et_content);
+		radio_customer = (RadioButton)findViewById(R.id.radio_customer);
+		radio_customer.setOnClickListener(onClickListener);
 		
-		tv_title = (TextView)findViewById(R.id.tv_title);
-		tv_title.setText("发布活动");
-		tv_more = (TextView)findViewById(R.id.tv_more);
-		tv_more.setText("快速模板");
-		tv_more.setVisibility(View.GONE);
-		tv_more.setOnClickListener(onClickListener);
+		tv_template = (TextView)findViewById(R.id.tv_template);
+		tv_template.setOnClickListener(onClickListener);
 		
 		findViewById(R.id.iv_back).setOnClickListener(onClickListener);
 		tv_submit.setOnClickListener(onClickListener);
@@ -139,7 +140,7 @@ public class PublishInfoActivity extends BaseActivity{
 					if (!Validator.isEmptyList(list)) {
 						session.getEvent_templates().addAll(list);
 						session.setLoad_event_template(true);
-						tv_more.setVisibility(View.VISIBLE);
+						tv_template.setVisibility(View.VISIBLE);
 					}
 				}
 				
@@ -148,7 +149,7 @@ public class PublishInfoActivity extends BaseActivity{
 				}
 			});
 		} else
-			tv_more.setVisibility(View.VISIBLE);
+			tv_template.setVisibility(View.VISIBLE);
 		locateAddress();
 	}
 	
@@ -268,9 +269,14 @@ public class PublishInfoActivity extends BaseActivity{
 				startActivityForResult(intent, REQUEST_POS);
 			} else if(v_id == R.id.tv_start_time_hint)
 				start_time_dialog.show();
-			else if(v_id == R.id.tv_end_time_hint)
+			else if (v_id == R.id.tv_end_time_hint)
 				end_time_dialog.show();
-			else if(v_id == R.id.tv_img_hint) {
+			else if (v_id == R.id.radio_customer) {
+				Intent intent = new Intent();
+				intent.setClass(PublishInfoActivity.this, PublishEventActivity.class);
+				startActivity(intent);
+				finish();
+			} else if (v_id == R.id.tv_img_hint) {
 				if(img_gridView.getVisibility() == View.VISIBLE) {
 					img_gridView.setVisibility(View.GONE);
 					tv_img_hint.setCompoundDrawablesWithIntrinsicBounds(null, null, context.getResources().getDrawable(R.drawable.icon_arrow_top), null);
@@ -289,7 +295,7 @@ public class PublishInfoActivity extends BaseActivity{
 					tv_type_hint.setText("活动类型");
 				}
 			//快捷发布
-			} else if(v_id == R.id.tv_more)
+			} else if(v_id == R.id.tv_template)
 				event_template_dialog.show();
 			else if(v_id == R.id.tv_special)
 				setTypeBackground(EventType.SPECIAL);

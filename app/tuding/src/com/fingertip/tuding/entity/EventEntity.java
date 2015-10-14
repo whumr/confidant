@@ -188,10 +188,10 @@ public class EventEntity implements Serializable{
 			List<Pos> result_list = new ArrayList<Pos>();
 			for (int i = 0; i < pos_list.size(); i++) {
 				Pos pos = pos_list.get(i);
-				int distince = Tools.getDistance(poslang, poslat, pos.poslong, pos.poslat);
+				double distince = Tools.getDistance(poslang, poslat, pos.poslong, pos.poslat);
 				pos.distince = distince;
 				result_list.add(pos);
-				Collections.sort(list, pos);
+				Collections.sort(result_list, pos);
 				while (result_list.size() > number)
 					result_list.remove(0);
 			}
@@ -267,14 +267,15 @@ public class EventEntity implements Serializable{
 
 		public double poslat, poslong;
 		
-		public int distince;
+		public double distince;
 
 		/**
 		 * ½µÐòÅÅ
 		 */
 		@Override
 		public int compare(Pos lhs, Pos rhs) {
-			return rhs.distince - lhs.distince;
+			double x = rhs.distince - lhs.distince;
+			return x > 0 ? 1 : (x == 0 ? 0 : -1);
 		} 
 	}
 }

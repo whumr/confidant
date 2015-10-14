@@ -50,6 +50,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		int id = v.getId();
 		switch (id) {
 		case R.id.img_txt:
+			edt.insertPic();
 			break;
 		case R.id.bold_txt:
 			if (!edt.isFont_bold()) {

@@ -421,6 +421,8 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_6);
 				iv_markerImg.setImageDrawable(getResources().getDrawable(R.drawable.icon_event_type_all));
 			}
+			if (event.sender.type == UserType.BUSINESS && !Validator.isEmptyString(event.sender.head_img_url))
+				ImageCache.setUserHeadImg(event.sender.id, iv_markerImg);
 			LatLng point = new LatLng(event.poslat, event.poslong);
 			BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromView(view_markerImage);
 			OverlayOptions options = new MarkerOptions().position(point).icon(bitmapDescriptor).draggable(false);
