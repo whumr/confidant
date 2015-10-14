@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -109,7 +108,7 @@ public class AccountActivationActivity extends BaseNavActivity implements View.O
 			} catch (JSONException e) {
 			}
 			RequestParams params = new RequestParams();
-			params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+			params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 			HttpUtils http = Tools.getHttpUtils();
 			http.send(HttpRequest.HttpMethod.POST, URL.LOGIN, params, new RequestCallBack<String>() {
 				@Override
@@ -118,7 +117,7 @@ public class AccountActivationActivity extends BaseNavActivity implements View.O
 				
 				@Override
 				public void onSuccess(ResponseInfo<String> responseInfo) {
-					String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+					String result = Tools.decodeString(responseInfo.result);
 					String error = null;
 					try {
 						JSONObject json = new JSONObject(result);

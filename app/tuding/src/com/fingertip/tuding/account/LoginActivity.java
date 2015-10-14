@@ -9,7 +9,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -195,7 +194,7 @@ public class LoginActivity extends BaseNavActivity implements View.OnClickListen
 			} catch (JSONException e) {
 			}
 			RequestParams params = new RequestParams();
-			params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+			params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 			HttpUtils http = Tools.getHttpUtils();
 			http.send(HttpRequest.HttpMethod.POST, URL.LOGIN, params, new RequestCallBack<String>() {
 				@Override
@@ -207,7 +206,7 @@ public class LoginActivity extends BaseNavActivity implements View.OnClickListen
 				public void onSuccess(ResponseInfo<String> responseInfo) {
 					dismissProgressDialog();
 					
-					String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+					String result = Tools.decodeString(responseInfo.result);
 					String error = null;
 					String login_id = null;
 					try {

@@ -8,9 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Base64;
-
 import com.fingertip.tuding.entity.EventEntity.EventType;
+import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
 
 public class EventTemplate implements Serializable {
@@ -39,8 +38,8 @@ public class EventTemplate implements Serializable {
 	
 	public static EventTemplate parseJson(JSONObject json) throws JSONException {
 		EventTemplate template = new EventTemplate();
-		template.titleof = new String(Base64.decode(json.getString(PARAM_KEYS.TITLEOF), Base64.DEFAULT));
-		template.content = new String(Base64.decode(json.getString(PARAM_KEYS.CONTENT), Base64.DEFAULT));
+		template.titleof = Tools.decodeString(json.getString(PARAM_KEYS.TITLEOF));
+		template.content = Tools.decodeString(json.getString(PARAM_KEYS.CONTENT));
 		template.picof = json.getString(PARAM_KEYS.PICOF);
 		template.kindof = EventType.getEventType(json.getString(PARAM_KEYS.KINDOF));
 		return template;

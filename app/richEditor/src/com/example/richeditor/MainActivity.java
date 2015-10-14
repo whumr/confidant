@@ -38,7 +38,8 @@ public class MainActivity extends Activity implements OnClickListener {
 			@Override
 			public void afterEdit(String str) {
 				String html = Html.toHtml(edt.getText());
-				txt.setText(html);
+//				txt.setText(html);
+				txt.setText(edt.getHtmlContent());
 				web.loadData(html, "text/html", "UTF-8");
 			}
 		});

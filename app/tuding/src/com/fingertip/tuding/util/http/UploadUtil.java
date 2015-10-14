@@ -5,16 +5,14 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Base64;
-
 import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.util.ImageCache;
 import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.http.callback.EntityCallback;
 import com.fingertip.tuding.util.http.common.ServerConstants;
-import com.fingertip.tuding.util.http.common.UploadImgEntity;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_VALUES;
+import com.fingertip.tuding.util.http.common.UploadImgEntity;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -73,7 +71,7 @@ public class UploadUtil extends BaseHttpUtil {
 				} catch (JSONException e) {
 				}
 				RequestParams params = new RequestParams();
-				params.addQueryStringParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+				params.addQueryStringParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 				params.addBodyParameter(PARAM_KEYS.UPLOAD_SFULL, entity.big_file);
 				params.addBodyParameter(PARAM_KEYS.UPLOAD_SFILE, entity.small_file);
 				
@@ -83,7 +81,7 @@ public class UploadUtil extends BaseHttpUtil {
 					
 					@Override
 					public void onSuccess(ResponseInfo<String> responseInfo) {
-						String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+						String result = Tools.decodeString(responseInfo.result);
 						String error = null;
 						String small_url = null;
 						String big_url = null;

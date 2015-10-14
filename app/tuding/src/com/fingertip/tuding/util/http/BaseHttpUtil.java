@@ -3,8 +3,6 @@ package com.fingertip.tuding.util.http;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Base64;
-
 import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.http.callback.DefaultCallback;
 import com.fingertip.tuding.util.http.common.ServerConstants;
@@ -21,12 +19,12 @@ public class BaseHttpUtil {
 	
 	protected static void postDefalt(String url, JSONObject data, final String error_msg, final DefaultCallback callback) {
 		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 		HttpUtils http = Tools.getHttpUtils();
 		http.send(HttpRequest.HttpMethod.POST, url, params, new RequestCallBack<String>() {
 	        @Override
 	        public void onSuccess(ResponseInfo<String> responseInfo) {
-	        	String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+	        	String result = Tools.decodeString(responseInfo.result);
 				String error = null;
 				JSONObject json = null;
 				try {

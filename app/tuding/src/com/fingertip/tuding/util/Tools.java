@@ -431,6 +431,10 @@ public class Tools {
 	public static String convertLine(String str) {
 		return str.replaceAll("\\\\n", "\\\n");
 	}
+
+	public static String convertHtmlLine(String str) {
+		return str.replaceAll("<br>", "\n");
+	}
 	
 	public static String getDistince(int meters) {
 		if (meters <= 0)
@@ -455,5 +459,9 @@ public class Tools {
 		intent.setClass(activity, SelectPicActivity.class);
 		intent.putExtra(SelectPicActivity.KEY_MAX_COUNT, max_count);
 		activity.startActivityForResult(intent, request_code);
+	}
+	
+	public static int getDistance(double long1, double lat1, double long2, double lat2) {
+		return (int)(Math.sqrt((long1 - long2) * (long1 - long2) + (lat1 - lat2) * (lat1 - lat2)));
 	}
 }

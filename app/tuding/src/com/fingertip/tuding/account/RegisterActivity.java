@@ -8,7 +8,6 @@ import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -186,16 +185,14 @@ public class RegisterActivity extends BaseNavActivity implements
 				System.out.println("报异常啦11111111111111111111111111111111111");
 			}
 			RequestParams params = new RequestParams();
-			params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(
-					data.toString().getBytes(), Base64.DEFAULT));
+			params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 			HttpUtils http = Tools.getHttpUtils();
 			http.send(HttpRequest.HttpMethod.POST, URL.CHECK_SENDMSG, params,
 					new RequestCallBack<String>() {
 
 						@Override
 						public void onSuccess(ResponseInfo<String> responseInfo) {
-							String result = new String(Base64.decode(
-									responseInfo.result, Base64.DEFAULT));
+							String result = Tools.decodeString(responseInfo.result);
 							String error = null;
 							try {
 								JSONObject json = new JSONObject(result);
@@ -261,8 +258,7 @@ public class RegisterActivity extends BaseNavActivity implements
 			} catch (JSONException e) {
 			}
 			RequestParams params = new RequestParams();
-			params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(
-					data.toString().getBytes(), Base64.DEFAULT));
+			params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 			HttpUtils http = Tools.getHttpUtils();
 			http.send(HttpRequest.HttpMethod.POST, URL.REG_SENDMSG, params,
 					new RequestCallBack<String>() {
@@ -272,8 +268,7 @@ public class RegisterActivity extends BaseNavActivity implements
 
 						@Override
 						public void onSuccess(ResponseInfo<String> responseInfo) {
-							String result = new String(Base64.decode(
-									responseInfo.result, Base64.DEFAULT));
+							String result = Tools.decodeString(responseInfo.result);
 							String error = null;
 							try {
 								JSONObject json = new JSONObject(result);
@@ -335,8 +330,7 @@ public class RegisterActivity extends BaseNavActivity implements
 				System.out.println("报异常222222222");
 			}
 			RequestParams params = new RequestParams();
-			params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(
-					data.toString().getBytes(), Base64.DEFAULT));
+			params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 			HttpUtils http = Tools.getHttpUtils();
 			http.send(HttpRequest.HttpMethod.POST, URL.RESET_UESRPASSWORD,
 					params, new RequestCallBack<String>() {
@@ -344,8 +338,7 @@ public class RegisterActivity extends BaseNavActivity implements
 
 						@Override
 						public void onSuccess(ResponseInfo<String> responseInfo) {
-							String result = new String(Base64.decode(
-									responseInfo.result, Base64.DEFAULT));
+							String result = Tools.decodeString(responseInfo.result);
 							String error = null;
 							try {
 								JSONObject json = new JSONObject(result);
@@ -388,8 +381,7 @@ public class RegisterActivity extends BaseNavActivity implements
 				e.printStackTrace();
 			}
 			RequestParams params = new RequestParams();
-			params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(
-					data.toString().getBytes(), Base64.DEFAULT));
+			params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 			HttpUtils http = Tools.getHttpUtils();
 			http.send(HttpRequest.HttpMethod.POST, URL.RESET_PASSWORD, params,
 					new RequestCallBack<String>() {
@@ -399,8 +391,7 @@ public class RegisterActivity extends BaseNavActivity implements
 
 						@Override
 						public void onSuccess(ResponseInfo<String> responseInfo) {
-							String result = new String(Base64.decode(
-									responseInfo.result, Base64.DEFAULT));
+							String result = Tools.decodeString(responseInfo.result);
 							String error = null;
 							try {
 								JSONObject json = new JSONObject(result);

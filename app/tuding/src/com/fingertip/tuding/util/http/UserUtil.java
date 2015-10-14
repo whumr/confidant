@@ -10,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.graphics.Bitmap;
-import android.util.Base64;
 import android.util.Log;
 
 import com.fingertip.tuding.common.UserSession;
@@ -73,12 +72,12 @@ public class UserUtil extends BaseHttpUtil {
 		} catch (JSONException e) {
 		}
 		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 		HttpUtils http = Tools.getHttpUtils();
 		http.send(HttpRequest.HttpMethod.POST, URL.GET_USER_INFO, params, new RequestCallBack<String>() {
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+				String result = Tools.decodeString(responseInfo.result);
 				String error = null;
 				UserEntity user = null;
 				try {
@@ -125,12 +124,12 @@ public class UserUtil extends BaseHttpUtil {
 		} catch (JSONException e) {
 		}
 		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 		HttpUtils http = Tools.getHttpUtils();
 		http.send(HttpRequest.HttpMethod.POST, URL.SEARCH_USER, params, new RequestCallBack<String>() {
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+				String result = Tools.decodeString(responseInfo.result);
 				String error = null;
 				List<UserEntity> list = null;
 				try {
@@ -212,12 +211,12 @@ public class UserUtil extends BaseHttpUtil {
 			data.put(PARAM_KEYS.TOUSERID, to_user_id);
 			JSONObject says = new JSONObject();
 			says.put(PARAM_KEYS.KIND, PARAM_VALUES.SAYS_TEXT);
-			says.put(PARAM_KEYS.CONTENT, Base64.encodeToString(content.getBytes(), Base64.DEFAULT));
+			says.put(PARAM_KEYS.CONTENT, Tools.encodeString(content));
 			if (!Validator.isEmptyString(title))
 				says.put(PARAM_KEYS.QUOTE, title);
 			if (!Validator.isEmptyString(event_id))
 				says.put(PARAM_KEYS.JUMPPARAM, PARAM_KEYS.ACTIONID + ":" + event_id);
-			data.put(PARAM_KEYS.SAYS, Base64.encodeToString(says.toString().getBytes(), Base64.DEFAULT));
+			data.put(PARAM_KEYS.SAYS, Tools.encodeString(says.toString()));
 		} catch (JSONException e) {
 		}
 		postDefalt(URL.SEND_MSG, data, "∑¢ÀÕ ß∞‹:", callback);
@@ -240,12 +239,12 @@ public class UserUtil extends BaseHttpUtil {
 		} catch (JSONException e) {
 		}
 		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 		HttpUtils http = Tools.getHttpUtils();
 		http.send(HttpRequest.HttpMethod.POST, URL.GET_MY_WATCH, params, new RequestCallBack<String>() {
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+				String result = Tools.decodeString(responseInfo.result);
 				String error = null;
 				JSONObject json = null;
 				List<WatchEntity> list = null;
@@ -315,16 +314,17 @@ public class UserUtil extends BaseHttpUtil {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_GET_MY_FAVOR_EVENT);
 			data.put(PARAM_KEYS.USERID, session.getId());
 			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
+			data.put(PARAM_KEYS.DECODE_CONTENT, PARAM_VALUES.N);
 //			data.put(PARAM_KEYS.PAGENO, page);
 		} catch (JSONException e) {
 		}
 		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 		HttpUtils http = Tools.getHttpUtils();
 		http.send(HttpRequest.HttpMethod.POST, URL.GET_MY_FAVOR_EVENT, params, new RequestCallBack<String>() {
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+				String result = Tools.decodeString(responseInfo.result);
 				String error = null;
 				JSONObject json = null;
 				List<EventEntity> list = null;
@@ -420,13 +420,13 @@ public class UserUtil extends BaseHttpUtil {
 		} catch (JSONException e) {
 		}
 		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 		HttpUtils http = Tools.getHttpUtils();
 		http.send(HttpRequest.HttpMethod.POST, URL.GET_MY_MSG, params, new RequestCallBack<String>() {
 			
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+				String result = Tools.decodeString(responseInfo.result);
 				String error = null;
 				JSONObject json = null;
 				List<MessageEntity> list = new ArrayList<MessageEntity>();
@@ -467,16 +467,17 @@ public class UserUtil extends BaseHttpUtil {
 			data.put(PARAM_KEYS.USERID, session.getId());
 			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.PAGENO, page);
+			data.put(PARAM_KEYS.DECODE_CONTENT, PARAM_VALUES.N);
 		} catch (JSONException e) {
 		}
 		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 		HttpUtils http = Tools.getHttpUtils();
 		http.send(HttpRequest.HttpMethod.POST, URL.GET_MY_EVENT, params, new RequestCallBack<String>() {
 			
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+				String result = Tools.decodeString(responseInfo.result);
 				String error = null;
 				JSONObject json = null;
 				List<EventEntity> list = new ArrayList<EventEntity>();
@@ -517,17 +518,17 @@ public class UserUtil extends BaseHttpUtil {
 			data.put(PARAM_KEYS.USERID, session.getId());
 			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.BYUSER, user_id);
+			data.put(PARAM_KEYS.DECODE_CONTENT, PARAM_VALUES.N);
 		} catch (JSONException e) {
 		}
 		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 		HttpUtils http = Tools.getHttpUtils();
 		http.send(HttpRequest.HttpMethod.POST, URL.GET_USER_EVENT, params, new RequestCallBack<String>() {
 			
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo) {
-				
-				String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+				String result = Tools.decodeString(responseInfo.result);
 				String error = null;
 				JSONObject json = null;
 				List<EventEntity> list = new ArrayList<EventEntity>();
@@ -566,12 +567,12 @@ public class UserUtil extends BaseHttpUtil {
 		} catch (JSONException e) {
 		}
 		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 		HttpUtils http = Tools.getHttpUtils();
 		http.send(HttpRequest.HttpMethod.POST, URL.CHECK_PHONE_REG, params, new RequestCallBack<String>() {
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+				String result = Tools.decodeString(responseInfo.result);
 				String error = null;
 				JSONObject json = null;
 				try {
@@ -688,7 +689,7 @@ public class UserUtil extends BaseHttpUtil {
 		} catch (JSONException e) {
 		}
 		RequestParams params = new RequestParams();
-		params.addQueryStringParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		params.addQueryStringParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 		params.addBodyParameter(PARAM_KEYS.UPLOAD_SFULL, new File(big_head_path));
 		params.addBodyParameter(PARAM_KEYS.UPLOAD_SFILE, new File(small_head_path));
 
@@ -697,7 +698,7 @@ public class UserUtil extends BaseHttpUtil {
 		    new RequestCallBack<String>() {
 		        @Override
 		        public void onSuccess(ResponseInfo<String> responseInfo) {
-		        	String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+		        	String result = Tools.decodeString(responseInfo.result);
 					String error = null;
 					String file_url = null;
 					String full_url = null;
@@ -738,15 +739,16 @@ public class UserUtil extends BaseHttpUtil {
 			data.put(PARAM_KEYS.POSLAT, poslat);
 			data.put(PARAM_KEYS.POSLONG, poslong);
 			data.put(PARAM_KEYS.PAGENO, page);
+			data.put(PARAM_KEYS.DECODE_CONTENT, PARAM_VALUES.N);
 		} catch (JSONException e) {
 		}
 		RequestParams params = new RequestParams();
-		params.addQueryStringParameter(PARAM_KEYS.COMMAND, Base64.encodeToString(data.toString().getBytes(), Base64.DEFAULT));
+		params.addQueryStringParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 		HttpUtils http = Tools.getHttpUtils();
 		http.send(HttpRequest.HttpMethod.POST, ServerConstants.URL.GET_WATCH_GROUP, params, new RequestCallBack<String>() {
 			@Override
 			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = new String(Base64.decode(responseInfo.result, Base64.DEFAULT));
+				String result = Tools.decodeString(responseInfo.result);
 				String error = null;
 				JSONObject json = null;
 				List<EventEntity> list = null;

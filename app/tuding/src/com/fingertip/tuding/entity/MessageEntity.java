@@ -13,9 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Base64;
-
 import com.fingertip.tuding.common.UserSession;
+import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.Validator;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
 import com.lidroid.xutils.db.annotation.Column;
@@ -103,7 +102,7 @@ public class MessageEntity implements Serializable{
 				e.printStackTrace();
 			}
 			msg.sender = user;
-			String says = new String(Base64.decode(j.getString(PARAM_KEYS.SAYS), Base64.DEFAULT));
+			String says = Tools.decodeString(j.getString(PARAM_KEYS.SAYS));
 			msg.says = SaysEntity.parseJson(new JSONObject(says));
 			
 			MessageDbEntity msg_db = new MessageDbEntity();
@@ -134,7 +133,7 @@ public class MessageEntity implements Serializable{
 				sender.nick_name = mde.sender_name;
 				sender.head_img_url = mde.sender_head;
 				msg.sender = sender;
-				String says = new String(Base64.decode(mde.says, Base64.DEFAULT));
+				String says = Tools.decodeString(mde.says);
 				try {
 					msg.says = SaysEntity.parseJson(new JSONObject(says));
 				} catch (JSONException e) {
@@ -173,10 +172,10 @@ public class MessageEntity implements Serializable{
 		public static SaysEntity parseJson(JSONObject json) throws JSONException {
 			SaysEntity says = new SaysEntity();
 			says.kind = json.getString(PARAM_KEYS.KIND);
-			says.content = new String(Base64.decode(json.getString(PARAM_KEYS.CONTENT), Base64.DEFAULT));
+			says.content = Tools.decodeString(json.getString(PARAM_KEYS.CONTENT));
 			String quote = json.has(PARAM_KEYS.QUOTE) ? json.getString(PARAM_KEYS.QUOTE) : null;
 			if (!Validator.isEmptyString(quote))
-				says.quote = new String(Base64.decode(quote, Base64.DEFAULT));
+				says.quote = Tools.decodeString(quote);
 			String jumpparam = json.has(PARAM_KEYS.JUMPPARAM) ? json.getString(PARAM_KEYS.JUMPPARAM) : null;
 			if (!Validator.isEmptyString(jumpparam)) {
 				says.jumpparam = json.getString(PARAM_KEYS.JUMPPARAM);

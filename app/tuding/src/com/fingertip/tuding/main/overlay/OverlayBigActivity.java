@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
@@ -53,43 +54,20 @@ import com.umeng.analytics.MobclickAgent;
  */
 public class OverlayBigActivity extends BaseActivity implements View.OnClickListener {
 
-	private LinearLayout layout_main;
-	private ImageView iv_head;
-	private TextView tv_title;
-	private TextView tv_name;
-	/* * */
-	private TextView tv_time;
-	private TextView tv_detail;
-	private TextView tv_collection;
-	/** 收藏按钮 **/
-	private TextView tv_btnCollection;
-	/* 评论标题 * */
-	private TextView tv_recommendTopic;
-	/* 评论 * */
-	private TextView tv_recommend;
-	private LinearLayout layout_img;
-	/* * */
-	private LinearLayout layout_commend;
-	// 主题图片
-	private ImageView iv_topic;
-
+	private LinearLayout layout_main, layout_img, layout_commend, layout_collection, layout_share;
+	private ImageView iv_head, iv_topic;
+	private TextView tv_title, tv_name, tv_time, tv_detail, tv_collection, 
+		tv_btnCollection, tv_recommendTopic, tv_recommend, tv_accusation;
+	private WebView wv_detail;
+	
 	private EventEntity event;
-
 	private BitmapUtils bitmapUtils;
 	private SharedPreferenceUtil sp;
 
 	// 屏幕左右间隔
 	private int screenMargin = 80;
-
 	/** 当前评论页数 **/
 	private int pageIndex_recommend = 1;
-
-	// 马上举报
-	private TextView tv_accusation;
-
-	// 收藏和邀请的布局
-	private LinearLayout layout_collection, layout_share;
-
 	private boolean isFirst = true;
 
 	private UserSession session;
@@ -127,6 +105,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		tv_accusation = (TextView) findViewById(R.id.tv_accusation);
 		layout_collection = (LinearLayout) findViewById(R.id.layout_collection);
 		layout_share = (LinearLayout) findViewById(R.id.layout_share);
+		wv_detail = (WebView) findViewById(R.id.wv_detail);
 	}
 
 	private void setupViews() {
@@ -167,7 +146,15 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		}
 		tv_title.setText(event.title);
 		tv_name.setText(event.sender.nick_name);
-		tv_detail.setText(event.content);
+		if (EventEntity.SHOWMODE_DEFAULT.equals(event.showmode)) {
+			wv_detail.setVisibility(View.GONE);
+			tv_detail.setVisibility(View.VISIBLE);
+			tv_detail.setText(event.content);
+		} else if (EventEntity.SHOWMODE_RICH.equals(event.showmode)) {
+			wv_detail.setVisibility(View.VISIBLE);
+			tv_detail.setVisibility(View.GONE);
+			wv_detail.loadData(event.content, "text/html", "UTF-8");
+		}
 		tv_collection.setText("" + event.viewcount);// 调用浏览次数
 		// tv_collection.setText("" + overlayEntity.appraiseCount);
 		tv_recommendTopic.setText("评论（" + event.replycount + "）");

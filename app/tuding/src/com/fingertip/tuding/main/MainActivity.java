@@ -83,10 +83,10 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	private ScrollTouchView  view_tab;
 	
 	/** 地图数据 **/
-//	private ArrayList<EventEntity> event_list = new ArrayList<EventEntity>();
 	private HashSet<String> event_id_set = new HashSet<String>();
-//	private ArrayList<Marker> marker_list = new ArrayList<Marker>();
+	private HashSet<String> multi_event_id_set = new HashSet<String>();
 	private HashMap<Marker, EventEntity> marker_map = new HashMap<Marker, EventEntity>();
+	
 	
 	private ImageView user_info_img;
 	private Intent service;
@@ -96,7 +96,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	private int quit_idle = 2000;
 	
 	private SDKReceiver mSDKReceiver;
-	private String last_click_event_id = null;
+	private Marker last_click_marker = null;
 	
 	private BitmapUtils bitmapUtils;
 	private SharedPreferenceUtil sp;
@@ -105,6 +105,9 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	private String current_type = EventType.ALL.getType();
 	
 	private boolean load_data = false;
+	private LatLng last_lat = null;
+	
+	private static int MULTI_COUNT = 3;
 	
 	@SuppressLint("HandlerLeak")
 	private Handler handler = new Handler() {
@@ -323,7 +326,6 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	
 	@SuppressLint("InflateParams")
 	private Marker setOverlayData(final EventEntity event){
-		final LatLng point = new LatLng(event.poslat, event.poslong);
 		Context context = MainActivity.this;
 		final View view_markerImage = LayoutInflater.from(context).inflate(R.layout.view_marker_img, null);
 		ImageView iv_markerImg = (ImageView)view_markerImage.findViewById(R.id.image);
@@ -355,27 +357,107 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 				
 				@Override
 				public void loadSucceed() {
-					addOverlay(event, view_markerImage, point);				
+					addOverlay(event, view_markerImage);				
 				}
 				
 				@Override
 				public void loadFail() {
-					addOverlay(event, view_markerImage, point);
+					addOverlay(event, view_markerImage);
 				}
 			});
 		} else
-			return addOverlay(event, view_markerImage, point);
+			return addOverlay(event, view_markerImage);
 		return null;
 	}
 	
-	private Marker addOverlay(EventEntity event, View view_markerImage, LatLng point) {
-		BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromView(view_markerImage);
-		OverlayOptions options = new MarkerOptions().position(point).icon(bitmapDescriptor).draggable(false);
-		Marker marker = (Marker)(baiduMap.addOverlay(options));
-//		if(!marker_list.contains(marker))
-//			marker_list.add(marker);
-		marker_map.put(marker, event);
-		return marker;
+	private Marker addOverlay(EventEntity event, View view_markerImage) {
+		if (event.poslist.size() > 1 && last_lat != null) {
+			view_markerImage = null;
+			List<EventEntity> events = EventEntity.getNearestEvents(event, last_lat.longitude, last_lat.latitude, MULTI_COUNT);
+			if (event.poslist.size() > MULTI_COUNT)
+				multi_event_id_set.add(event.id);
+			return addMultiOverlay(events);
+		} else {
+			if (view_markerImage != null) {
+				LatLng point = new LatLng(event.poslat, event.poslong);
+				BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromView(view_markerImage);
+				OverlayOptions options = new MarkerOptions().position(point).icon(bitmapDescriptor).draggable(false);
+				Marker marker = (Marker)(baiduMap.addOverlay(options));
+				marker_map.put(marker, event);
+				return marker;
+			}
+			return null;
+		}
+	}
+	
+	//返回最近的一个
+	@SuppressLint("InflateParams")
+	private Marker addMultiOverlay(List<EventEntity> events) {
+		Marker result = null;
+		for (int i = 0; i < events.size(); i++) {
+			View view_markerImage = LayoutInflater.from(this).inflate(R.layout.view_marker_img, null);
+			ImageView iv_markerImg = (ImageView)view_markerImage.findViewById(R.id.image);
+			EventEntity event = events.get(i);
+			EventType event_type = event.event_type;
+			if (event_type == EventType.SPORTS) {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_5);
+				iv_markerImg.setImageDrawable(getResources().getDrawable(R.drawable.icon_event_type_sports));
+			} else if (event_type == EventType.SOCIALITY) {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_3);
+				iv_markerImg.setImageDrawable(getResources().getDrawable(R.drawable.icon_event_type_party));
+			} else if (event_type == EventType.PERFORM) {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_4);
+				iv_markerImg.setImageDrawable(getResources().getDrawable(R.drawable.icon_event_type_show));
+			} else if (event_type == EventType.STUDY) {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_1);
+				iv_markerImg.setImageDrawable(getResources().getDrawable(R.drawable.icon_event_type_study));
+			} else if (event_type == EventType.SPECIAL) {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_2);
+				iv_markerImg.setImageDrawable(getResources().getDrawable(R.drawable.icon_event_type_special_selling));
+			} else if (event_type == EventType.OTHER) {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_4);
+				iv_markerImg.setImageDrawable(getResources().getDrawable(R.drawable.icon_event_type_others));
+			} else {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_6);
+				iv_markerImg.setImageDrawable(getResources().getDrawable(R.drawable.icon_event_type_all));
+			}
+			LatLng point = new LatLng(event.poslat, event.poslong);
+			BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromView(view_markerImage);
+			OverlayOptions options = new MarkerOptions().position(point).icon(bitmapDescriptor).draggable(false);
+			Marker marker = (Marker)(baiduMap.addOverlay(options));
+//			if(!marker_list.contains(marker))
+//				marker_list.add(marker);
+			marker_map.put(marker, event);
+			if (i == events.size() - 1)
+				result = marker;
+		}
+		return result;
+	}
+	
+	private void refreshMultiEvents() {
+		if (!multi_event_id_set.isEmpty()) {
+			HashSet<String> id_set = new HashSet<String>();
+			List<EventEntity> multi_events = new ArrayList<EventEntity>();
+			for (Iterator<Marker> it = marker_map.keySet().iterator(); it.hasNext();) {
+				Marker marker = it.next();
+				EventEntity event = marker_map.get(marker);
+				if (multi_event_id_set.contains(event.id)) {
+					marker.remove();
+					it.remove();
+					marker = null;
+					if (id_set.add(event.id))
+						multi_events.add(event);
+					else
+						event = null;
+				}
+			}
+			if (!multi_events.isEmpty()) {
+				for (EventEntity event : multi_events) {
+					addOverlay(event, null);
+				}
+			}
+		}
+		
 	}
 	
 //	private void resetOverlay() {
@@ -532,8 +614,10 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		if (ll != null && ll.latitude != 0 && ll.longitude != 0) {
 			latitude = ll.latitude;
 			longitude = ll.longitude;
+			refreshMultiEvents();
 		}
 		if (latitude > 0 && longitude > 0) {
+			last_lat = new LatLng(latitude, longitude);
 			EventUtil.searchEvents(EventUtil.Type.nearest, longitude + "", latitude + "", 1, new EntityListCallback<EventEntity>(){
 				@Override
 				public void succeed(List<EventEntity> list) {
@@ -603,28 +687,29 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	}
 	
 	private boolean clickMarker(Marker marker) {
-		final EventEntity event = marker_map.get(marker);
+		EventEntity event = marker_map.get(marker);
 		if (event == null){
 			Log.e(TAG, "overlayt is null");
 			return false;
 		}
-		if (last_click_event_id != null && last_click_event_id.equals(event.id)) {
+		if (last_click_marker != null && last_click_marker == marker) {
 			Intent intent = new Intent();
 			intent.setClass(MainActivity.this, OverlayBigActivity.class);
 			intent.putExtra(BaseActivity.EXTRA_PARAM, event);
 			startActivity(intent);
 			return true;
 		}
-		last_click_event_id = event.id;
+		last_click_marker = marker;
 		ViewMapOverlay viewMapOverlay = new ViewMapOverlay(getApplicationContext());
 		viewMapOverlay.setEventEntity(event);
+		final EventEntity final_event = event;
 		viewMapOverlay.setOnClickListener(new View.OnClickListener() {					
 			@Override
 			public void onClick(View v) {
 				baiduMap.hideInfoWindow();
 				Intent intent = new Intent();
 				intent.setClass(MainActivity.this, OverlayBigActivity.class);
-				intent.putExtra(BaseActivity.EXTRA_PARAM, event);
+				intent.putExtra(BaseActivity.EXTRA_PARAM, final_event);
 				startActivity(intent);
 			}
 		});

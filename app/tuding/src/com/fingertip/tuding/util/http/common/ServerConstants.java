@@ -156,6 +156,7 @@ public class ServerConstants {
 		public static String DECODE_CONTENT = "decode_content";
 		public static String METERS = "meters";
 		public static String SHOWMODE = "showmode";
+		public static String POSLIST = "poslist";
 		
 		/**
 		 * comment
@@ -233,6 +234,8 @@ public class ServerConstants {
 
 		public static String SHOWMODE_DEFAULT = "mo";
 		public static String SHOWMODE_BIG = "big";
+		public static String STATUS_LIVE = "live";
+		public static String STATUS_OVER = "over";
 		
 		/**
 		 * msg
@@ -263,6 +266,9 @@ public class ServerConstants {
 		
 		public static String RESULT_SUCCEED = "y";
 		public static String RESULT_FAIL = "n";
+		
+		public static String N = "n";
+		public static String Y = "y";
 		
 		public static String INFOR_MINI = "mini";
 		public static String INFOR_STAND = "stand";
