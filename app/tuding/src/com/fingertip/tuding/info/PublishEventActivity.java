@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -171,10 +172,9 @@ public class PublishEventActivity extends BaseActivity{
 			latitude = data.getDoubleExtra(MapPositionSelectionActivity.KEY_LAT, 0);
 			longitude = data.getDoubleExtra(MapPositionSelectionActivity.KEY_LONG, 0);
 		} else if (requestCode == REQUEST_PIC) {
-			ArrayList<String> pics = data.getStringArrayListExtra(SelectPicActivity.KEY_PICS);
-			if (!Validator.isEmptyList(pics)) {
-				String picString = pics.get(0);
-			}
+			Uri path = data.getData();
+			if (path != null) 
+				et_content.insertPic(path.getPath());
 		}
 	}
 	

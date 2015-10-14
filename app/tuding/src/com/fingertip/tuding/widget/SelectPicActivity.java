@@ -92,7 +92,7 @@ public class SelectPicActivity extends BaseActivity implements OnDirSelectListen
 			single = true;
 		else if (intent.hasExtra(KEY_MAX_COUNT))
 			max_count = intent.getIntExtra(KEY_MAX_COUNT, DEFAULT_MAX_COUNT);
-		if (intent.hasExtra(KEY_CUT))
+		if (intent.hasExtra(KEY_CUT) && intent.getBooleanExtra(KEY_CUT, false))
 			cut_pic = true;
 	}
 
