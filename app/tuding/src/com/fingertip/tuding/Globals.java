@@ -14,9 +14,9 @@ public class Globals {
 	/** 手机目录名称 **/
 	public static final String PATH_BASE = "tuding";
 	/** 缓存目录 **/
-	public static final String PATH_CACH = PATH_BASE + File.separator + "cache";
+	public static final String PATH_CACHE = PATH_BASE + File.separator + "cache";
 
-	public static final String UPLOAD_CACH = "upload";
+	public static final String IMG_DIR = "img", UPLOAD_DIR = "upload", LOG_DIR = "log", PREVIEW_DIR = "preview";
 	
 	/** 微信appid **/
 	public static final String APPID_WX = "wx2ba593638ec9fab5";

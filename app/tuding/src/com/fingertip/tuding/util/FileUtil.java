@@ -2,6 +2,7 @@ package com.fingertip.tuding.util;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -136,7 +137,7 @@ public class FileUtil {
 	public static void writeLog(String log) {
 		try {
 			String log_path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator 
-				+ Globals.PATH_CACH + File.separator + "log";
+				+ Globals.PATH_CACHE + File.separator + Globals.LOG_DIR;
 			File dir = new File(log_path);
 			if (!dir.exists())
 				dir.mkdirs();
@@ -147,5 +148,25 @@ public class FileUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static boolean copyFile(String from_path, String to_path) {
+		File from = new File(from_path);
+		if (!from.exists())
+			return false;
+		try {  
+            FileInputStream in = new FileInputStream(from);  
+            FileOutputStream out = new FileOutputStream(to_path);  
+            byte[] bt = new byte[1024];  
+            int count;  
+            while ((count = in.read(bt)) > 0) {  
+                out.write(bt, 0, count);  
+            }  
+            in.close();  
+            out.close();  
+            return true;  
+        } catch (IOException ex) {  
+            return false;  
+        }  
 	}
 }

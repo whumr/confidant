@@ -44,11 +44,11 @@ public class UploadUtil extends BaseHttpUtil {
 		});
 	}
 	
-	public static void uplodaImg(String path, final EntityCallback<UploadImgEntity> callback) {
-		uplodaImg(path, ServerConstants.SMALL_PIC_KB, ServerConstants.BIG_PIC_KB, callback);
-	}
+//	public static void uplodaImg(String path, final EntityCallback<UploadImgEntity> callback) {
+//		uplodaImg(path, ServerConstants.SMALL_PIC_KB, ServerConstants.BIG_PIC_KB, callback);
+//	}
 	
-	public static void uplodaImg(String path, int small_kb, int big_kb, final EntityCallback<UploadImgEntity> callback) {
+	public static void uplodaImg(String path, final EntityCallback<UploadImgEntity> callback) {
 //		"fc":"upload_file", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", "filefor":"Í·Ïñ"
 //		sfile ËõÂÔÍ¼, sfull Ô­Í¼
 		if (path.startsWith("http:")) {

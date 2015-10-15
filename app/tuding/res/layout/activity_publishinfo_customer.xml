@@ -109,7 +109,9 @@
                     android:paddingRight="12dp"
                     android:paddingTop="8dp"
                     android:singleLine="false"
+                    android:minLines="3"
                     android:hint="活动详情"
+                    android:gravity="top"
                     android:text=""
                     android:textSize="18sp" />
                 
@@ -356,18 +358,39 @@
                 android:layout_height="1dp"
                 android:background="@color/gray_d7" />
 
-            <TextView
-                android:id="@+id/tv_submit"
-                android:layout_width="wrap_content"
+            <LinearLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="36dp"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/bg_btn_publish_blue"
-                android:gravity="center"
-                android:text="立即发布"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
+                android:gravity="center">
+                
+                <TextView
+	                android:id="@+id/tv_preview"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_gravity="center"
+	                android:layout_marginBottom="36dp"
+	                android:layout_marginTop="24dp"
+	                android:layout_marginRight="20dp"
+	                android:background="@drawable/bg_btn_publish_blue"
+	                android:gravity="center"
+	                android:text="预览"
+	                android:textColor="@color/white"
+	                android:textSize="18sp" />
+                
+                <TextView
+	                android:id="@+id/tv_submit"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_gravity="center"
+	                android:layout_marginBottom="36dp"
+	                android:layout_marginTop="24dp"
+	                android:layout_marginLeft="20dp"
+	                android:background="@drawable/bg_btn_publish_blue"
+	                android:gravity="center"
+	                android:text="立即发布"
+	                android:textColor="@color/white"
+	                android:textSize="18sp" />
+            </LinearLayout>
+            
         </LinearLayout>
     </ScrollView>
 

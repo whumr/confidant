@@ -697,7 +697,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		if (last_click_marker != null && last_click_marker == marker) {
 			Intent intent = new Intent();
 			intent.setClass(MainActivity.this, OverlayBigActivity.class);
-			intent.putExtra(BaseActivity.EXTRA_PARAM, event);
+			intent.putExtra(EXTRA_PARAM, event);
 			startActivity(intent);
 			return true;
 		}
@@ -711,7 +711,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 				baiduMap.hideInfoWindow();
 				Intent intent = new Intent();
 				intent.setClass(MainActivity.this, OverlayBigActivity.class);
-				intent.putExtra(BaseActivity.EXTRA_PARAM, final_event);
+				intent.putExtra(EXTRA_PARAM, final_event);
 				startActivity(intent);
 			}
 		});

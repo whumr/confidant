@@ -180,6 +180,9 @@
         <activity  android:name="com.fingertip.tuding.info.PublishEventActivity"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" />
         
+        <activity android:name="com.fingertip.tuding.info.PreviewEventActivity" 
+            android:theme="@style/MyDialogStyleTop"/>
+        
         <!-- 检索 -->
         <activity android:name="com.fingertip.tuding.search.SearchMainActivity" />
         
@@ -238,7 +241,6 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:screenOrientation="portrait">
         </activity>
-        
         
         <!-- 百度地图 -->
         <service

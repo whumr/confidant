@@ -1,5 +1,6 @@
 package com.fingertip.tuding.info.widget;
 
+import java.io.File;
 import java.util.Arrays;
 
 import android.content.Context;
@@ -21,6 +22,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.EditText;
 
+import com.fingertip.tuding.util.ImageCache;
+import com.fingertip.tuding.util.http.common.UploadImgEntity;
+
 public class RichEditText extends EditText {
 	
 	public static int COLOR_BLACK = 0x000000 | 0xFF000000, COLOR_BLUE = 0x3399db | 0xFF000000;
@@ -33,6 +37,7 @@ public class RichEditText extends EditText {
 	private int last_start, last_count;
 	private EditorListner editorListner;
 	private int default_text_size = 20, big_text_size = 30;
+	private int pic_index = 0;
 
 	public RichEditText(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -150,7 +155,8 @@ public class RichEditText extends EditText {
 		MetricAffectingSpan[] last_spans = null;
 		for (int i = 0; i < editable.length(); i++) {
 			MetricAffectingSpan[] spans = editable.getSpans(i, i + 1, MetricAffectingSpan.class);
-			if (spans != null && spans.length == 1 && spans[0] instanceof ImageSpan)
+			ImageSpan image = getImageSpan(spans);
+			if (image != null)
 				buffer.append(getHtmlImg((ImageSpan)spans[0]));
 			else {
 				String text = toHtml(editable.subSequence(i, i + 1).toString());
@@ -165,6 +171,16 @@ public class RichEditText extends EditText {
 		}
 		buffer.append(getHtmlEnd(last_spans));
 		return buffer.toString();
+	}
+	
+	private ImageSpan getImageSpan(MetricAffectingSpan[] spans) {
+		if (spans != null && spans.length > 0) {
+			for (MetricAffectingSpan span : spans) {
+				if (span instanceof ImageSpan)
+					return (ImageSpan)span;
+			}
+		}
+		return null; 
 	}
 	
 	private String toHtml(String text) {
@@ -198,7 +214,6 @@ public class RichEditText extends EditText {
 		for (MetricAffectingSpan span : spans) {
 			if (span instanceof TextAppearanceSpan) {
 				color = ((TextAppearanceSpan) span).getTextColor().getColorForState(EMPTY, -1);
-				Log.e("getTextColor", Integer.toHexString(color));
 			} else if (span instanceof AbsoluteSizeSpan) {
 				int font_size = ((AbsoluteSizeSpan) span).getSize();
 				_big = font_size == big_text_size;
@@ -206,7 +221,7 @@ public class RichEditText extends EditText {
 				_bold = true;
 		}
 		StringBuilder builder = new StringBuilder();
-		builder.append(COLOR_BLACK != color && -1 != color ? "<font color=\"" + Integer.toHexString(color) + "\">" : "")
+		builder.append(COLOR_BLACK != color && -1 != color ? "<font color=\"#" + Integer.toHexString(color).substring(2) + "\">" : "")
 			.append(_big ? "<big>" : "")
 			.append(_bold ? "<b>" : "");
 		return builder.toString();
@@ -235,8 +250,10 @@ public class RichEditText extends EditText {
 	}
 	
 	public void insertPic(String path) {
+		UploadImgEntity img_entity = ImageCache.compressImageForPreview(path, pic_index++);
+		path = img_entity.small_file.getAbsolutePath();
 		int nowLocation = getSelectionStart();  
-        getText().insert(nowLocation, Html.fromHtml("<img src=\"" + path + "\" width=\"100%\"/>", imageGetter, null));
+        getText().insert(nowLocation, Html.fromHtml("<br><img src=\"" + path + "\" width=\"100%\"/><br>", imageGetter, null));
 	}
 	
 	public boolean isFont_bold() {
@@ -275,7 +292,9 @@ public class RichEditText extends EditText {
 		
 		@Override
 		public Drawable getDrawable(String source) {
-			Drawable d = new BitmapDrawable(getResources(), BitmapFactory.decodeFile(source));
+			int index = source.lastIndexOf(File.separator);
+			source = index > 0 ? source.substring(index) : source;
+			Drawable d = new BitmapDrawable(getResources(), BitmapFactory.decodeFile(ImageCache.getPreviewDir() + source));
 			d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
 			return d;
 		}

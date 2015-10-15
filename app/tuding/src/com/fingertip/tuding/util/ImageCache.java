@@ -24,7 +24,7 @@ import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 public class ImageCache {
 
 	private static String IMG_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator 
-			+ Globals.PATH_CACH + File.separator + "img" + File.separator;
+			+ Globals.PATH_CACHE + File.separator + Globals.IMG_DIR + File.separator;
 	private static String IMG_FORMAT = ".h";
 	private static String IMG_HD_FORMAT = ".hd.h";
 	private static String IMG_TMP_FORMAT = ".tmp";
@@ -214,26 +214,6 @@ public class ImageCache {
 		return baos.toByteArray().length / 1024 <= kb;
 	}
 	
-	public static UploadImgEntity compressImageForUpload(String path) {
-		File file = new File(path);
-		long kb = file.length() / 1024;
-		boolean save_big = false;
-		UploadImgEntity entity = new UploadImgEntity();
-		if (kb <= ServerConstants.SMALL_PIC_KB) {
-			entity.small_file = file;
-			entity.big_file = file;
-			return entity;
-		}
-		if (kb <= ServerConstants.BIG_PIC_KB) {
-			entity.big_file = file;
-			save_big = true;
-		}
-		if (!save_big)
-			entity.big_file = new File(compressImageForUpload(path, true, kb));
-		entity.small_file = new File(compressImageForUpload(path, false, kb));
-		return entity;
-	}
-	
 	private static Bitmap getCompressImg(String image_path, int result_kb) {
 		File file = new File(image_path);
 		if (!file.exists())
@@ -251,16 +231,68 @@ public class ImageCache {
         return BitmapFactory.decodeFile(image_path, options);
 	}
 	
-	private static String compressImageForUpload(String image_path, boolean big, long kb) {
+	public static UploadImgEntity compressImageForUpload(String path) {
+		return compressImageForUpload(path, Globals.UPLOAD_DIR, -1, false);
+	}
+	
+	public static UploadImgEntity compressImageForPreview(String path, int index) {
+		if (index == 0)
+			clearPreviewCache();
+		return compressImageForUpload(path, Globals.PREVIEW_DIR, index, true);
+	}
+	
+	private static void clearPreviewCache() {
+		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator 
+				+ Globals.PATH_CACHE + File.separator + Globals.PREVIEW_DIR;
+		File dir_file = new File(path);
+		if (dir_file.exists()) {
+			FileUtil.deleteDir(dir_file);
+		}
+	}
+	
+	private static UploadImgEntity compressImageForUpload(String path, String dir, int index, boolean force_copy) {
+		File file = new File(path);
+		long kb = file.length() / 1024;
+		boolean save_big = false;
+		UploadImgEntity entity = new UploadImgEntity();
+		if (kb <= ServerConstants.SMALL_PIC_KB) {
+			if (force_copy) {
+				entity.small_file = new File(copyImageForUpload(path, dir, index, false));
+				entity.big_file = new File(copyImageForUpload(path, dir, index, true));
+			} else {
+				entity.small_file = file;
+				entity.big_file = file;
+			}
+			return entity;
+		}
+		if (kb <= ServerConstants.BIG_PIC_KB) {
+			entity.big_file = file;
+			save_big = true;
+		}
+		if (!save_big)
+			entity.big_file = new File(compressImageForUpload(path, dir, index, true, kb));
+		else if (force_copy)
+			entity.big_file = new File(copyImageForUpload(path, dir, index, true));
+		entity.small_file = new File(compressImageForUpload(path, dir, index, false, kb));
+		return entity;
+	}
+	
+	private static String copyImageForUpload(String path, String dir, int index, boolean big) {
+		String to_path = getUploadImgPath(dir, index, big);
+		FileUtil.copyFile(path, to_path);
+		return to_path;
+	}
+	
+	private static String compressImageForUpload(String image_path, String dir, int index, boolean big, long kb) {
 		BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = false;
         int size = (int)kb / (big ? ServerConstants.BIG_PIC_KB : ServerConstants.SMALL_PIC_KB);
         int i = 1;
-        while (i < size)
+        while (i <= size)
         	i = i<<1;
         options.inSampleSize = i;
         Bitmap image = BitmapFactory.decodeFile(image_path, options);
-		String path = getUploadImgPath(big);
+		String path = getUploadImgPath(dir, index, big);
 		FileUtil.saveImage(image, path);
 		if (big)
 			Log.e("saveImage  big", (new File(path).length() / 1024) + " " + path);
@@ -269,13 +301,21 @@ public class ImageCache {
 		return path;
 	}
 
-	private static String getUploadImgPath(boolean big) {
-		File dir = new File(IMG_PATH + Globals.UPLOAD_CACH);
-		if (!dir.exists())
-			dir.mkdirs();
-		return IMG_PATH + Globals.UPLOAD_CACH + File.separator + (big ? IMG_UPLOAD_BIG : IMG_UPLOAD_SMALL);
+	private static String getUploadImgPath(String dir, int index, boolean big) {
+		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator 
+				+ Globals.PATH_CACHE + File.separator + dir;
+		File dir_file = new File(path);
+		if (!dir_file.exists())
+			dir_file.mkdirs();
+		String prefix = index >= 0 ? index + "" : "";
+		return path + File.separator + prefix + (big ? IMG_UPLOAD_BIG : IMG_UPLOAD_SMALL);
 	}
 	
+	public static String getPreviewDir() {
+		return Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator 
+				+ Globals.PATH_CACHE + File.separator + Globals.PREVIEW_DIR;
+	}
+
 	public static String getCutImgPath() {
 		File dir = new File(IMG_PATH);
 		if (!dir.exists())

@@ -58,7 +58,7 @@ public class SettingActivity extends BaseNavActivity implements View.OnClickList
 		clear_cache.setOnClickListener(this);
 		logout.setOnClickListener(this);
 		
-		cache_dir = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + Globals.PATH_CACH;
+		cache_dir = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + Globals.PATH_CACHE;
 		
 		getCacheSize();
 		try {

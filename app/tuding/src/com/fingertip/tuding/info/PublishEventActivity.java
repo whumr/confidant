@@ -1,12 +1,17 @@
 package com.fingertip.tuding.info;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -17,6 +22,8 @@ import android.widget.TextView;
 
 import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseActivity;
+import com.fingertip.tuding.common.UserSession;
+import com.fingertip.tuding.entity.EventEntity;
 import com.fingertip.tuding.entity.EventEntity.EventType;
 import com.fingertip.tuding.info.widget.RichEditText;
 import com.fingertip.tuding.main.widget.DialogDate;
@@ -24,16 +31,23 @@ import com.fingertip.tuding.main.widget.DialogDate.OnDateSelectdListener;
 import com.fingertip.tuding.main.widget.MapPositionSelectionActivity;
 import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.Validator;
-import com.fingertip.tuding.widget.SelectPicActivity;
+import com.fingertip.tuding.util.http.EventUtil;
+import com.fingertip.tuding.util.http.UploadUtil;
+import com.fingertip.tuding.util.http.UploadUtil.UploadCallback;
+import com.fingertip.tuding.util.http.callback.EntityCallback;
+import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_VALUES;
+import com.fingertip.tuding.util.http.common.UploadImgEntity;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class PublishEventActivity extends BaseActivity{
 	
 	private static final int REQUEST_POS = 1000;
 	private static final int REQUEST_PIC = 1001;
+	private static SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 	public static int MAX_PIC_SIZE = 9;
 	
-	private TextView tv_submit,
+	
+	private TextView tv_submit, tv_preview,
 		tv_position, tv_type_hint, tv_start_time_hint, tv_end_time_hint,
 		tv_special, tv_perform, tv_sociality, tv_sports, tv_study, tv_other;
 	private EditText et_title;
@@ -45,6 +59,8 @@ public class PublishEventActivity extends BaseActivity{
 	private double latitude = 0, longitude = 0;
 	
 	private TextView img_txt, bold_txt, big_txt, color_txt;
+	
+	private UserSession session;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +72,7 @@ public class PublishEventActivity extends BaseActivity{
 
 	private void setupViews() {
 		tv_submit = (TextView)findViewById(R.id.tv_submit);
+		tv_preview = (TextView)findViewById(R.id.tv_preview);
 		tv_position = (TextView)findViewById(R.id.tv_position);
 		et_title = (EditText)findViewById(R.id.et_title);
 		et_content = (RichEditText)findViewById(R.id.et_content);
@@ -65,6 +82,7 @@ public class PublishEventActivity extends BaseActivity{
 		
 		findViewById(R.id.iv_back).setOnClickListener(onClickListener);
 		tv_submit.setOnClickListener(onClickListener);
+		tv_preview.setOnClickListener(onClickListener);
 		
 		
 		tv_type_hint = (TextView)findViewById(R.id.tv_type_hint);
@@ -97,6 +115,8 @@ public class PublishEventActivity extends BaseActivity{
 		bold_txt.setOnClickListener(onClickListener);
 		big_txt.setOnClickListener(onClickListener);
 		color_txt.setOnClickListener(onClickListener);
+		
+		session = UserSession.getInstance();
 	}
 	
 	private void initDialog(){
@@ -191,6 +211,9 @@ public class PublishEventActivity extends BaseActivity{
 			case R.id.tv_submit:
 				publicActivity();
 				break;
+			case R.id.tv_preview:
+				previewActivity();
+				break;
 			case R.id.tv_position:
 				Tools.choosePosition(PublishEventActivity.this, REQUEST_POS);
 				break;
@@ -277,74 +300,129 @@ public class PublishEventActivity extends BaseActivity{
 	
 	/** 发布活动 **/
 	private void publicActivity(){
+		if (!checkData())
+			return;
 		//标题
 		final String title = et_title.getText().toString().trim();
-		if (Validator.isEmptyString(title)) {
-			toastShort("请输入活动标题");
-			return;
-		}
 		//内容
-		final String content = et_content.getText().toString().trim();
-		if (Validator.isEmptyString(content)) {
-			toastShort("请输入活动内容");
-			return;
-		}
+		final String content = et_content.getHtmlContent();
 		//类型
 		final String type = eventType.getType();
-		if (Validator.isEmptyString(type)) {
-			toastShort("请选择活动类型");
-			return;
-		}
 		//开始时间
 		final String start_time = start_time_dialog.getTimeString();
-		if (Validator.isEmptyString(tv_start_time_hint.getText().toString().trim())) {
-			toastShort("请选择活动开始时间");
-			return;
-		}
 		//截止时间
 		final String end_time = end_time_dialog.getTimeString();
-		if (Validator.isEmptyString(tv_end_time_hint.getText().toString().trim())) {
-			toastShort("请选择活动截止时间");
-			return;
-		}
 		//坐标
 		final String address = tv_position.getText().toString();
-		if (Validator.isEmptyString(address) || latitude == 0 || longitude == 0) {
-			toastShort("请标记活动位置");
-			return;
-		}
 		//发布活动
 		showProgressDialog(false);
 		//先上传图片
-//		final List<UploadImgEntity> entitys = new ArrayList<UploadImgEntity>();
-//		UploadUtil.uplodaImg(pics, entitys, new UploadCallback() {
-//			
-//			@Override
-//			public void succeed() {
-//				EventUtil.publishEvent(title, content, type, address, start_time, end_time, latitude + "", longitude + "", 
-//						PARAM_VALUES.SHOWMODE_DEFAULT, entitys, new EntityCallback<String>() {
-//					@Override
-//					public void succeed(String event_id) {
-//						dismissProgressDialog();
-//						Tools.openEvent(PublishEventActivity.this, event_id);
-//						finish();
-//					}
-//
-//					@Override
-//					public void fail(String error) {
-//						dismissProgressDialog();
-//						toastShort(error);
-//					}
-//				});
-//			}
-//			
-//			@Override
-//			public void fail(int index, String error) {
-//				Log.e("uploadFile", index + " " + error);
-//				toastShort("上传图片失败");
-//				dismissProgressDialog();
-//			}
-//		});
+		final List<UploadImgEntity> entitys = new ArrayList<UploadImgEntity>();
+		UploadUtil.uplodaImg(null, entitys, new UploadCallback() {
+			
+			@Override
+			public void succeed() {
+				EventUtil.publishEvent(title, content, type, address, start_time, end_time, latitude + "", longitude + "", 
+						PARAM_VALUES.SHOWMODE_BIG, entitys, new EntityCallback<String>() {
+					@Override
+					public void succeed(String event_id) {
+						dismissProgressDialog();
+						Tools.openEvent(PublishEventActivity.this, event_id);
+						finish();
+					}
+
+					@Override
+					public void fail(String error) {
+						dismissProgressDialog();
+						toastShort(error);
+					}
+				});
+			}
+			
+			@Override
+			public void fail(int index, String error) {
+				Log.e("uploadFile", index + " " + error);
+				toastShort("上传图片失败");
+				dismissProgressDialog();
+			}
+		});
+	}
+
+	/** 预览活动 **/
+	private void previewActivity(){
+		if (!checkData())
+			return;
+		//标题
+		String title = et_title.getText().toString().trim();
+		//内容
+		String content = et_content.getHtmlContent();
+		//类型
+//		String type = eventType.getType();
+		//开始时间
+		String start_time = start_time_dialog.getTimeString();
+		//截止时间
+		String end_time = end_time_dialog.getTimeString();
+		//坐标
+		String address = tv_position.getText().toString();
+//		latitude + "", longitude + ""
+		//预览活动
+		EventEntity event = new EventEntity();
+		event.title = title;
+		event.content = content;
+		event.event_type = eventType;
+		long now = System.currentTimeMillis();
+		event.timefrom = now;
+		event.timeto = now;
+		try {
+			event.timefrom = TIME_FORMAT.parse(start_time).getTime();
+			event.timeto = TIME_FORMAT.parse(end_time).getTime();
+		} catch (ParseException e) {
+		}
+		event.send_time = System.currentTimeMillis();
+		event.address = address;
+		event.sender = session.getUser();
+		Intent intent = new Intent();
+		intent.setClass(this, PreviewEventActivity.class);
+		intent.putExtra(EXTRA_PARAM, event);
+		startActivity(intent);
+	}
+	
+	private boolean checkData() {
+		//标题
+		String title = et_title.getText().toString().trim();
+		if (Validator.isEmptyString(title)) {
+			toastShort("请输入活动标题");
+			return false;
+		}
+		//内容
+		String content = et_content.getText().toString().trim();
+		if (Validator.isEmptyString(content)) {
+			toastShort("请输入活动内容");
+			return false;
+		}
+		//类型
+		String type = eventType.getType();
+		if (Validator.isEmptyString(type)) {
+			toastShort("请选择活动类型");
+			return false;
+		}
+		//开始时间
+		if (Validator.isEmptyString(tv_start_time_hint.getText().toString().trim())) {
+			toastShort("请选择活动开始时间");
+			return false;
+		}
+		//截止时间
+		if (Validator.isEmptyString(tv_end_time_hint.getText().toString().trim())) {
+			toastShort("请选择活动截止时间");
+			return false;
+		}
+		//坐标
+		String address = tv_position.getText().toString();
+		if (Validator.isEmptyString(address) || latitude == 0 || longitude == 0) {
+			toastShort("请标记活动位置");
+			return false;
+		}
+		return true;
 	}
 	
 	@Override

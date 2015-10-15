@@ -61,6 +61,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 	private WebView wv_detail;
 	
 	private EventEntity event;
+	private boolean rich_event = false;
 	private BitmapUtils bitmapUtils;
 	private SharedPreferenceUtil sp;
 
@@ -144,6 +145,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 			finish();
 			return;
 		}
+		rich_event = EventEntity.SHOWMODE_RICH.equals(event.showmode);
 		tv_title.setText(event.title);
 		tv_name.setText(event.sender.nick_name);
 		if (EventEntity.SHOWMODE_DEFAULT.equals(event.showmode)) {
@@ -152,8 +154,9 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 			tv_detail.setText(event.content);
 		} else if (EventEntity.SHOWMODE_RICH.equals(event.showmode)) {
 			wv_detail.setVisibility(View.VISIBLE);
+			wv_detail.getSettings().setDefaultTextEncodingName("UTF-8");
 			tv_detail.setVisibility(View.GONE);
-			wv_detail.loadData(event.content, "text/html", "UTF-8");
+			wv_detail.loadData(event.content, "text/html; charset=UTF-8", "UTF-8");
 		}
 		tv_collection.setText("" + event.viewcount);// 调用浏览次数
 		// tv_collection.setText("" + overlayEntity.appraiseCount);
@@ -165,44 +168,54 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		
 		ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, iv_head);
 
-		String topImag = Validator.isEmptyList(event.pics_big) ? null : event.pics_big.get(0);
-		if (!Validator.isEmptyString(topImag))
-			ImageCache.loadUrlImg(topImag, iv_topic, bitmapUtils);
-		
-		ImageView imageView = null;
-		LinearLayout layout_img_horizontal = null;
-		LayoutParams layoutParams_horizontal = null;
-		LayoutParams layoutParams_vertical = null;
-
-		// 图片
-		int paddingRight = 17;
-		int maxWidth = (getResources().getDisplayMetrics().widthPixels - screenMargin - paddingRight * 4) / 3;
-
-		layoutParams_vertical = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		layoutParams_vertical.topMargin = paddingRight / 2;
-		layoutParams_vertical.bottomMargin = paddingRight / 2;
-
-		for (int i = 0; i < event.pics_small.size(); i++) {
-			layoutParams_horizontal = new LayoutParams(maxWidth, maxWidth);
-			if (i % 3 == 0) {
-				layout_img_horizontal = new LinearLayout(this);
-				layout_img.addView(layout_img_horizontal, layoutParams_vertical);
-				layoutParams_horizontal.leftMargin = paddingRight / 2;
-			}
-			if (i % 3 == 2)
-				layoutParams_horizontal.rightMargin = 0;
-			else
-				layoutParams_horizontal.rightMargin = paddingRight;
-			imageView = new ImageView(this);
-			imageView.setScaleType(ScaleType.FIT_XY);
-			imageView.setAdjustViewBounds(true);
-			// imageView.setScaleType(ScaleType.CENTER);
-			ImageCache.loadUrlImg(event.pics_small.get(i), imageView, bitmapUtils);
-			imageView.setTag(i);
-			imageView.setOnClickListener(imgOnClickListener);
-			layout_img_horizontal.addView(imageView, layoutParams_horizontal);
+		if (rich_event)
+			iv_topic.setVisibility(View.GONE);
+		else {
+			String topImag = Validator.isEmptyList(event.pics_big) ? null : event.pics_big.get(0);
+			if (!Validator.isEmptyString(topImag))
+				ImageCache.loadUrlImg(topImag, iv_topic, bitmapUtils);
 		}
-		imageView = null;
+		
+		if (rich_event) {
+			layout_img.setVisibility(View.GONE);
+			findViewById(R.id.tv_img_tip).setVisibility(View.GONE);
+			findViewById(R.id.v_img_line).setVisibility(View.GONE);
+		} else {
+			ImageView imageView = null;
+			LinearLayout layout_img_horizontal = null;
+			LayoutParams layoutParams_horizontal = null;
+			LayoutParams layoutParams_vertical = null;
+			
+			// 图片
+			int paddingRight = 17;
+			int maxWidth = (getResources().getDisplayMetrics().widthPixels - screenMargin - paddingRight * 4) / 3;
+			
+			layoutParams_vertical = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			layoutParams_vertical.topMargin = paddingRight / 2;
+			layoutParams_vertical.bottomMargin = paddingRight / 2;
+			
+			for (int i = 0; i < event.pics_small.size(); i++) {
+				layoutParams_horizontal = new LayoutParams(maxWidth, maxWidth);
+				if (i % 3 == 0) {
+					layout_img_horizontal = new LinearLayout(this);
+					layout_img.addView(layout_img_horizontal, layoutParams_vertical);
+					layoutParams_horizontal.leftMargin = paddingRight / 2;
+				}
+				if (i % 3 == 2)
+					layoutParams_horizontal.rightMargin = 0;
+				else
+					layoutParams_horizontal.rightMargin = paddingRight;
+				imageView = new ImageView(this);
+				imageView.setScaleType(ScaleType.FIT_XY);
+				imageView.setAdjustViewBounds(true);
+				// imageView.setScaleType(ScaleType.CENTER);
+				ImageCache.loadUrlImg(event.pics_small.get(i), imageView, bitmapUtils);
+				imageView.setTag(i);
+				imageView.setOnClickListener(imgOnClickListener);
+				layout_img_horizontal.addView(imageView, layoutParams_horizontal);
+			}
+			imageView = null;
+		}
 		setOverlayType();
 	}
 

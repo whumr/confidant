@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.fingertip.tuding.entity.EventTemplate;
+import com.fingertip.tuding.entity.UserEntity;
 import com.fingertip.tuding.entity.WatchEntity;
 import com.fingertip.tuding.util.Validator;
 
@@ -155,5 +156,16 @@ public class UserSession {
 
 	public List<EventTemplate> getEvent_templates() {
 		return event_templates;
+	}
+	
+	public UserEntity getUser() {
+		UserEntity user = new UserEntity();
+		user.id = id;
+		user.nick_name = nick_name;
+		user.head_img_url = head_url;
+		user.sex = sex;
+		user.place = place;
+		user.mark = mark;
+		return user;
 	}
 }

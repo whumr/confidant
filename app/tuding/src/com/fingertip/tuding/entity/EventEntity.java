@@ -44,7 +44,7 @@ public class EventEntity implements Serializable{
 //	"statusof":"over","actionid":"577b032-603E420-6h","poslong":"113.952568","address":"","timeto":"0000-00-00 00:00:00","kindof":"се╩щ\/ль╪ш"}
 
 	public String id, title, content, userid, statusof, address, kindof, send_time_str, showmode;
-	public long send_time, timeto;
+	public long send_time, timeto, timefrom;
 	public int likedcount, replycount, viewcount, meters;
 	public double poslat, poslong;
 	public List<String> pics_small, pics_big;
@@ -61,6 +61,10 @@ public class EventEntity implements Serializable{
 
 	public String getTimeToStr() {
 		return SDF.format(new Date(timeto)); 
+	}
+
+	public String getTimeFromStr() {
+		return SDF.format(new Date(timefrom)); 
 	}
 
 	public String getStatusStr() {
@@ -132,6 +136,7 @@ public class EventEntity implements Serializable{
 		event.send_time_str = json.getString(PARAM_KEYS.PUBLICTIME);
 		event.send_time = SERVER_SDF.parse(json.getString(PARAM_KEYS.PUBLICTIME)).getTime();
 		event.timeto = SERVER_SDF.parse(json.getString(PARAM_KEYS.TIMETO)).getTime();
+		event.timefrom = SERVER_SDF.parse(json.getString(PARAM_KEYS.TIMEFROM)).getTime();
 		
 		event.likedcount = json.getInt(PARAM_KEYS.LIKEDCOUNT);
 		event.replycount = json.getInt(PARAM_KEYS.REPLYCOUNT);
@@ -221,6 +226,7 @@ public class EventEntity implements Serializable{
 			e.send_time_str = event.send_time_str;
 			e.send_time = event.send_time;
 			e.timeto = event.timeto;
+			e.timefrom = event.timefrom;
 			e.likedcount = event.likedcount;
 			e.replycount = event.replycount;
 			e.viewcount = event.viewcount;
