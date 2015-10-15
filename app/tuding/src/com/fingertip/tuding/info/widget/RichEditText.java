@@ -1,7 +1,10 @@
 package com.fingertip.tuding.info.widget;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -20,6 +23,7 @@ import android.text.style.StyleSpan;
 import android.text.style.TextAppearanceSpan;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.widget.EditText;
 
 import com.fingertip.tuding.util.ImageCache;
@@ -27,7 +31,28 @@ import com.fingertip.tuding.util.http.common.UploadImgEntity;
 
 public class RichEditText extends EditText {
 	
-	public static int COLOR_BLACK = 0x000000 | 0xFF000000, COLOR_BLUE = 0x3399db | 0xFF000000;
+//	黄色#ff9c00
+//	蓝色#0070c1
+//	绿色#00b150
+//	紫色#531483
+//	黑色#000000
+//	红色#c10000
+	public static int COLOR_BLACK = 0x000000 | 0xFF000000, 
+			COLOR_YELLOW = 0xff9c00 | 0xFF000000,
+			COLOR_BLUE = 0x0070c1 | 0xFF000000,
+			COLOR_GREEN = 0x00b150 | 0xFF000000,
+			COLOR_RED = 0xc10000 | 0xFF000000,
+			COLOR_PURPLE = 0x531483 | 0xFF000000;
+	
+	public static SparseArray<String> COLOR_MAP = new SparseArray<String>();
+	static {
+		COLOR_MAP.put(COLOR_BLACK, "#000000");
+		COLOR_MAP.put(COLOR_YELLOW, "#ff9c00");
+		COLOR_MAP.put(COLOR_BLUE, "#0070c1");
+		COLOR_MAP.put(COLOR_GREEN, "#00b150");
+		COLOR_MAP.put(COLOR_RED, "#c10000");
+		COLOR_MAP.put(COLOR_PURPLE, "#531483");
+	}
 	
 	/**
 	 * font settings
@@ -38,6 +63,7 @@ public class RichEditText extends EditText {
 	private EditorListner editorListner;
 	private int default_text_size = 20, big_text_size = 30;
 	private int pic_index = 0;
+	private List<UploadImgEntity> images = new ArrayList<UploadImgEntity>();
 
 	public RichEditText(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -61,7 +87,7 @@ public class RichEditText extends EditText {
 			
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				Log.e("onTextChanged", s.toString() + "  " + start + "   " + before + "   " + count);
+//				Log.e("onTextChanged", s.toString() + "  " + start + "   " + before + "   " + count);
 				last_start = start;
 				last_count = count;
 				
@@ -85,7 +111,7 @@ public class RichEditText extends EditText {
 			
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-				Log.e("beforeTextChanged", s.toString() + "  " + start + "   " + after + "   " + count);
+//				Log.e("beforeTextChanged", s.toString() + "  " + start + "   " + after + "   " + count);
 				//删除时删掉spans
 				if (count == 1 && after == 0) {
 					boolean delete = true;
@@ -124,40 +150,40 @@ public class RichEditText extends EditText {
 			if (font_bold)
 				s.setSpan(new StyleSpan(Typeface.BOLD), last_start, last_start + last_count, 0);
 		} else {
-			boolean _big = false, _bold = false, _blue = false;
-			for (int i = 0; i < spans1.length; i++) {
-				MetricAffectingSpan span = spans1[i];
-				if (span instanceof AbsoluteSizeSpan) {
-					if (font_big)
-						s.setSpan(new AbsoluteSizeSpan(big_text_size), last_start, last_start + last_count, 0);
-					else
-						s.setSpan(new AbsoluteSizeSpan(default_text_size), last_start, last_start + last_count, 0);
-					_big = true;
-				} else if (span instanceof StyleSpan) {
-					_bold = true;
-				} else if (span instanceof TextAppearanceSpan) {
-					_blue = true;
-				}
-			}
-			if (font_big && !_big)
+//			boolean _big = false;
+//			for (int i = 0; i < spans1.length; i++) {
+//				MetricAffectingSpan span = spans1[i];
+//				if (span instanceof AbsoluteSizeSpan) {
+//					int font_size = ((AbsoluteSizeSpan) span).getSize();
+//					_big = font_size == big_text_size;
+//				}
+//			}
+			if (font_big)
 				s.setSpan(new AbsoluteSizeSpan(big_text_size), last_start, last_start + last_count, 0);
+			else
+				s.setSpan(new AbsoluteSizeSpan(default_text_size), last_start, last_start + last_count, 0);
 			if (font_bold)
 				s.setSpan(new StyleSpan(Typeface.BOLD), last_start, last_start + last_count, 0);
-			if (font_color == COLOR_BLUE)
+			if (font_color != COLOR_BLACK)
 				s.setSpan(new TextAppearanceSpan(null, 0, 0, ColorStateList.valueOf(font_color), null), last_start, last_start + last_count, 0);
 		
 		}
 	}
 	
-	public String getHtmlContent() {
+//	public String getHtmlContent() {
+//		return getHtmlContent(null);
+//	}
+		
+	public String getHtmlContent(Map<String, String> img_map) {
 		Editable editable = getEditableText();
 		StringBuilder buffer = new StringBuilder();
+		images.clear();
 		MetricAffectingSpan[] last_spans = null;
 		for (int i = 0; i < editable.length(); i++) {
 			MetricAffectingSpan[] spans = editable.getSpans(i, i + 1, MetricAffectingSpan.class);
 			ImageSpan image = getImageSpan(spans);
 			if (image != null)
-				buffer.append(getHtmlImg((ImageSpan)spans[0]));
+				buffer.append(getHtmlImg(image, img_map));
 			else {
 				String text = toHtml(editable.subSequence(i, i + 1).toString());
 				if (!spansEquals(last_spans, spans)) {
@@ -199,10 +225,16 @@ public class RichEditText extends EditText {
 	
 	private static final int[] EMPTY = new int[0];
 	
-	private String getHtmlImg(ImageSpan imgSpan) {
+	private String getHtmlImg(ImageSpan imgSpan, Map<String, String> img_map) {
+		String src = imgSpan.getSource();
+		UploadImgEntity uploadeEntity = new UploadImgEntity();
+		uploadeEntity.small_file = new File(src);
+		String big_file_path = ImageCache.getAnOtherUploadImgPath(uploadeEntity.small_file.getName(), false);
+		uploadeEntity.big_file = new File(big_file_path != null ? big_file_path : src);
+		images.add(uploadeEntity);
 		StringBuilder buffer = new StringBuilder();
-		buffer.append("<img src=\"").append(imgSpan.getSource())
-			.append("\" width=\"100%\" />");
+		src = img_map != null && img_map.containsKey(src) ? img_map.get(src) : src;
+		buffer.append("<img src=\"").append(src).append("\" width=\"100%\" />");
 		return buffer.toString();
 	}
 	
@@ -221,7 +253,7 @@ public class RichEditText extends EditText {
 				_bold = true;
 		}
 		StringBuilder builder = new StringBuilder();
-		builder.append(COLOR_BLACK != color && -1 != color ? "<font color=\"#" + Integer.toHexString(color).substring(2) + "\">" : "")
+		builder.append(COLOR_BLACK != color && -1 != color ? "<font color=\"" + COLOR_MAP.get(color) + "\">" : "")
 			.append(_big ? "<big>" : "")
 			.append(_bold ? "<b>" : "");
 		return builder.toString();
@@ -284,6 +316,22 @@ public class RichEditText extends EditText {
 		this.editorListner = editorListner;
 	}
 	
+	public List<UploadImgEntity> getImages() {
+		return images;
+	}
+
+	public List<UploadImgEntity> getImages(Map<String, String> img_map) {
+		if (img_map != null && !img_map.isEmpty()) {
+			for (UploadImgEntity img : images) {
+				String small_path = img.small_file.getAbsolutePath();
+				String big_path = img.big_file.getAbsolutePath();
+				img.small_url = img_map.get(small_path);
+				img.big_url = img_map.get(big_path);
+			} 
+		}
+		return images;
+	}
+
 	public interface EditorListner {
 		public void afterEdit(String str);
 	}

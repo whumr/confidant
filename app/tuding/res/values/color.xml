@@ -83,4 +83,13 @@
 	<color name="friend">#3593cd</color>
 	<color name="activity">#eecc24</color>
 	
+	<!-- 
+	<color name="font_color_black">#000000</color>
+	<color name="font_color_yellow">#ff9c00</color>
+	<color name="font_color_red">#c10000</color>
+	<color name="font_color_blue">#0070c1</color>
+	<color name="font_color_green">#00b150</color>
+	<color name="font_color_purple">#531483</color>
+	 -->
+	
 </resources>

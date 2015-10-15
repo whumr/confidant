@@ -2,9 +2,11 @@ package com.fingertip.tuding.info;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +19,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -46,19 +50,20 @@ public class PublishEventActivity extends BaseActivity{
 	private static SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 	public static int MAX_PIC_SIZE = 9;
 	
-	
 	private TextView tv_submit, tv_preview,
 		tv_position, tv_type_hint, tv_start_time_hint, tv_end_time_hint,
 		tv_special, tv_perform, tv_sociality, tv_sports, tv_study, tv_other;
+	private ImageView iv_img, iv_bold, iv_big, iv_color,
+		img_font_black, img_font_blue, img_font_green, img_font_purple, img_font_red, img_font_yellow;
 	private EditText et_title;
 	private RichEditText et_content;
 	private RadioButton radio_default;
 	private DialogDate start_time_dialog, end_time_dialog;
 	private EventType eventType = null;
+	private LinearLayout font_color_layout;
 	
 	private double latitude = 0, longitude = 0;
-	
-	private TextView img_txt, bold_txt, big_txt, color_txt;
+	private Map<String, String> img_upload_map = new HashMap<String, String>();
 	
 	private UserSession session;
 
@@ -107,14 +112,30 @@ public class PublishEventActivity extends BaseActivity{
 		tv_position.setOnClickListener(onClickListener);
 		setTypeBackground(EventType.SOCIALITY);
 		
-		img_txt = (TextView) findViewById(R.id.img_txt);
-		bold_txt = (TextView) findViewById(R.id.bold_txt);
-		big_txt = (TextView) findViewById(R.id.big_txt);
-		color_txt = (TextView) findViewById(R.id.color_txt);
-		img_txt.setOnClickListener(onClickListener);
-		bold_txt.setOnClickListener(onClickListener);
-		big_txt.setOnClickListener(onClickListener);
-		color_txt.setOnClickListener(onClickListener);
+		iv_img = (ImageView) findViewById(R.id.iv_img);
+		iv_bold = (ImageView) findViewById(R.id.iv_bold);
+		iv_big = (ImageView) findViewById(R.id.iv_big);
+		iv_color = (ImageView) findViewById(R.id.iv_color);
+		iv_img.setOnClickListener(onClickListener);
+		iv_bold.setOnClickListener(onClickListener);
+		iv_big.setOnClickListener(onClickListener);
+		iv_color.setOnClickListener(onClickListener);
+		
+		img_font_black = (ImageView) findViewById(R.id.img_font_black);
+		img_font_black.setOnClickListener(onClickListener);
+		img_font_blue = (ImageView) findViewById(R.id.img_font_blue);
+		img_font_blue.setOnClickListener(onClickListener);
+		img_font_green = (ImageView) findViewById(R.id.img_font_green);
+		img_font_green.setOnClickListener(onClickListener);
+		img_font_purple = (ImageView) findViewById(R.id.img_font_purple);
+		img_font_purple.setOnClickListener(onClickListener);
+		img_font_red = (ImageView) findViewById(R.id.img_font_red);
+		img_font_red.setOnClickListener(onClickListener);
+		img_font_yellow = (ImageView) findViewById(R.id.img_font_yellow);
+		img_font_yellow.setOnClickListener(onClickListener);
+		
+		font_color_layout = (LinearLayout)findViewById(R.id.font_color_layout);
+		font_color_layout.setOnClickListener(onClickListener);
 		
 		session = UserSession.getInstance();
 	}
@@ -240,39 +261,59 @@ public class PublishEventActivity extends BaseActivity{
 					tv_type_hint.setText("活动类型");
 				}
 				break;
-//				img_txt = (TextView) findViewById(R.id.img_txt);
-//				bold_txt = (TextView) findViewById(R.id.bold_txt);
-//				big_txt = (TextView) findViewById(R.id.big_txt);
-//				color_txt = (TextView) findViewById(R.id.color_txt);
-			case R.id.img_txt:
+			case R.id.iv_img:
 				Tools.selectSinglePic(PublishEventActivity.this, REQUEST_PIC);
 				break;
-			case R.id.bold_txt:
+			case R.id.iv_bold:
 				if (!et_content.isFont_bold()) {
 					et_content.setFont_bold(true);
-					bold_txt.setBackgroundColor(getResources().getColor(R.color.blue_msg));
+					iv_bold.setImageDrawable(getResources().getDrawable(R.drawable.icon_font_bold_up));
 				} else {
 					et_content.setFont_bold(false);
-					bold_txt.setBackgroundColor(getResources().getColor(R.color.transparent));
+					iv_bold.setImageDrawable(getResources().getDrawable(R.drawable.icon_font_bold_down));
 				}
 				break;
-			case R.id.big_txt:
+			case R.id.iv_big:
 				if (!et_content.isFont_big()) {
 					et_content.setFont_big(true);
-					big_txt.setBackgroundColor(getResources().getColor(R.color.blue_msg));
+					iv_big.setImageDrawable(getResources().getDrawable(R.drawable.icon_font_big_up));
 				} else {
 					et_content.setFont_big(false);
-					big_txt.setBackgroundColor(getResources().getColor(R.color.transparent));
+					iv_big.setImageDrawable(getResources().getDrawable(R.drawable.icon_font_big_down));
 				}
 				break;
-			case R.id.color_txt:
-				if (RichEditText.COLOR_BLACK == et_content.getFont_color()) {
-					et_content.setFont_color(RichEditText.COLOR_BLUE);
-					color_txt.setBackgroundColor(getResources().getColor(R.color.blue_msg));
-				} else {
-					et_content.setFont_color(RichEditText.COLOR_BLACK);
-					color_txt.setBackgroundColor(getResources().getColor(R.color.transparent));
-				}
+			case R.id.iv_color:
+				font_color_layout.setVisibility(View.VISIBLE);
+				break;
+			case R.id.img_font_black:
+				font_color_layout.setVisibility(View.GONE);
+				iv_color.setImageDrawable(getResources().getDrawable(R.drawable.icon_font_color_black));
+				et_content.setFont_color(RichEditText.COLOR_BLACK);
+				break;
+			case R.id.img_font_blue:
+				font_color_layout.setVisibility(View.GONE);
+				iv_color.setImageDrawable(getResources().getDrawable(R.drawable.icon_font_color_blue));
+				et_content.setFont_color(RichEditText.COLOR_BLUE);
+				break;
+			case R.id.img_font_green:
+				font_color_layout.setVisibility(View.GONE);
+				iv_color.setImageDrawable(getResources().getDrawable(R.drawable.icon_font_color_green));
+				et_content.setFont_color(RichEditText.COLOR_GREEN);
+				break;
+			case R.id.img_font_purple:
+				font_color_layout.setVisibility(View.GONE);
+				iv_color.setImageDrawable(getResources().getDrawable(R.drawable.icon_font_color_purple));
+				et_content.setFont_color(RichEditText.COLOR_PURPLE);
+				break;
+			case R.id.img_font_red:
+				font_color_layout.setVisibility(View.GONE);
+				iv_color.setImageDrawable(getResources().getDrawable(R.drawable.icon_font_color_red));
+				et_content.setFont_color(RichEditText.COLOR_RED);
+				break;
+			case R.id.img_font_yellow:
+				font_color_layout.setVisibility(View.GONE);
+				iv_color.setImageDrawable(getResources().getDrawable(R.drawable.icon_font_color_yellow));
+				et_content.setFont_color(RichEditText.COLOR_YELLOW);
 				break;
 			case R.id.tv_special:
 				setTypeBackground(EventType.SPECIAL);
@@ -305,7 +346,9 @@ public class PublishEventActivity extends BaseActivity{
 		//标题
 		final String title = et_title.getText().toString().trim();
 		//内容
-		final String content = et_content.getHtmlContent();
+		final String content = et_content.getHtmlContent(img_upload_map);
+		//图片
+		final List<UploadImgEntity> images = et_content.getImages();
 		//类型
 		final String type = eventType.getType();
 		//开始时间
@@ -316,34 +359,62 @@ public class PublishEventActivity extends BaseActivity{
 		final String address = tv_position.getText().toString();
 		//发布活动
 		showProgressDialog(false);
+		
 		//先上传图片
-		final List<UploadImgEntity> entitys = new ArrayList<UploadImgEntity>();
-		UploadUtil.uplodaImg(null, entitys, new UploadCallback() {
-			
-			@Override
-			public void succeed() {
-				EventUtil.publishEvent(title, content, type, address, start_time, end_time, latitude + "", longitude + "", 
-						PARAM_VALUES.SHOWMODE_BIG, entitys, new EntityCallback<String>() {
+		if (!images.isEmpty()) {
+			//先上传图片
+			for (Iterator<UploadImgEntity> it = images.iterator(); it.hasNext();) {
+				UploadImgEntity img = it.next();
+				String small_path = img.small_file.getAbsolutePath();
+				String big_path = img.big_file.getAbsolutePath();
+				if (img_upload_map.containsKey(small_path) && img_upload_map.containsKey(big_path))
+					it.remove();
+			}
+			showProgressDialog(false);
+			if (!images.isEmpty()) {
+				UploadUtil.uploadImgEntitys(images, new UploadCallback() {
+					
 					@Override
-					public void succeed(String event_id) {
-						dismissProgressDialog();
-						Tools.openEvent(PublishEventActivity.this, event_id);
-						finish();
+					public void succeed() {
+						for (UploadImgEntity img : images) {
+							String small_path = img.small_file.getAbsolutePath();
+							String big_path = img.big_file.getAbsolutePath();
+							img_upload_map.put(small_path, img.small_url);
+							img_upload_map.put(big_path, img.big_url);
+						}
+						pubEvent(title, et_content.getHtmlContent(img_upload_map), type, address, 
+								start_time, end_time);
 					}
-
+					
 					@Override
-					public void fail(String error) {
+					public void fail(int index, String error) {
+						Log.e("uploadFile", index + " " + error);
+						toastShort("上传图片失败");
 						dismissProgressDialog();
-						toastShort(error);
 					}
 				});
-			}
-			
+			} else
+				pubEvent(title, et_content.getHtmlContent(img_upload_map), type, address, start_time, end_time);
+		} else
+			pubEvent(title, content, type, address, start_time, end_time);
+	}
+	
+	private void pubEvent(String title, String content, String type, String address, String start_time, String end_time) {
+		Log.e("PublishEventActivity", "pubEvent");
+		content = Tools.encodeString(content);
+		EventUtil.publishEvent(title, content, type, address, start_time, end_time, latitude + "", longitude + "", 
+				PARAM_VALUES.SHOWMODE_BIG, et_content.getImages(img_upload_map), new EntityCallback<String>() {
 			@Override
-			public void fail(int index, String error) {
-				Log.e("uploadFile", index + " " + error);
-				toastShort("上传图片失败");
+			public void succeed(String event_id) {
 				dismissProgressDialog();
+				Tools.openEvent(PublishEventActivity.this, event_id);
+				finish();
+			}
+
+			@Override
+			public void fail(String error) {
+				dismissProgressDialog();
+				toastShort(error);
 			}
 		});
 	}
@@ -355,7 +426,9 @@ public class PublishEventActivity extends BaseActivity{
 		//标题
 		String title = et_title.getText().toString().trim();
 		//内容
-		String content = et_content.getHtmlContent();
+		String content = et_content.getHtmlContent(img_upload_map);
+		//图片
+		final List<UploadImgEntity> images = et_content.getImages();
 		//类型
 //		String type = eventType.getType();
 		//开始时间
@@ -366,7 +439,7 @@ public class PublishEventActivity extends BaseActivity{
 		String address = tv_position.getText().toString();
 //		latitude + "", longitude + ""
 		//预览活动
-		EventEntity event = new EventEntity();
+		final EventEntity event = new EventEntity();
 		event.title = title;
 		event.content = content;
 		event.event_type = eventType;
@@ -381,6 +454,48 @@ public class PublishEventActivity extends BaseActivity{
 		event.send_time = System.currentTimeMillis();
 		event.address = address;
 		event.sender = session.getUser();
+		if (!images.isEmpty()) {
+			//先上传图片
+			for (Iterator<UploadImgEntity> it = images.iterator(); it.hasNext();) {
+				UploadImgEntity img = it.next();
+				String small_path = img.small_file.getAbsolutePath();
+				String big_path = img.big_file.getAbsolutePath();
+				if (img_upload_map.containsKey(small_path) && img_upload_map.containsKey(big_path))
+					it.remove();
+			}
+			if (!images.isEmpty()) {
+				showProgressDialog(false);
+				UploadUtil.uploadImgEntitys(images, new UploadCallback() {
+					
+					@Override
+					public void succeed() {
+						for (UploadImgEntity img : images) {
+							String small_path = img.small_file.getAbsolutePath();
+							String big_path = img.big_file.getAbsolutePath();
+							img_upload_map.put(small_path, img.small_url);
+							img_upload_map.put(big_path, img.big_url);
+						}
+						event.content = et_content.getHtmlContent(img_upload_map);
+						dismissProgressDialog();
+						previewEvent(event);
+					}
+					
+					@Override
+					public void fail(int index, String error) {
+						Log.e("uploadFile", index + " " + error);
+						toastShort("上传图片失败");
+						dismissProgressDialog();
+					}
+				});
+			} else {
+				event.content = et_content.getHtmlContent(img_upload_map);
+				previewEvent(event);
+			}
+		} else
+			previewEvent(event);
+	}
+	
+	private void previewEvent(EventEntity event) {
 		Intent intent = new Intent();
 		intent.setClass(this, PreviewEventActivity.class);
 		intent.putExtra(EXTRA_PARAM, event);

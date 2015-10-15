@@ -115,36 +115,162 @@
                     android:text=""
                     android:textSize="18sp" />
                 
-                <LinearLayout android:layout_width="match_parent"
+                <FrameLayout android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
-                    <TextView android:id="@+id/img_txt"
-			            android:layout_width="wrap_content"
-			            android:layout_height="wrap_content"
-			            android:layout_marginLeft="10dp"
-			            android:layout_marginRight="10dp"
-			            android:text="图片"/>
-			        
-			        <TextView android:id="@+id/bold_txt"
-			            android:layout_width="wrap_content"
-			            android:layout_height="wrap_content"
-			            android:layout_marginLeft="10dp"
-			            android:layout_marginRight="10dp"
-			            android:text="加粗"/>
-			        
-			        <TextView android:id="@+id/big_txt"
-			            android:layout_width="wrap_content"
-			            android:layout_height="wrap_content"
-			            android:layout_marginLeft="10dp"
-			            android:layout_marginRight="10dp"
-			            android:text="加大"/>
-			
-			        <TextView android:id="@+id/color_txt"
-			            android:layout_width="wrap_content"
-			            android:layout_height="wrap_content"
-			            android:layout_marginLeft="10dp"
-			            android:layout_marginRight="10dp"
-			            android:text="颜色"/>
-                </LinearLayout>
+                    
+                    <LinearLayout android:layout_width="match_parent"
+	                    android:layout_height="wrap_content" >
+	                    
+	                    <ImageView android:id="@+id/iv_img"
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content"
+	                        android:padding="10dp"
+	                        android:src="@drawable/icon_editor_img"/>
+	                    
+	                    <ImageView android:id="@+id/iv_bold"
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content"
+	                        android:padding="10dp"
+	                        android:src="@drawable/icon_font_bold_down"/>
+	                    
+	                    <ImageView android:id="@+id/iv_big"
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content"
+	                        android:padding="10dp"
+	                        android:src="@drawable/icon_font_big_down"/>
+	                    
+	                    <ImageView android:id="@+id/iv_color"
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content"
+	                        android:padding="10dp"
+	                        android:src="@drawable/icon_font_color_black"/>
+	                    
+	                    <!-- 
+	                    <TextView android:id="@+id/img_txt"
+				            android:layout_width="wrap_content"
+				            android:layout_height="wrap_content"
+				            android:layout_marginLeft="10dp"
+				            android:layout_marginRight="10dp"
+				            android:text="图片"/>
+				        
+				        <TextView android:id="@+id/bold_txt"
+				            android:layout_width="wrap_content"
+				            android:layout_height="wrap_content"
+				            android:layout_marginLeft="10dp"
+				            android:layout_marginRight="10dp"
+				            android:text="加粗"/>
+				        
+				        <TextView android:id="@+id/big_txt"
+				            android:layout_width="wrap_content"
+				            android:layout_height="wrap_content"
+				            android:layout_marginLeft="10dp"
+				            android:layout_marginRight="10dp"
+				            android:text="加大"/>
+				
+				        <TextView android:id="@+id/color_txt"
+				            android:layout_width="wrap_content"
+				            android:layout_height="wrap_content"
+				            android:layout_marginLeft="10dp"
+				            android:layout_marginRight="10dp"
+				            android:text="颜色"/>
+	                     -->
+	                </LinearLayout>
+	                
+                    <LinearLayout android:id="@+id/font_color_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_gravity="center">
+                        
+                        <ImageView android:id="@+id/img_font_black"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:src="@drawable/icon_font_black"/>
+                        
+                        <ImageView android:id="@+id/img_font_blue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:src="@drawable/icon_font_blue"/>
+                        
+                        <ImageView android:id="@+id/img_font_green"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:src="@drawable/icon_font_green"/>
+                        
+                        <ImageView android:id="@+id/img_font_purple"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:src="@drawable/icon_font_purple"/>
+                        
+                        <ImageView android:id="@+id/img_font_red"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:src="@drawable/icon_font_red"/>
+                        
+                        <ImageView android:id="@+id/img_font_yellow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:src="@drawable/icon_font_yellow"/>
+                        
+                        <!-- 
+                        <View android:id="@+id/v_color_black"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:background="@color/font_color_black"/>
+                        
+                        <View android:id="@+id/v_color_yellow"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:background="@color/font_color_yellow"/>
+                        
+                        <View android:id="@+id/v_color_blue"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:background="@color/font_color_blue"/>
+                        
+                        <View android:id="@+id/v_color_green"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:background="@color/font_color_green"/>
+                        
+                        <View android:id="@+id/v_color_red"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:background="@color/font_color_red"/>
+                        
+                        <View android:id="@+id/v_color_purple"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"
+                            android:background="@color/font_color_purple"/>
+                         -->
+                        
+                    </LinearLayout>
+                </FrameLayout>
+                
             </LinearLayout>
 
             <TextView

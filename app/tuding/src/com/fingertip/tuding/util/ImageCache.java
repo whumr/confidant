@@ -323,6 +323,19 @@ public class ImageCache {
 		return IMG_PATH + IMG_CUT;
 	}
 	
+	public static String getAnOtherUploadImgPath(String name, boolean big) {
+		if (big) {
+			int index = name.indexOf(IMG_UPLOAD_BIG);
+			if (index > 0)
+				return getPreviewDir() + File.separator + name.substring(0, index) + IMG_UPLOAD_SMALL;
+		} else {
+			int index = name.indexOf(IMG_UPLOAD_SMALL);
+			if (index > 0)
+				return getPreviewDir() + File.separator + name.substring(0, index) + IMG_UPLOAD_BIG;
+		}
+		return null;
+	}
+	
 	public interface UserHeadCallback {
 		
 		public void loadSucceed();

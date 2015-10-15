@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.util.ImageCache;
 import com.fingertip.tuding.util.Tools;
+import com.fingertip.tuding.util.http.callback.DefaultCallback;
 import com.fingertip.tuding.util.http.callback.EntityCallback;
 import com.fingertip.tuding.util.http.common.ServerConstants;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
@@ -43,10 +44,6 @@ public class UploadUtil extends BaseHttpUtil {
 			}
 		});
 	}
-	
-//	public static void uplodaImg(String path, final EntityCallback<UploadImgEntity> callback) {
-//		uplodaImg(path, ServerConstants.SMALL_PIC_KB, ServerConstants.BIG_PIC_KB, callback);
-//	}
 	
 	public static void uplodaImg(String path, final EntityCallback<UploadImgEntity> callback) {
 //		"fc":"upload_file", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", "filefor":"Í·Ïñ"
@@ -109,6 +106,83 @@ public class UploadUtil extends BaseHttpUtil {
 					}
 				});
 			}
+		}
+	}
+	
+	public static void uploadImgEntitys(final List<UploadImgEntity> entitys, final UploadCallback callback) {
+		uploadImgEntitys0(0, entitys, callback);
+	}
+	
+	public static void uploadImgEntitys0(final int index, final List<UploadImgEntity> entitys, final UploadCallback callback) {
+		final UploadImgEntity entity = entitys.get(index);
+		uploadImgEntity(entity, new DefaultCallback() {
+			@Override
+			public void succeed() {
+				if (index + 1 < entitys.size())
+					uploadImgEntitys0(index + 1, entitys, callback);
+				else
+					callback.succeed();
+			}
+			
+			@Override
+			public void fail(String error) {
+				callback.fail(index, error);
+			}
+		});
+	}
+	
+	public static void uploadImgEntity(final UploadImgEntity entity, final DefaultCallback callback) {
+//		"fc":"upload_file", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", "filefor":"Í·Ïñ"
+//		sfile ËõÂÔÍ¼, sfull Ô­Í¼
+		if (!checkUploadEntity(entity))
+			callback.fail("Ñ¹ËõÍ¼Æ¬Ê§°Ü");
+		else {
+			UserSession session = UserSession.getInstance();
+			JSONObject data = new JSONObject();
+			try {
+				data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_UPLOAD_FILE);
+				data.put(PARAM_KEYS.UPLOAD_FILEFOR, PARAM_VALUES.UPLOAD_EVENT);
+				data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
+				data.put(PARAM_KEYS.USERID, session.getId());
+			} catch (JSONException e) {
+			}
+			RequestParams params = new RequestParams();
+			params.addQueryStringParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
+			params.addBodyParameter(PARAM_KEYS.UPLOAD_SFULL, entity.big_file);
+			params.addBodyParameter(PARAM_KEYS.UPLOAD_SFILE, entity.small_file);
+			
+			HttpUtils http = Tools.getHttpUtils();
+			http.send(HttpRequest.HttpMethod.POST, ServerConstants.URL.UPLOAD_IMG, params,
+					new RequestCallBack<String>() {
+				
+				@Override
+				public void onSuccess(ResponseInfo<String> responseInfo) {
+					String result = Tools.decodeString(responseInfo.result);
+					String error = null;
+					String small_url = null;
+					String big_url = null;
+					try {
+						JSONObject json = new JSONObject(result);
+						small_url = json.getString(PARAM_KEYS.UPLOAD_RESULT_URLFILE);
+						big_url = json.getString(PARAM_KEYS.UPLOAD_RESULT_URLFULL);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					if (small_url == null || big_url == null)
+						error = "ÉÏ´«Í¼Æ¬Ê§°Ü";
+					if (error == null) {
+						entity.small_url = small_url;
+						entity.big_url = big_url;
+						callback.succeed();
+					} else
+						callback.fail(error);
+				}
+				
+				@Override
+				public void onFailure(HttpException error, String msg) {
+					callback.fail(ServerConstants.NET_ERROR_TIP);
+				}
+			});
 		}
 	}
 	

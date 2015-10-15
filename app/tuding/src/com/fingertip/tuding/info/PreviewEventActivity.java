@@ -1,9 +1,7 @@
 package com.fingertip.tuding.info;
 
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
-import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -11,7 +9,6 @@ import android.widget.TextView;
 
 import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseActivity;
-import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.db.SharedPreferenceUtil;
 import com.fingertip.tuding.entity.EventEntity;
 import com.fingertip.tuding.entity.EventEntity.EventType;
