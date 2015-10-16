@@ -1,6 +1,7 @@
 package com.fingertip.tuding.info;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.ImageView;
@@ -73,9 +74,20 @@ public class PreviewEventActivity extends BaseActivity {
 		tv_name.setText(event.sender.nick_name);
 		wv_detail.setVisibility(View.VISIBLE);
 		wv_detail.getSettings().setDefaultTextEncodingName("UTF-8");
-		wv_detail.loadData(event.content, "text/html; charset=UTF-8", "UTF-8");
-//		wv_detail.loadData("<img width=\"100%\" src=\"http://tutu-oss.oss-cn-qingdao.aliyuncs.com/action/20151014/5aec28c-21F0BBB.jpg\" /> ", 
-//				"text/html; charset=UTF-8", "UTF-8");
+		
+		
+//		wv_detail.loadData(event.content, "text/html; charset=UTF-8", "UTF-8");
+		
+		
+		String html = surrendHtmlTag(event.content);
+		wv_detail.loadDataWithBaseURL("file://" + Environment.getExternalStorageDirectory().getAbsoluteFile(), 
+				html, "text/html; charset=UTF-8", "UTF-8", null);
+		
+//		String path = Environment.getExternalStorageDirectory().getAbsoluteFile() + "/1.jpg";
+//		String html = surrendHtmlTag("<img src=\"file:///sdcard" + path + "\" width=\"100%\" />");
+//		wv_detail.loadData(html, "text/html; charset=UTF-8", "UTF-8");
+		
+		
 		tv_collection.setText("" + event.viewcount);// 调用浏览次数
 		tv_recommendTopic.setText("评论（" + event.replycount + "）");
 		tv_time.setText(event.send_time_str);
@@ -86,6 +98,20 @@ public class PreviewEventActivity extends BaseActivity {
 		setOverlayType();
 	}
 
+	private String surrendHtmlTag(String content) {
+		StringBuilder buffer = new StringBuilder();
+		buffer.append("<html>\n")
+			.append("<head>\n")
+			.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n")
+			.append("<title>preview</title>\n")
+			.append("</head>\n")
+			.append("<body>\n")
+			.append(content)
+			.append("\n</body>\n")
+			.append("</html>");
+		return buffer.toString();
+	}
+	
 	private void setOverlayType() {
 		if (event.event_type == EventType.SPORTS) {
 			layout_main.setBackgroundResource(R.drawable.bg_recommend);

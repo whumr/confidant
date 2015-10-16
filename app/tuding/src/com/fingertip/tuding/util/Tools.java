@@ -84,12 +84,12 @@ public class Tools {
 	
 	/** ×Ö·û´®64Î»½âÂë **/
 	public static String decodeString(String encode){
-		return new String(Base64.decode(encode.getBytes(), Base64.DEFAULT));
+		return new String(Base64.decode(encode.getBytes(), Base64.NO_WRAP));
 	}
 	
 	/** ×Ö·û´®64Î»±àÂë **/
 	public static String encodeString(String encode_string){
-		return new String(Base64.encodeToString(encode_string.getBytes(), Base64.DEFAULT));
+		return new String(Base64.encodeToString(encode_string.getBytes(), Base64.NO_WRAP));
 	}
 	
 	public static boolean hasSDCard() {

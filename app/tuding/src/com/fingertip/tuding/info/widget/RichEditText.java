@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Html.ImageGetter;
@@ -53,6 +54,8 @@ public class RichEditText extends EditText {
 		COLOR_MAP.put(COLOR_RED, "#c10000");
 		COLOR_MAP.put(COLOR_PURPLE, "#531483");
 	}
+	
+	private static String IMG_PREFIX = "file:///sdcard";
 	
 	/**
 	 * font settings
@@ -225,19 +228,6 @@ public class RichEditText extends EditText {
 	
 	private static final int[] EMPTY = new int[0];
 	
-	private String getHtmlImg(ImageSpan imgSpan, Map<String, String> img_map) {
-		String src = imgSpan.getSource();
-		UploadImgEntity uploadeEntity = new UploadImgEntity();
-		uploadeEntity.small_file = new File(src);
-		String big_file_path = ImageCache.getAnOtherUploadImgPath(uploadeEntity.small_file.getName(), false);
-		uploadeEntity.big_file = new File(big_file_path != null ? big_file_path : src);
-		images.add(uploadeEntity);
-		StringBuilder buffer = new StringBuilder();
-		src = img_map != null && img_map.containsKey(src) ? img_map.get(src) : src;
-		buffer.append("<img src=\"").append(src).append("\" width=\"100%\" />");
-		return buffer.toString();
-	}
-	
 	private String getHtmlStart(MetricAffectingSpan[] spans) {
 		if (spans == null || spans.length == 0)
 			return "";
@@ -283,9 +273,26 @@ public class RichEditText extends EditText {
 	
 	public void insertPic(String path) {
 		UploadImgEntity img_entity = ImageCache.compressImageForPreview(path, pic_index++);
-		path = img_entity.small_file.getAbsolutePath();
-		int nowLocation = getSelectionStart();  
-        getText().insert(nowLocation, Html.fromHtml("<br><img src=\"" + path + "\" width=\"100%\"/><br>", imageGetter, null));
+		path = ImageCache.getPreviewRelativDir() + img_entity.small_file.getName();
+		int nowLocation = getSelectionStart();
+        getText().insert(nowLocation, Html.fromHtml("<br><img src=\"" + IMG_PREFIX + path 
+        		+ "\" width=\"100%\"/><br>", imageGetter, null));
+	}
+	
+	private String getHtmlImg(ImageSpan imgSpan, Map<String, String> img_map) {
+		String src = imgSpan.getSource();
+		String path = src;
+		if (path.startsWith(IMG_PREFIX))
+			path = Environment.getExternalStorageDirectory().getAbsolutePath() + path.substring(IMG_PREFIX.length());
+		UploadImgEntity uploadeEntity = new UploadImgEntity();
+		uploadeEntity.small_file = new File(path);
+		String big_file_path = ImageCache.getAnOtherUploadImgPath(uploadeEntity.small_file.getName(), false);
+		uploadeEntity.big_file = new File(big_file_path != null ? big_file_path : path);
+		images.add(uploadeEntity);
+		StringBuilder buffer = new StringBuilder();
+		src = img_map != null && img_map.containsKey(path) ? img_map.get(path) : src;
+		buffer.append("<img src=\"").append(src).append("\" width=\"100%\" />");
+		return buffer.toString();
 	}
 	
 	public boolean isFont_bold() {

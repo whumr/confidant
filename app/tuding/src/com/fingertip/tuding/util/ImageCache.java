@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -183,7 +182,7 @@ public class ImageCache {
 		if (Validator.isEmptyString(url))
 			return;
 		boolean has_cache = false;
-		final String file_name = IMG_PATH + Base64.encodeToString(url.getBytes(), Base64.NO_WRAP);
+		final String file_name = IMG_PATH + Tools.encodeString(url);
 		if (cache) {
 			File cache_fie = new File(file_name);
 			if (cache_fie.exists()) 
@@ -334,6 +333,10 @@ public class ImageCache {
 				return getPreviewDir() + File.separator + name.substring(0, index) + IMG_UPLOAD_BIG;
 		}
 		return null;
+	}
+	
+	public static String getPreviewRelativDir() {
+		return File.separator + Globals.PATH_CACHE + File.separator + Globals.PREVIEW_DIR + File.separator;
 	}
 	
 	public interface UserHeadCallback {

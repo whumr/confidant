@@ -402,7 +402,7 @@ public class PublishEventActivity extends BaseActivity{
 	private void pubEvent(String title, String content, String type, String address, String start_time, String end_time) {
 		Log.e("PublishEventActivity", "pubEvent");
 		content = Tools.encodeString(content);
-		EventUtil.publishEvent(title, content, type, address, start_time, end_time, latitude + "", longitude + "", 
+		EventUtil.publishEvent_v2(title, content, type, address, start_time, end_time, latitude + "", longitude + "", 
 				PARAM_VALUES.SHOWMODE_BIG, et_content.getImages(img_upload_map), new EntityCallback<String>() {
 			@Override
 			public void succeed(String event_id) {
@@ -428,7 +428,7 @@ public class PublishEventActivity extends BaseActivity{
 		//内容
 		String content = et_content.getHtmlContent(img_upload_map);
 		//图片
-		final List<UploadImgEntity> images = et_content.getImages();
+//		final List<UploadImgEntity> images = et_content.getImages();
 		//类型
 //		String type = eventType.getType();
 		//开始时间
@@ -454,44 +454,44 @@ public class PublishEventActivity extends BaseActivity{
 		event.send_time = System.currentTimeMillis();
 		event.address = address;
 		event.sender = session.getUser();
-		if (!images.isEmpty()) {
-			//先上传图片
-			for (Iterator<UploadImgEntity> it = images.iterator(); it.hasNext();) {
-				UploadImgEntity img = it.next();
-				String small_path = img.small_file.getAbsolutePath();
-				String big_path = img.big_file.getAbsolutePath();
-				if (img_upload_map.containsKey(small_path) && img_upload_map.containsKey(big_path))
-					it.remove();
-			}
-			if (!images.isEmpty()) {
-				showProgressDialog(false);
-				UploadUtil.uploadImgEntitys(images, new UploadCallback() {
-					
-					@Override
-					public void succeed() {
-						for (UploadImgEntity img : images) {
-							String small_path = img.small_file.getAbsolutePath();
-							String big_path = img.big_file.getAbsolutePath();
-							img_upload_map.put(small_path, img.small_url);
-							img_upload_map.put(big_path, img.big_url);
-						}
-						event.content = et_content.getHtmlContent(img_upload_map);
-						dismissProgressDialog();
-						previewEvent(event);
-					}
-					
-					@Override
-					public void fail(int index, String error) {
-						Log.e("uploadFile", index + " " + error);
-						toastShort("上传图片失败");
-						dismissProgressDialog();
-					}
-				});
-			} else {
-				event.content = et_content.getHtmlContent(img_upload_map);
-				previewEvent(event);
-			}
-		} else
+//		if (!images.isEmpty()) {
+//			//先上传图片
+//			for (Iterator<UploadImgEntity> it = images.iterator(); it.hasNext();) {
+//				UploadImgEntity img = it.next();
+//				String small_path = img.small_file.getAbsolutePath();
+//				String big_path = img.big_file.getAbsolutePath();
+//				if (img_upload_map.containsKey(small_path) && img_upload_map.containsKey(big_path))
+//					it.remove();
+//			}
+//			if (!images.isEmpty()) {
+//				showProgressDialog(false);
+//				UploadUtil.uploadImgEntitys(images, new UploadCallback() {
+//					
+//					@Override
+//					public void succeed() {
+//						for (UploadImgEntity img : images) {
+//							String small_path = img.small_file.getAbsolutePath();
+//							String big_path = img.big_file.getAbsolutePath();
+//							img_upload_map.put(small_path, img.small_url);
+//							img_upload_map.put(big_path, img.big_url);
+//						}
+//						event.content = et_content.getHtmlContent(img_upload_map);
+//						dismissProgressDialog();
+//						previewEvent(event);
+//					}
+//					
+//					@Override
+//					public void fail(int index, String error) {
+//						Log.e("uploadFile", index + " " + error);
+//						toastShort("上传图片失败");
+//						dismissProgressDialog();
+//					}
+//				});
+//			} else {
+//				event.content = et_content.getHtmlContent(img_upload_map);
+//				previewEvent(event);
+//			}
+//		} else
 			previewEvent(event);
 	}
 	

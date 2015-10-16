@@ -62,6 +62,8 @@ public class ServerConstants {
 		public static String SEARCH_EVENT = BASE_URL + "/_action/get_action_bysearch.php";
 		public static String GET_EVENT_TEMPLATE = BASE_URL + "/_system/get_action_template.php";
 		
+		public static String PUBLISH_EVENT_V2 = BASE_URL + "/_action/action_post_v2.php";
+		
 		/**
 		 * msg
 		 */
@@ -236,6 +238,8 @@ public class ServerConstants {
 		public static String SHOWMODE_BIG = "big";
 		public static String STATUS_LIVE = "live";
 		public static String STATUS_OVER = "over";
+
+		public static String FC_PUBLISH_EVENT_V2 = "action_post_v2";
 		
 		/**
 		 * msg

@@ -317,6 +317,66 @@ public class EventUtil extends BaseHttpUtil {
 			}
 		});
 	}
+
+	public static void publishEvent_v2(String title, String content, String type, String address, String start_time, String end_time, String latitude, String longitude, 
+			String show_mode, List<UploadImgEntity> entitys, final EntityCallback<String> callback) {
+		UserSession session = UserSession.getInstance();
+		JSONObject data = new JSONObject();
+		try {
+			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_PUBLISH_EVENT_V2);
+			data.put(PARAM_KEYS.USERID, session.getId());
+			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
+			data.put(PARAM_KEYS.TITLEOF, title);
+			data.put(PARAM_KEYS.CONTENT, content);
+			data.put(PARAM_KEYS.KINDOF, type);
+			data.put(PARAM_KEYS.TIMEFROM, start_time);
+			data.put(PARAM_KEYS.TIMETO, end_time);
+			data.put(PARAM_KEYS.ADDRESS, address);
+			data.put(PARAM_KEYS.POSLAT, latitude);
+			data.put(PARAM_KEYS.POSLONG, longitude);
+			data.put(PARAM_KEYS.SHOWMODE, show_mode);
+			JSONArray pics = new JSONArray();
+			for (UploadImgEntity entity : entitys) {
+				JSONObject json = new JSONObject();
+				json.put(PARAM_KEYS.S, entity.small_url);
+				json.put(PARAM_KEYS.B, entity.big_url);
+				pics.put(json);
+			}
+			data.put(PARAM_KEYS.PICOF, pics);
+		} catch (JSONException e) {
+		}
+		RequestParams params = new RequestParams();
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
+		HttpUtils http = Tools.getHttpUtils();
+		http.send(HttpRequest.HttpMethod.POST, URL.PUBLISH_EVENT_V2, params, new RequestCallBack<String>() {
+			
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				String result = Tools.decodeString(responseInfo.result);
+				String error = null;
+				JSONObject json = null;
+				String event_id = null;
+				try {
+					json = new JSONObject(result);
+					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
+						error = json.getString(PARAM_KEYS.RESULT_ERROR);
+					else
+						event_id = json.getString(PARAM_KEYS.ACTIONID);
+				} catch (Exception e) {
+					error = "·¢²¼Ê§°Ü:" + e.getMessage();
+				}
+				if (error != null)
+					callback.fail(error);
+				else
+					callback.succeed(event_id);
+			}
+			
+			@Override
+			public void onFailure(HttpException error, String msg) {
+				callback.fail(ServerConstants.NET_ERROR_TIP);
+			}
+		});
+	}
 	
 	public static void favorEvent(String event_id, final DefaultCallback callback) {
 		UserSession session = UserSession.getInstance();
