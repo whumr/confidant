@@ -55,7 +55,7 @@ public class RichEditText extends EditText {
 		COLOR_MAP.put(COLOR_PURPLE, "#531483");
 	}
 	
-	private static String IMG_PREFIX = "file:///sdcard";
+	public static String IMG_PREFIX = "file:///sdcard";
 	
 	/**
 	 * font settings
@@ -291,7 +291,7 @@ public class RichEditText extends EditText {
 		images.add(uploadeEntity);
 		StringBuilder buffer = new StringBuilder();
 		src = img_map != null && img_map.containsKey(path) ? img_map.get(path) : src;
-		buffer.append("<img src=\"").append(src).append("\" width=\"100%\" />");
+		buffer.append("<img src=\"").append(path).append("\" width=\"100%\" />");
 		return buffer.toString();
 	}
 	

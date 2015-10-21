@@ -80,8 +80,9 @@ public class PreviewEventActivity extends BaseActivity {
 		
 		
 		String html = surrendHtmlTag(event.content);
-		wv_detail.loadDataWithBaseURL("file://" + Environment.getExternalStorageDirectory().getAbsoluteFile(), 
+		wv_detail.loadDataWithBaseURL("file://" + Environment.getExternalStorageDirectory().getPath(), 
 				html, "text/html; charset=UTF-8", "UTF-8", null);
+//		wv_detail.loadData(html, "text/html; charset=UTF-8", "UTF-8");
 		
 //		String path = Environment.getExternalStorageDirectory().getAbsoluteFile() + "/1.jpg";
 //		String html = surrendHtmlTag("<img src=\"file:///sdcard" + path + "\" width=\"100%\" />");

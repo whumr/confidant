@@ -204,39 +204,59 @@ public class EventEntity implements Serializable{
 		}
 		return copyEvents(event, list);
 	}
+
+	public static EventEntity getNearestEvent(EventEntity event, double poslang, double poslat) {
+		Pos result = null;
+		double min_distince = 0;
+		List<Pos> pos_list = event.poslist;
+		for (int i = 0; i < pos_list.size(); i++) {
+			Pos pos = pos_list.get(i);
+			double distince = Tools.getDistance(poslang, poslat, pos.poslong, pos.poslat);
+			pos.distince = distince;
+			if (result == null || distince < min_distince) {
+				result = pos;
+				min_distince = distince;
+			}
+		}
+		return copyEvent(event, result);
+	}
 	
 	public static List<EventEntity> copyEvents(EventEntity event, List<Pos> p_list) {
 		List<EventEntity> list = new ArrayList<EventEntity>();
 		for (Pos pos : p_list) {
-			EventEntity e = new EventEntity();
-//			e.orignal_event = event;
-			e.poslat = pos.poslat;
-			e.poslong = pos.poslong;
-			e.id = event.id;
-			e.sender = event.sender;
-			e.id = event.id;
-			e.title = event.title;
-			e.userid = event.userid;
-			e.statusof = event.statusof;
-			e.address = event.address;
-			e.kindof = event.kindof;
-			e.event_type = event.event_type;
-			e.showmode = event.showmode;
-			e.content = event.content;
-			e.send_time_str = event.send_time_str;
-			e.send_time = event.send_time;
-			e.timeto = event.timeto;
-			e.timefrom = event.timefrom;
-			e.likedcount = event.likedcount;
-			e.replycount = event.replycount;
-			e.viewcount = event.viewcount;
-			e.meters = event.meters;
-			e.pics_small = event.pics_small;
-			e.pics_big = event.pics_big;
-			e.poslist = event.poslist;
-			list.add(e);
+			list.add(copyEvent(event, pos));
 		}
 		return list;
+	}
+
+	public static EventEntity copyEvent(EventEntity event, Pos pos) {
+		EventEntity e = new EventEntity();
+//			e.orignal_event = event;
+		e.poslat = pos.poslat;
+		e.poslong = pos.poslong;
+		e.id = event.id;
+		e.sender = event.sender;
+		e.id = event.id;
+		e.title = event.title;
+		e.userid = event.userid;
+		e.statusof = event.statusof;
+		e.address = event.address;
+		e.kindof = event.kindof;
+		e.event_type = event.event_type;
+		e.showmode = event.showmode;
+		e.content = event.content;
+		e.send_time_str = event.send_time_str;
+		e.send_time = event.send_time;
+		e.timeto = event.timeto;
+		e.timefrom = event.timefrom;
+		e.likedcount = event.likedcount;
+		e.replycount = event.replycount;
+		e.viewcount = event.viewcount;
+		e.meters = event.meters;
+		e.pics_small = event.pics_small;
+		e.pics_big = event.pics_big;
+		e.poslist = event.poslist;
+		return e;
 	}
 	
 	public enum EventType {

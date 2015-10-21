@@ -224,12 +224,6 @@ public class Tools {
 	 * @param event_id
 	 */
 	public static void openEvent(Context context, String event_id) {
-//		OverlayEntity overlayEntity = new OverlayEntity();
-//		overlayEntity.actionid = event_id;
-//		Intent intent = new Intent();
-//		intent.setClass(context, MapShowPositionActivity.class);
-//		intent.putExtra(BaseActivity.EXTRA_PARAM, overlayEntity);
-//		context.startActivity(intent);
 		Intent intent = new Intent();
 		intent.setClass(context, MainActivity.class);
 		intent.putExtra(BaseActivity.EXTRA_PARAM, event_id);

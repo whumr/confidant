@@ -24,9 +24,17 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseActivity;
 import com.fingertip.tuding.common.UserSession;
+import com.fingertip.tuding.db.SharedPreferenceUtil;
 import com.fingertip.tuding.entity.EventEntity;
 import com.fingertip.tuding.entity.EventEntity.EventType;
 import com.fingertip.tuding.info.widget.RichEditText;
@@ -73,6 +81,7 @@ public class PublishEventActivity extends BaseActivity{
 		setContentView(R.layout.activity_publishinfo_customer);
 		setupViews();
 		initDialog();
+		locateAddress();
 	}
 
 	private void setupViews() {
@@ -544,5 +553,32 @@ public class PublishEventActivity extends BaseActivity{
 	protected void onDestroy() {
 		super.onDestroy();
 		ImageLoader.getInstance().clearMemoryCache();
+	}
+	
+	private void locateAddress() {
+		final float lat = getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT);
+		final float lon = getSP().getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG);
+		if (lat > 0 && lon > 0) {
+			final GeoCoder mSearch = GeoCoder.newInstance();
+			mSearch.setOnGetGeoCodeResultListener(new OnGetGeoCoderResultListener() {
+				
+				@Override
+				public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
+					if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+						toastShort("未能确定当前位置");
+					} else {
+						tv_position.setText("当前位置:" + result.getAddress());
+						latitude = lat;
+						longitude = lon;
+					}
+					mSearch.destroy();
+				}
+				
+				@Override
+				public void onGetGeoCodeResult(GeoCodeResult result) {
+				}
+			});
+			mSearch.reverseGeoCode(new ReverseGeoCodeOption().location(new LatLng(lat, lon)));
+		}
 	}
 }

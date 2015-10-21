@@ -370,5 +370,18 @@ public class RefreshableListView extends ListView implements OnScrollListener {
 		public void onRefresh();
 		public void onLoadMore();
 	}
+	
+	
+	public void setNoDataString(String no_data) {
+		noData.setText(no_data);
+	}
+	
+	public void setLoadFullString(String load_full) {
+		loadFull.setText(load_full);
+	}
+	
+	public void setMoreString(String more_string) {
+		more.setText(more_string);
+	}
 
 }

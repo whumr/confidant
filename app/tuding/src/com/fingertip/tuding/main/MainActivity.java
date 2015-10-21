@@ -327,32 +327,12 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	@SuppressLint("InflateParams")
 	private Marker setOverlayData(final EventEntity event){
 		Context context = MainActivity.this;
-		final View view_markerImage = LayoutInflater.from(context).inflate(R.layout.view_marker_img, null);
-		ImageView iv_markerImg = (ImageView)view_markerImage.findViewById(R.id.image);
-		
-		if (event.event_type == EventType.SPORTS) {
-			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_5);
-			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_sports));
-		} else if (event.event_type == EventType.SOCIALITY) {
-			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_3);
-			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_party));
-		} else if (event.event_type == EventType.PERFORM) {
-			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_4);
-			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_show));
-		} else if (event.event_type == EventType.STUDY) {
-			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_1);
-			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_study));
-		} else if (event.event_type == EventType.SPECIAL) {
-			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_2);
-			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_special_selling));
-		} else if (event.event_type == EventType.OTHER) {
-			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_4);
-			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_others));
-		} else {
-			iv_markerImg.setBackgroundResource(R.drawable.bg_icon_6);
-			iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_all));
-		}
-		if (event.sender.type == UserType.BUSINESS && !Validator.isEmptyString(event.sender.head_img_url)) {
+		boolean customer = event.sender.type == UserType.BUSINESS && !Validator.isEmptyString(event.sender.head_img_url);
+		if (customer) {
+			final View view_markerImage =  LayoutInflater.from(context).inflate(R.layout.view_marker_img_customer, null);
+			ImageView iv_markerImg = (ImageView)view_markerImage.findViewById(R.id.image);
+			int top = iv_markerImg.getPaddingTop();
+			Log.e("customer  getPaddingTop", top + "");
 			ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, iv_markerImg, new UserHeadCallback() {
 				
 				@Override
@@ -365,8 +345,35 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 					addOverlay(event, view_markerImage);
 				}
 			});
-		} else
+		} else {
+			View view_markerImage =  LayoutInflater.from(context).inflate(R.layout.view_marker_img, null);
+			ImageView iv_markerImg = (ImageView)view_markerImage.findViewById(R.id.image);
+			int top = iv_markerImg.getPaddingTop();
+			Log.e("default  getPaddingTop", top + "");
+			if (event.event_type == EventType.SPORTS) {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_5);
+				iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_sports));
+			} else if (event.event_type == EventType.SOCIALITY) {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_3);
+				iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_party));
+			} else if (event.event_type == EventType.PERFORM) {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_4);
+				iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_show));
+			} else if (event.event_type == EventType.STUDY) {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_1);
+				iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_study));
+			} else if (event.event_type == EventType.SPECIAL) {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_2);
+				iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_special_selling));
+			} else if (event.event_type == EventType.OTHER) {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_4);
+				iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_others));
+			} else {
+				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_6);
+				iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_all));
+			}
 			return addOverlay(event, view_markerImage);
+		}
 		return null;
 	}
 	
@@ -393,9 +400,11 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	//返回最近的一个
 	@SuppressLint("InflateParams")
 	private Marker addMultiOverlay(List<EventEntity> events) {
+		boolean customer = events.get(0).sender.type == UserType.BUSINESS && !Validator.isEmptyString(events.get(0).sender.head_img_url);
 		Marker result = null;
 		for (int i = 0; i < events.size(); i++) {
-			View view_markerImage = LayoutInflater.from(this).inflate(R.layout.view_marker_img, null);
+			View view_markerImage = customer ? LayoutInflater.from(this).inflate(R.layout.view_marker_img_customer, null) 
+					: LayoutInflater.from(this).inflate(R.layout.view_marker_img, null);
 			ImageView iv_markerImg = (ImageView)view_markerImage.findViewById(R.id.image);
 			EventEntity event = events.get(i);
 			EventType event_type = event.event_type;
@@ -665,9 +674,18 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 			@Override
 			public void succeed(EventEntity entity) {
 				dismissProgressDialog();
-				Marker marker = getMarker(entity.id);
-				if (marker == null)
-					marker = setOverlayData(entity);
+				Marker marker = null;
+				//非多经纬度
+				if (entity.poslist.isEmpty()) {
+					marker = getMarker(entity.id);
+					if (marker == null)
+						marker = setOverlayData(entity);
+				} else {
+					EventEntity event = EventEntity.getNearestEvent(entity, last_lat.longitude, last_lat.latitude);
+					marker = getMarker(event.id, event.poslong, event.poslat);
+					if (marker == null)
+						marker = setOverlayData(event);
+				}
 				clickMarker(marker);
 			}
 			
@@ -683,6 +701,15 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		for (Marker marker : marker_map.keySet()) {
 			EventEntity event = marker_map.get(marker);
 			if (event.id.equals(event_id))
+				return marker;
+		}
+		return null;
+	}
+
+	private Marker getMarker(String event_id, double poslong, double poslat) {
+		for (Marker marker : marker_map.keySet()) {
+			EventEntity event = marker_map.get(marker);
+			if (event.id.equals(event_id) && event.poslong == poslong && event.poslat == poslat)
 				return marker;
 		}
 		return null;
