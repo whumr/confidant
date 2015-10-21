@@ -65,7 +65,8 @@
 # xutils
 #
 -keep class * extends java.lang.annotation.Annotation { *; } 
-
+-keep class com.fingertip.tuding.entity.MessageEntity.MessageDbEntity
+-keep class com.fingertip.tuding.entity.MessageEntity
 
 #
 # baidu map

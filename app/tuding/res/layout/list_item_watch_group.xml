@@ -74,7 +74,8 @@
 	            <WebView android:id="@+id/event_content_web"
 	                android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
-		            android:paddingTop="3dp" />
+		            android:paddingTop="3dp"
+		            android:visibility="gone" />
 	            
             </LinearLayout>
 

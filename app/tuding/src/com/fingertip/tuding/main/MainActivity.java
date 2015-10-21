@@ -333,8 +333,6 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		if (customer) {
 			final View view_markerImage =  LayoutInflater.from(context).inflate(R.layout.view_marker_img_customer, null);
 			ImageView iv_markerImg = (ImageView)view_markerImage.findViewById(R.id.image);
-			int top = iv_markerImg.getPaddingTop();
-			Log.e("customer  getPaddingTop", top + "");
 			ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, iv_markerImg, new UserHeadCallback() {
 				
 				@Override
@@ -350,8 +348,6 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		} else {
 			View view_markerImage =  LayoutInflater.from(context).inflate(R.layout.view_marker_img, null);
 			ImageView iv_markerImg = (ImageView)view_markerImage.findViewById(R.id.image);
-			int top = iv_markerImg.getPaddingTop();
-			Log.e("default  getPaddingTop", top + "");
 			if (event.event_type == EventType.SPORTS) {
 				iv_markerImg.setBackgroundResource(R.drawable.bg_icon_5);
 				iv_markerImg.setImageDrawable(context.getResources().getDrawable(R.drawable.icon_event_type_sports));

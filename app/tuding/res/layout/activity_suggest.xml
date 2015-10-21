@@ -39,7 +39,7 @@
             android:layout_height="120dp"
             android:textSize="18sp"
             android:textColor="@color/gray_67"
-            android:gravity="bottom"
+            android:gravity="top"
             android:background="@null"
             android:text="" />
         

@@ -18,6 +18,7 @@ import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.Validator;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
 import com.lidroid.xutils.db.annotation.Column;
+import com.lidroid.xutils.db.annotation.Id;
 import com.lidroid.xutils.db.annotation.Table;
 
 /**
@@ -192,7 +193,7 @@ public class MessageEntity implements Serializable{
 		
 		private static final long serialVersionUID = 1L;
 
-		@Column(column = "msg_id")
+		@Id(column = "id")
 	    public String id;
 		
 		@Column(column = "receiver_id")

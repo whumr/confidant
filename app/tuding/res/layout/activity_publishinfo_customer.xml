@@ -96,107 +96,110 @@
                     android:paddingTop="8dp"
                     android:singleLine="true" />
 
-                <com.fingertip.tuding.info.widget.RichEditText
-                    android:id="@+id/et_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp"
-                    android:layout_marginTop="4dp"
-                    android:background="@drawable/bg_kuang_rc"
-                    android:paddingBottom="8dp"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp"
-                    android:paddingTop="8dp"
-                    android:singleLine="false"
-                    android:minLines="6"
-                    android:hint="活动详情"
-                    android:gravity="top"
-                    android:text=""
-                    android:textSize="18sp" />
-                
-                <FrameLayout android:layout_width="wrap_content"
+                <FrameLayout android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     
-                    <LinearLayout android:layout_width="match_parent"
-	                    android:layout_height="wrap_content" >
-	                    
-	                    <ImageView android:id="@+id/iv_img"
-	                        android:layout_width="wrap_content"
-	                        android:layout_height="wrap_content"
-	                        android:padding="5dp"
-	                        android:src="@drawable/icon_editor_img"/>
-	                    
-	                    <ImageView android:id="@+id/iv_bold"
-	                        android:layout_width="wrap_content"
-	                        android:layout_height="wrap_content"
-	                        android:padding="5dp"
-	                        android:src="@drawable/icon_font_bold_down"/>
-	                    
-	                    <ImageView android:id="@+id/iv_big"
-	                        android:layout_width="wrap_content"
-	                        android:layout_height="wrap_content"
-	                        android:padding="5dp"
-	                        android:src="@drawable/icon_font_big_down"/>
-	                    
-	                    <ImageView android:id="@+id/iv_color"
-	                        android:layout_width="wrap_content"
-	                        android:layout_height="wrap_content"
-	                        android:padding="5dp"
-	                        android:src="@drawable/icon_font_color_black"/>
-	                    
-	                </LinearLayout>
+	                <com.fingertip.tuding.info.widget.RichEditText
+	                    android:id="@+id/et_content"
+	                    android:layout_width="match_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginLeft="12dp"
+	                    android:layout_marginRight="12dp"
+	                    android:layout_marginTop="4dp"
+	                    android:background="@drawable/bg_kuang_rc"
+	                    android:paddingBottom="8dp"
+	                    android:paddingLeft="12dp"
+	                    android:paddingRight="12dp"
+	                    android:paddingTop="8dp"
+	                    android:singleLine="false"
+	                    android:minLines="6"
+	                    android:hint="活动详情"
+	                    android:gravity="top"
+	                    android:text=""
+	                    android:textSize="18sp" />
 	                
-                    <LinearLayout android:id="@+id/font_color_layout"
+	                <LinearLayout android:id="@+id/font_color_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:visibility="gone"
-                        android:layout_gravity="center">
+                        android:layout_gravity="center|bottom">
                         
                         <ImageView android:id="@+id/img_font_black"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:src="@drawable/icon_font_black"/>
                         
                         <ImageView android:id="@+id/img_font_blue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:src="@drawable/icon_font_blue"/>
                         
                         <ImageView android:id="@+id/img_font_green"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:src="@drawable/icon_font_green"/>
                         
                         <ImageView android:id="@+id/img_font_purple"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:src="@drawable/icon_font_purple"/>
                         
                         <ImageView android:id="@+id/img_font_red"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:src="@drawable/icon_font_red"/>
                         
                         <ImageView android:id="@+id/img_font_yellow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:src="@drawable/icon_font_yellow"/>
-                        
                     </LinearLayout>
                 </FrameLayout>
+                
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <ImageView
+                        android:id="@+id/iv_img"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:padding="3dp"
+                        android:src="@drawable/icon_editor_img" />
+
+                    <ImageView
+                        android:id="@+id/iv_bold"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:padding="3dp"
+                        android:src="@drawable/icon_font_bold_down" />
+
+                    <ImageView
+                        android:id="@+id/iv_big"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:padding="3dp"
+                        android:src="@drawable/icon_font_big_down" />
+
+                    <ImageView
+                        android:id="@+id/iv_color"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:padding="3dp"
+                        android:src="@drawable/icon_font_color_black" />
+                </LinearLayout>
                 
             </LinearLayout>
 
