@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
             android:paddingStart="16dp"
-            android:text="关于兔丁"
+            android:text="关于图丁"
             android:textColor="@color/gray_67"
             android:textSize="15sp"/>
         
