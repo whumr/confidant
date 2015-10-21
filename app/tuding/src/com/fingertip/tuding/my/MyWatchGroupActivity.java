@@ -45,10 +45,10 @@ public class MyWatchGroupActivity extends BaseNavActivity implements RefreshList
 		super.setupViews();
 		nav_title_txt.setText(R.string.my_watch_group);
 		adapter = new AdapterMyWatchGroup(this);
-//		listView.setBackgroundResource(R.color.white);
-//		listView.setDividerHeight(0);
+		listView.setBackgroundResource(R.color.white);
+		listView.setDividerHeight(0);
 		listView.setAdapter(adapter);
-		listView.setOnItemClickListener(adapter);
+//		listView.setOnItemClickListener(adapter);
 		listView.setRefreshListener(this);
 		listView.setPageSize(20);
 		listView.setNoDataString("关注人新发布的活动，会第一时间出现在这哦。");

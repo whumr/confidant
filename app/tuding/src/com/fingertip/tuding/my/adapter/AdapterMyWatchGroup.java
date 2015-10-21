@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AdapterView;
@@ -88,27 +89,34 @@ public class AdapterMyWatchGroup extends BaseAdapter implements OnItemClickListe
 		boolean rich_event = EventEntity.SHOWMODE_RICH.equals(event.showmode);
 		ImageCache.loadUserHeadImg(event.sender.head_img_url, event.sender.id, sp, bitmapUtils, viewHolder.watcher_head_img);				
 		viewHolder.watcher_head_img.setTag(event.sender.id);
-		viewHolder.watcher_name_txt.setText(event.sender.nick_name);
-		viewHolder.event_title_txt.setText(event.title);
-		
-		viewHolder.event_time_txt.setText(Tools.getTimeStr(event.send_time));
-		viewHolder.event_address_txt.setText(event.address);
-		viewHolder.watcher_head_img.setOnClickListener(new View.OnClickListener() {
+		viewHolder.watcher_head_img.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Tools.openUser(context, v.getTag().toString());
 			}
 		});
+		viewHolder.watcher_name_txt.setText(event.sender.nick_name);
+		viewHolder.event_title_txt.setText(event.title);
+		viewHolder.event_title_txt.setTag(event.id);
+		viewHolder.event_title_txt.setOnClickListener(openEventlistener);
+		viewHolder.event_time_txt.setText(Tools.getTimeStr(event.send_time));
+		viewHolder.event_address_txt.setText(event.address);
 		if (rich_event) {
 			viewHolder.event_content_txt.setVisibility(View.GONE);
 			viewHolder.event_content_web_parent.setVisibility(View.VISIBLE);
 			viewHolder.event_content_web.setVisibility(View.VISIBLE);
 			viewHolder.event_content_web.loadData(event.getHtmlWithoutImg(), "text/html; charset=UTF-8", "UTF-8");
+			
+			viewHolder.event_content_web.setTag(event.id);
+			viewHolder.event_content_web.setOnClickListener(openEventlistener);
 		} else {
 			viewHolder.event_content_txt.setVisibility(View.VISIBLE);
 			viewHolder.event_content_web_parent.setVisibility(View.GONE);
 			viewHolder.event_content_web.setVisibility(View.GONE);
 			viewHolder.event_content_txt.setText(event.content);
+			
+			viewHolder.event_content_txt.setTag(event.id);
+			viewHolder.event_content_txt.setOnClickListener(openEventlistener);
 		}
 		AdapterGridPic pic_adapter = new AdapterGridPic(context, (ArrayList<String>)event.pics_small, (ArrayList<String>)event.pics_big);
 		viewHolder.event_pics_grid.setAdapter(pic_adapter);
@@ -116,6 +124,13 @@ public class AdapterMyWatchGroup extends BaseAdapter implements OnItemClickListe
 		return convertView;
 	}
 
+	OnClickListener openEventlistener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			Tools.openEvent(context, v.getTag().toString());			
+		}
+	};
+	
 	class ViewHolder {
 		ImageView watcher_head_img;
 		TextView watcher_name_txt, event_title_txt, event_content_txt, event_time_txt, event_address_txt;

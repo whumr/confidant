@@ -255,16 +255,16 @@
             android:authorities="com.fingertip.tuding"/>
         
         <!-- product
-         -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="Qu4L8yB6ekUzYsXVz4yiudzP" />
+         -->
          
         <!-- debug
+         -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="G7GhulwwGWcBZbifHflqikpM" />
-         -->
         
         <!-- 友盟统计数据 -->
         <meta-data
