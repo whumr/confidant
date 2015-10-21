@@ -65,6 +65,18 @@
 	            android:text="xxxxxxxxxxxxxxxxxxxxxxxx"
 	            android:textColor="@color/black"
 	            android:textSize="12sp" />
+            
+            <LinearLayout android:id="@+id/event_content_web_parent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+	            
+	            <WebView android:id="@+id/event_content_web"
+	                android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:paddingTop="3dp" />
+	            
+            </LinearLayout>
 
             <com.fingertip.tuding.widget.view.GridViewForScroll android:id="@+id/event_pics_grid"
                 android:layout_width="match_parent"

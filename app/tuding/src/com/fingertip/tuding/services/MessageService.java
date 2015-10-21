@@ -34,14 +34,15 @@ public class MessageService extends Service {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				boolean has_new = sp.getBooleanValue(SharedPreferenceUtil.HAS_NEW_MESSAGE, false);
-				if (!has_new && Tools.isNetworkConnected(MessageService.this)) {
-					UserUtil.loadUserMsg(new EntityListCallback<MessageEntity>() {
+				if (Tools.isNetworkConnected(MessageService.this)) {
+					final UserSession session = UserSession.getInstance();
+					String lastread = sp.getStringValue(session.getId(), SharedPreferenceUtil.LASTREAD);
+					if ("".equals(lastread))
+						lastread = "-1";
+					UserUtil.loadUserMsg(lastread, sp, new EntityListCallback<MessageEntity>() {
 						@Override
 						public void succeed(List<MessageEntity> list) {
 							if (!Validator.isEmptyList(list)) {
-								sp.setBooleanValue(SharedPreferenceUtil.HAS_NEW_MESSAGE, true);
-								UserSession session = UserSession.getInstance();
 								for (MessageEntity msg : list)
 									msg.receiver_id = session.getId();
 								Tools.saveMessages(MessageService.this, list);

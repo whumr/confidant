@@ -335,10 +335,6 @@ public class ImageCache {
 		return null;
 	}
 	
-	public static String getPreviewRelativDir() {
-		return File.separator + Globals.PATH_CACHE + File.separator + Globals.PREVIEW_DIR + File.separator;
-	}
-	
 	public interface UserHeadCallback {
 		
 		public void loadSucceed();

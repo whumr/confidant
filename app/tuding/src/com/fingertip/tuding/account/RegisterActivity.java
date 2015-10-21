@@ -3,6 +3,7 @@ package com.fingertip.tuding.account;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
@@ -12,12 +13,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.fingertip.tuding.Globals;
 import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseNavActivity;
+import com.fingertip.tuding.common.UserSession;
+import com.fingertip.tuding.db.SharedPreferenceUtil;
+import com.fingertip.tuding.util.LocationUtil;
 import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.Validator;
+import com.fingertip.tuding.util.http.UserUtil;
+import com.fingertip.tuding.util.http.callback.JsonCallback;
 import com.fingertip.tuding.util.http.common.ServerConstants;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_VALUES;
@@ -117,13 +123,9 @@ public class RegisterActivity extends BaseNavActivity implements
 				if (reset_pwd) {
 					time.start();
 					sendrestpasswordmsg();
-					Toast.makeText(this, "验证码已发送,请查看并输入您所接收到的短信重置验证码",
-							Toast.LENGTH_SHORT).show();
 				} else {
 					time.start();
 					sendMsg();
-					Toast.makeText(this, "验证码已发送,请查看并输入您所接收到的手机短信验证码",
-							Toast.LENGTH_SHORT).show();
 				}
 			}
 			break;
@@ -144,17 +146,18 @@ public class RegisterActivity extends BaseNavActivity implements
 		final String password = et_password.getText().toString().trim();
 		if (!Validator.isMobilePhone(account)) {
 			toastShort(getResources().getString(R.string.enterElevenPhone));
-			
-				
 		} else {
-			if(!TextUtils.isEmpty(password)){
-				if(password.length()<6){
+			if (!TextUtils.isEmpty(password)) {
+				if (password.length() < 6) {
 					toastShort("密码不能小于6位");
-				}else if (password.length()>12) {
+					return;
+				} else if (password.length() > 12) {
 					toastShort("密码不能大于12位");
+					return;
 				}
-			}else {
+			} else {
 				toastShort("密码不能为空");
+				return;
 			}
 			JSONObject data = new JSONObject();
 			// {"fc":"reg_phone_password_verify", "phone":"18979528420",
@@ -163,59 +166,38 @@ public class RegisterActivity extends BaseNavActivity implements
 				data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_REG_PHONE_PASSWORD);
 				data.put(PARAM_KEYS.PHONE, account);
 				data.put(PARAM_KEYS.MSGCODE, msgCode);
-				if(!msgCode.equals(data.getString(PARAM_KEYS.MSGCODE))){
-					toastShort("hahaha");
-				}else {
-					if(!TextUtils.isEmpty(password)){
-						if(password.length()<6){
-							toastShort("密码不能小于6位");
-						}else if (password.length()>12) {
-							toastShort("密码不能大于12位");
-						}else {
-							
-							data.put(PARAM_KEYS.PASSWORD, password);
-						}
-						
-					}else {
-						toastShort("密码不能为空");
-					}
-				}
+				data.put(PARAM_KEYS.PASSWORD, password);
 			} catch (JSONException e) {
 				e.printStackTrace();
-				System.out.println("报异常啦11111111111111111111111111111111111");
 			}
 			RequestParams params = new RequestParams();
 			params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 			HttpUtils http = Tools.getHttpUtils();
 			http.send(HttpRequest.HttpMethod.POST, URL.CHECK_SENDMSG, params,
-					new RequestCallBack<String>() {
+				new RequestCallBack<String>() {
 
-						@Override
-						public void onSuccess(ResponseInfo<String> responseInfo) {
-							String result = Tools.decodeString(responseInfo.result);
-							String error = null;
-							try {
-								JSONObject json = new JSONObject(result);
-								if (PARAM_VALUES.RESULT_FAIL.equals(json
-										.getString(PARAM_KEYS.RESULT_STATUS)))
-									error = json
-											.getString(PARAM_KEYS.RESULT_ERROR);
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-							if (error != null)
-								toastShort(error);
-							 else {
-								 finish();
-							 }
+					@Override
+					public void onSuccess(ResponseInfo<String> responseInfo) {
+						String result = Tools.decodeString(responseInfo.result);
+						String error = null;
+						try {
+							JSONObject json = new JSONObject(result);
+							if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
+								error = json.getString(PARAM_KEYS.RESULT_ERROR);
+						} catch (JSONException e) {
+							e.printStackTrace();
 						}
+						if (error != null)
+							toastShort(error);
+						else
+							login(account, password);
+					}
 
-						@Override
-						public void onFailure(HttpException error, String msg) {
-							toastShort(ServerConstants.NET_ERROR_TIP);
-						}
-
-					});
+					@Override
+					public void onFailure(HttpException error, String msg) {
+						toastShort(ServerConstants.NET_ERROR_TIP);
+					}
+				});
 		}
 
 	}
@@ -231,13 +213,11 @@ public class RegisterActivity extends BaseNavActivity implements
 		public void onTick(long millisUntilFinished) {
 			btn_send_emscode.setClickable(false);
 			btn_send_emscode.setBackgroundResource(R.drawable.btn_emscode_p);
-			btn_send_emscode.setText("(" + millisUntilFinished / 1000 + ")"
-					+ " 重新获取");
+			btn_send_emscode.setText("(" + millisUntilFinished / 1000 + ")" + " 重新获取");
 		}
 
 		@Override
 		public void onFinish() {
-
 			btn_send_emscode.setBackgroundResource(R.drawable.btn_emscode_n);
 			btn_send_emscode.setText("发送验证码");
 			btn_send_emscode.setClickable(true);
@@ -261,35 +241,30 @@ public class RegisterActivity extends BaseNavActivity implements
 			params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 			HttpUtils http = Tools.getHttpUtils();
 			http.send(HttpRequest.HttpMethod.POST, URL.REG_SENDMSG, params,
-					new RequestCallBack<String>() {
-						@Override
-						public void onStart() {
-						}
+				new RequestCallBack<String>() {
 
-						@Override
-						public void onSuccess(ResponseInfo<String> responseInfo) {
+					@Override
+					public void onSuccess(ResponseInfo<String> responseInfo) {
 							String result = Tools.decodeString(responseInfo.result);
 							String error = null;
 							try {
 								JSONObject json = new JSONObject(result);
-								if (PARAM_VALUES.RESULT_FAIL.equals(json
-										.getString(PARAM_KEYS.RESULT_STATUS)))
-									error = json
-											.getString(PARAM_KEYS.RESULT_ERROR);
+								if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
+									error = json.getString(PARAM_KEYS.RESULT_ERROR);
 							} catch (JSONException e) {
 								e.printStackTrace();
 							}
 							if (error != null)
 								toastShort(error);
-							 else {
-							 }
-						}
+							else
+								toastShort("验证码已发送,请查看并输入您所接收到的手机短信验证码");
+					}
 
-						@Override
-						public void onFailure(HttpException error, String msg) {
+					@Override
+					public void onFailure(HttpException error, String msg) {
 							toastShort(ServerConstants.NET_ERROR_TIP);
-						}
-					});
+					}
+				});
 		}
 	}
 
@@ -299,8 +274,6 @@ public class RegisterActivity extends BaseNavActivity implements
 		final String password = et_password.getText().toString().trim();
 		if (!Validator.isMobilePhone(account)) {
 			toastShort(getResources().getString(R.string.enterElevenPhone));
-			
-				
 		} else {
 			if(!TextUtils.isEmpty(password)){
 				if(password.length()<6){
@@ -315,47 +288,33 @@ public class RegisterActivity extends BaseNavActivity implements
 			// {"fc":"reset_phone_password_verify", "phone":"18979528420",
 			// "pass":"123456", "verifycode":"2155"}
 			try {
-				
 				data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_RESET_PHONE_PASSWPRD);
 				data.put(PARAM_KEYS.PHONE, account);
 				data.put(PARAM_KEYS.MSGCODE, msgCode);
-				if(!msgCode.equals(data.getString(PARAM_KEYS.MSGCODE))){
-				}else {
-							data.put(PARAM_KEYS.PASSWORD, password);
-						}
-					
-				
+				data.put(PARAM_KEYS.PASSWORD, password);
 			} catch (JSONException e) {
 				e.printStackTrace();
-				System.out.println("报异常222222222");
 			}
 			RequestParams params = new RequestParams();
 			params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 			HttpUtils http = Tools.getHttpUtils();
 			http.send(HttpRequest.HttpMethod.POST, URL.RESET_UESRPASSWORD,
 					params, new RequestCallBack<String>() {
-						
-
 						@Override
 						public void onSuccess(ResponseInfo<String> responseInfo) {
 							String result = Tools.decodeString(responseInfo.result);
 							String error = null;
 							try {
 								JSONObject json = new JSONObject(result);
-							
-								if (PARAM_VALUES.RESULT_FAIL.equals(json
-										.getString(PARAM_KEYS.RESULT_STATUS))){
-									error = json
-											.getString(PARAM_KEYS.RESULT_ERROR);}
+								if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS))){
+									error = json.getString(PARAM_KEYS.RESULT_ERROR);}
 							} catch (JSONException e) {
 								e.printStackTrace();
 							}
 							if (error != null)
 								toastShort(error);
-							else {
-								
-								finish();
-							}
+							else
+								login(account, password);
 						}
 
 						@Override
@@ -365,7 +324,42 @@ public class RegisterActivity extends BaseNavActivity implements
 					});
 		}
 	}
+	
+	private void login(final String account, final String password) {
+		showProgressDialog(false);
+		Location location = LocationUtil.getLocation(this);
+		UserUtil.Login(account, password, location, new JsonCallback() {
+			@Override
+			public void succeed(JSONObject json) {
+				dismissProgressDialog();
+				try {
+					String login_id = json.getString(PARAM_KEYS.LOGINID);
+					loginSucceed(account, login_id);
+				} catch (JSONException e) {
+					toastShort("登录失败");
+				}
+			}
+			
+			@Override
+			public void fail(String error) {
+				toastShort(error);
+				dismissProgressDialog();
+			}
+		});
+	}
 
+	private void loginSucceed(String user_id, String login_id) {
+		getSP().setStringValue(SharedPreferenceUtil.LAST_UID, user_id);
+		getSP().setStringValue(SharedPreferenceUtil.LAST_LOGIN_ID, login_id);
+		UserSession session = UserSession.getInstance();
+		session.setLogin(true);
+		session.setId(user_id);
+		session.setLogin_id(login_id);
+		UserUtil.loadFavorList();
+		UserUtil.loadWatchList();
+		Globals.clearActivityList(false);
+	}
+	
 	/** 找回密码的发送验证码 **/
 	private void sendrestpasswordmsg() {
 		final String account = et_account.getText().toString();
@@ -384,34 +378,30 @@ public class RegisterActivity extends BaseNavActivity implements
 			params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
 			HttpUtils http = Tools.getHttpUtils();
 			http.send(HttpRequest.HttpMethod.POST, URL.RESET_PASSWORD, params,
-					new RequestCallBack<String>() {
-						@Override
-						public void onStart() {
-						}
+				new RequestCallBack<String>() {
 
-						@Override
-						public void onSuccess(ResponseInfo<String> responseInfo) {
-							String result = Tools.decodeString(responseInfo.result);
-							String error = null;
-							try {
-								JSONObject json = new JSONObject(result);
-								if (PARAM_VALUES.RESULT_FAIL.equals(json
-										.getString(PARAM_KEYS.RESULT_STATUS)))
-									error = json
-											.getString(PARAM_KEYS.RESULT_ERROR);
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
-							if (error != null)
-								toastShort(error);
-							
+					@Override
+					public void onSuccess(ResponseInfo<String> responseInfo) {
+						String result = Tools.decodeString(responseInfo.result);
+						String error = null;
+						try {
+							JSONObject json = new JSONObject(result);
+							if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
+								error = json.getString(PARAM_KEYS.RESULT_ERROR);
+						} catch (JSONException e) {
+							e.printStackTrace();
 						}
+						if (error != null)
+							toastShort(error);
+						else
+							toastShort("验证码已发送,请查看并输入您所接收到的短信重置验证码");
+					}
 
-						@Override
-						public void onFailure(HttpException error, String msg) {
-							toastShort(ServerConstants.NET_ERROR_TIP);
-						}
-					});
-	}
+					@Override
+					public void onFailure(HttpException error, String msg) {
+						toastShort(ServerConstants.NET_ERROR_TIP);
+					}
+				});
+		}
 	}
 }

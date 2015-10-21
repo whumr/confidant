@@ -540,6 +540,20 @@ public class PublishEventActivity extends BaseActivity{
 			toastShort("请选择活动截止时间");
 			return false;
 		}
+		//开始时间
+		String start_time = start_time_dialog.getTimeString();
+		//截止时间
+		String end_time = end_time_dialog.getTimeString();
+		long start = Tools.strToDate(start_time).getTime();
+		long end = Tools.strToDate(end_time).getTime();
+		if (start > end) {
+			toastShort("活动结束时间不能早于开始时间");
+			return false;
+		}
+		if (end < System.currentTimeMillis()) {
+			toastShort("活动结束时间不能早于当前时间");
+			return false;
+		}
 		//坐标
 		String address = tv_position.getText().toString();
 		if (Validator.isEmptyString(address) || latitude == 0 || longitude == 0) {

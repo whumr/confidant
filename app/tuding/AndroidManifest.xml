@@ -251,6 +251,9 @@
         
         <service android:name="com.fingertip.tuding.services.MessageService" />
         
+        <provider android:name="com.fingertip.tuding.common.LocalFileProvider" 
+            android:authorities="com.fingertip.tuding"/>
+        
         <!-- product
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"

@@ -28,7 +28,7 @@ import com.lidroid.xutils.BitmapUtils;
 public class MyIndexActivity extends BaseActivity implements View.OnClickListener {
 	
 	private ImageView my_head_img;
-	private ImageView msg_img;
+	private ImageView msg_img, watch_area_img;
 	private TextView my_nick_txt;
 	private TextView my_place_txt;
 	
@@ -60,6 +60,7 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 	private void findViews() {
 		my_head_img = (ImageView) findViewById(R.id.my_head_img);
 		msg_img = (ImageView) findViewById(R.id.msg_img);
+		watch_area_img = (ImageView) findViewById(R.id.watch_area_img);
 		my_nick_txt = (TextView) findViewById(R.id.my_nick_txt);
 		my_place_txt = (TextView) findViewById(R.id.my_place_txt);
 		
@@ -181,10 +182,16 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 				resetUserInfo();
 			else
 				loadUserInfo();
-			if (sp.getBooleanValue(SharedPreferenceUtil.HAS_NEW_MESSAGE, false))
+			//新消息
+			if (sp.getBooleanValue(session.getId(), SharedPreferenceUtil.HAS_NEW_MESSAGE, false))
 				msg_img.setImageDrawable(getResources().getDrawable(R.drawable.icon_my_msg_red));
 			else
 				msg_img.setImageDrawable(getResources().getDrawable(R.drawable.icon_my_msg));
+			//新关注圈
+			if (sp.getBooleanValue(session.getId(), SharedPreferenceUtil.HAS_NEW_WATCH, false))
+				watch_area_img.setImageDrawable(getResources().getDrawable(R.drawable.icon_my_watch_area_red));
+			else
+				watch_area_img.setImageDrawable(getResources().getDrawable(R.drawable.icon_my_watch_area));
 		}
 	}
 	

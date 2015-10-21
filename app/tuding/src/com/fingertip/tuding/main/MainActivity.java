@@ -156,8 +156,10 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
+				UserSession session = UserSession.getInstance();
 				//有新消息
-				if (sp.getBooleanValue(SharedPreferenceUtil.HAS_NEW_MESSAGE, false)) {
+				if (session.isLogin() && (sp.getBooleanValue(session.getId(), SharedPreferenceUtil.HAS_NEW_MESSAGE, false)
+						|| sp.getBooleanValue(session.getId(), SharedPreferenceUtil.HAS_NEW_WATCH, false))) {
 					Message msg = Message.obtain(handler, 0);
 					msg.sendToTarget();
 				}
@@ -595,7 +597,10 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 		mMapView.onResume();
 		mLocationClient.start();
 		super.onResume();
-		if (sp.getBooleanValue(SharedPreferenceUtil.HAS_NEW_MESSAGE, false))
+		
+		UserSession session = UserSession.getInstance();
+		if (session.isLogin() && (sp.getBooleanValue(session.getId(), SharedPreferenceUtil.HAS_NEW_MESSAGE, false)
+				|| sp.getBooleanValue(session.getId(), SharedPreferenceUtil.HAS_NEW_WATCH, false)))
 			user_info_img.setImageDrawable(getResources().getDrawable(R.drawable.icon_main_user_red));
 		else
 			user_info_img.setImageDrawable(getResources().getDrawable(R.drawable.icon_main_user));

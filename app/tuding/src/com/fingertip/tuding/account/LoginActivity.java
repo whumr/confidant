@@ -22,19 +22,10 @@ import com.fingertip.tuding.base.BaseNavActivity;
 import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.db.SharedPreferenceUtil;
 import com.fingertip.tuding.util.LocationUtil;
-import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.Validator;
 import com.fingertip.tuding.util.http.UserUtil;
-import com.fingertip.tuding.util.http.common.ServerConstants;
+import com.fingertip.tuding.util.http.callback.JsonCallback;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
-import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_VALUES;
-import com.fingertip.tuding.util.http.common.ServerConstants.URL;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
 
 public class LoginActivity extends BaseNavActivity implements View.OnClickListener {
 	
@@ -183,53 +174,23 @@ public class LoginActivity extends BaseNavActivity implements View.OnClickListen
 			toastShort(getResources().getString(R.string.enterRightPwd));
 		else {
 			Location location = LocationUtil.getLocation(this);
-			JSONObject data = new JSONObject();
-//			{"fc":"user_login","userid":1257053, "pass":"123456", "poslong":"113.3261", "poslat":"23.1330"}
-			try {
-				data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_LOGIN);
-				data.put(PARAM_KEYS.USERID, account);
-				data.put(PARAM_KEYS.PASSWORD, password);
-				data.put(PARAM_KEYS.POSLAT, location == null ? "" : location.getLatitude());
-				data.put(PARAM_KEYS.POSLONG, location == null ? "" : location.getLongitude());
-			} catch (JSONException e) {
-			}
-			RequestParams params = new RequestParams();
-			params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
-			HttpUtils http = Tools.getHttpUtils();
-			http.send(HttpRequest.HttpMethod.POST, URL.LOGIN, params, new RequestCallBack<String>() {
+			showProgressDialog(false);
+			UserUtil.Login(account, password, location, new JsonCallback() {
 				@Override
-				public void onStart() {
-					showProgressDialog(false);
-				}
-				
-				@Override
-				public void onSuccess(ResponseInfo<String> responseInfo) {
+				public void succeed(JSONObject json) {
 					dismissProgressDialog();
-					
-					String result = Tools.decodeString(responseInfo.result);
-					String error = null;
-					String login_id = null;
 					try {
-						JSONObject json = new JSONObject(result);
-						if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
-							error = json.getString(PARAM_KEYS.RESULT_ERROR);
-						else
-							login_id = json.getString(PARAM_KEYS.LOGINID);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-					if (error != null)
-						toastShort(error);
-					else if (login_id == null)
-						toastShort("µÇÂ¼Ê§°Ü");
-					else
+						String login_id = json.getString(PARAM_KEYS.LOGINID);
 						loginSucceed(account, login_id);
+					} catch (JSONException e) {
+						toastShort("µÇÂ¼Ê§°Ü");
+					}
 				}
 				
 				@Override
-				public void onFailure(HttpException error, String msg) {
+				public void fail(String error) {
+					toastShort(error);
 					dismissProgressDialog();
-					toastShort(ServerConstants.NET_ERROR_TIP);
 				}
 			});
 		}

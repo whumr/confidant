@@ -32,6 +32,8 @@ public class SharedPreferenceUtil {
 	public static final String HEADIMAGE_FULL = "headImage_full";
 
 	public static final String HAS_NEW_MESSAGE = "has_new_message";
+	public static final String HAS_NEW_WATCH = "has_new_watch";
+	public static final String LASTREAD = "lastread";
 	
 	public SharedPreferenceUtil(Context context){
 		this.context = context;
@@ -61,7 +63,7 @@ public class SharedPreferenceUtil {
 	public boolean getBooleanValue(String key, boolean flag_default){
 		return sp.getBoolean(key, flag_default);
 	}
-	
+
 	public void setIntValue(String key, int value){
 		editor.putInt(key, value).commit();
 	}
@@ -83,5 +85,14 @@ public class SharedPreferenceUtil {
 	public String getStringValue(String user_id, String key){
 		return sp.getString(user_id + "." + key, "");
 	}
+	
+	public void setBooleanValue(String user_id, String key, boolean value){
+		editor.putBoolean(user_id + "." + key, value).commit();
+	}
+	
+	public boolean getBooleanValue(String user_id, String key, boolean flag_default){
+		return sp.getBoolean(user_id + "." + key, flag_default);
+	}
+	
 	
 }

@@ -12,7 +12,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Html.ImageGetter;
@@ -27,6 +26,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.widget.EditText;
 
+import com.fingertip.tuding.common.LocalFileProvider;
 import com.fingertip.tuding.util.ImageCache;
 import com.fingertip.tuding.util.http.common.UploadImgEntity;
 
@@ -55,7 +55,7 @@ public class RichEditText extends EditText {
 		COLOR_MAP.put(COLOR_PURPLE, "#531483");
 	}
 	
-	public static String IMG_PREFIX = "file:///sdcard";
+//	public static String IMG_PREFIX = "file:///sdcard";
 	
 	/**
 	 * font settings
@@ -273,17 +273,17 @@ public class RichEditText extends EditText {
 	
 	public void insertPic(String path) {
 		UploadImgEntity img_entity = ImageCache.compressImageForPreview(path, pic_index++);
-		path = ImageCache.getPreviewRelativDir() + img_entity.small_file.getName();
+		path = img_entity.small_file.getAbsolutePath();
 		int nowLocation = getSelectionStart();
-        getText().insert(nowLocation, Html.fromHtml("<br><img src=\"" + IMG_PREFIX + path 
+        getText().insert(nowLocation, Html.fromHtml("<br><img src=\"" + LocalFileProvider.URI_PREFIX + path 
         		+ "\" width=\"100%\"/><br>", imageGetter, null));
 	}
 	
 	private String getHtmlImg(ImageSpan imgSpan, Map<String, String> img_map) {
 		String src = imgSpan.getSource();
 		String path = src;
-		if (path.startsWith(IMG_PREFIX))
-			path = Environment.getExternalStorageDirectory().getAbsolutePath() + path.substring(IMG_PREFIX.length());
+		if (path.startsWith(LocalFileProvider.URI_PREFIX))
+			path = path.substring(LocalFileProvider.URI_PREFIX.length());
 		UploadImgEntity uploadeEntity = new UploadImgEntity();
 		uploadeEntity.small_file = new File(path);
 		String big_file_path = ImageCache.getAnOtherUploadImgPath(uploadeEntity.small_file.getName(), false);
@@ -291,7 +291,7 @@ public class RichEditText extends EditText {
 		images.add(uploadeEntity);
 		StringBuilder buffer = new StringBuilder();
 		src = img_map != null && img_map.containsKey(path) ? img_map.get(path) : src;
-		buffer.append("<img src=\"").append(path).append("\" width=\"100%\" />");
+		buffer.append("<img src=\"").append(src).append("\" width=\"100%\" />");
 		return buffer.toString();
 	}
 	

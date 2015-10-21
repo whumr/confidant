@@ -98,7 +98,7 @@ public class MessageCenterActivity extends BaseNavActivity implements View.OnCli
 
 	private void loadData() {
 		//更新消息中心状态
-		sp.setBooleanValue(SharedPreferenceUtil.HAS_NEW_MESSAGE, false);
+		sp.setBooleanValue(session.getId(), SharedPreferenceUtil.HAS_NEW_MESSAGE, false);
 		//先加载本地消息
 		new AsyncTask<String, Integer, List<MessageEntity>>() {
 
@@ -114,7 +114,10 @@ public class MessageCenterActivity extends BaseNavActivity implements View.OnCli
 
 		}.execute();
 		//从服务器读取消息
-		UserUtil.loadUserMsg(new EntityListCallback<MessageEntity>() {
+		String lastread = sp.getStringValue(session.getId(), SharedPreferenceUtil.LASTREAD);
+		if ("".equals(lastread))
+			lastread = "-1";
+		UserUtil.loadUserMsg(lastread, sp, new EntityListCallback<MessageEntity>() {
 			
 			@Override
 			public void succeed(List<MessageEntity> list) {

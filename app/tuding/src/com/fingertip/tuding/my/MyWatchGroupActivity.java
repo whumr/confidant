@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseNavActivity;
+import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.db.SharedPreferenceUtil;
 import com.fingertip.tuding.entity.EventEntity;
 import com.fingertip.tuding.my.adapter.AdapterMyWatchGroup;
@@ -67,6 +68,7 @@ public class MyWatchGroupActivity extends BaseNavActivity implements RefreshList
 					else
 						adapter.addAllData(list);
 					afterLoad(append, true, Validator.isEmptyList(list) ? 0 : list.size());
+					sp.setBooleanValue(UserSession.getInstance().getId(), SharedPreferenceUtil.HAS_NEW_WATCH, false);
 				}
 				
 				@Override

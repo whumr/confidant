@@ -350,6 +350,16 @@ public class PublishInfoActivity extends BaseActivity{
 			toastShort("请选择活动截止时间");
 			return;
 		}
+		long start = Tools.strToDate(start_time).getTime();
+		long end = Tools.strToDate(end_time).getTime();
+		if (start > end) {
+			toastShort("活动结束时间不能早于开始时间");
+			return;
+		}
+		if (end < System.currentTimeMillis()) {
+			toastShort("活动结束时间不能早于当前时间");
+			return;
+		}
 		//坐标
 		String address = tv_position.getText().toString();
 		if (Validator.isEmptyString(address) || latitude == 0 || longitude == 0) {

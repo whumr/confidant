@@ -35,6 +35,8 @@ public class EventEntity implements Serializable{
 	private static SimpleDateFormat SERVER_SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 	private static Pattern POS_PATTERN = Pattern.compile("((\\d+.\\d+),(\\d+.\\d+))"); 
 	
+	private static String IMG_REG = "<img\\s*[(src=\"\"\\s+)|(width=\"100%\"\\s+)]+/>";
+	
 	public static String STATUS_IN = PARAM_VALUES.STATUS_LIVE, STATUS_OVER = PARAM_VALUES.STATUS_OVER, 
 			STATUS_IN_S = "进行中", STATUS_OVER_S = "已结束", STATUS_UNKNOWN_S = "未知";
 	public static String SHOWMODE_DEFAULT = PARAM_VALUES.SHOWMODE_DEFAULT, SHOWMODE_RICH = PARAM_VALUES.SHOWMODE_BIG;
@@ -257,6 +259,17 @@ public class EventEntity implements Serializable{
 		e.pics_big = event.pics_big;
 		e.poslist = event.poslist;
 		return e;
+	}
+	
+	public String getHtmlWithoutImg() {
+		String html = content;
+		for (String img : pics_small) {
+			html = html.replaceAll(img, "");
+		}
+		for (String img : pics_big) {
+			html = html.replaceAll(img, "");
+		}
+		return html.replaceAll(IMG_REG, "");
 	}
 	
 	public enum EventType {

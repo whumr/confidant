@@ -191,6 +191,7 @@ public class ServerConstants {
 		 */
 		public static String LINK = "link";
 		public static String FRIENDUID = "frienduid";
+		public static String HAVE_NEW = "have_new";
 	}
 
 	public static class PARAM_VALUES {

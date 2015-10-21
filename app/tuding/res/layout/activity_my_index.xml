@@ -182,6 +182,7 @@
         android:paddingTop="10dp" >
 
         <ImageView
+            android:id="@+id/watch_area_img"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:contentDescription="@string/empty"

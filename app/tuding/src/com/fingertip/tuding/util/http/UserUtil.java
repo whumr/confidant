@@ -10,9 +10,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.util.Log;
 
 import com.fingertip.tuding.common.UserSession;
+import com.fingertip.tuding.db.SharedPreferenceUtil;
 import com.fingertip.tuding.entity.EventEntity;
 import com.fingertip.tuding.entity.MessageEntity;
 import com.fingertip.tuding.entity.UserEntity;
@@ -408,15 +410,15 @@ public class UserUtil extends BaseHttpUtil {
 	 * 获取用户的消息
 	 * @param callback
 	 */
-	public static void loadUserMsg(final EntityListCallback<MessageEntity> callback) {
-		UserSession session = UserSession.getInstance();
+	public static void loadUserMsg(String lastread, final SharedPreferenceUtil sp, final EntityListCallback<MessageEntity> callback) {
+		final UserSession session = UserSession.getInstance();
 		JSONObject data = new JSONObject();
 //		{"fc":"get_msg_ofmy", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", "lastread":"-"}
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_GET_MY_MSG);
 			data.put(PARAM_KEYS.USERID, session.getId());
 			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
-			data.put(PARAM_KEYS.LASTREAD, "-1");
+			data.put(PARAM_KEYS.LASTREAD, lastread);
 		} catch (JSONException e) {
 		}
 		RequestParams params = new RequestParams();
@@ -432,11 +434,20 @@ public class UserUtil extends BaseHttpUtil {
 				List<MessageEntity> list = new ArrayList<MessageEntity>();
 				try {
 					json = new JSONObject(result);
+//					{"fc":"get_msg_ofmy","ok":"y","lastread":"5ale25t","list":[],"have_new":["15088138465","18588859895","13641411876","18682198397"]}
 					Log.e("getMsg", json.toString());
 					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
 						error = json.getString(PARAM_KEYS.RESULT_ERROR);
-					else
+					else {
 						list = MessageEntity.parseList(json);
+						String user_id = session.getId();
+						if (!Validator.isEmptyList(list))
+							sp.setBooleanValue(user_id, SharedPreferenceUtil.HAS_NEW_MESSAGE, true);
+						String have_new = json.getString(PARAM_KEYS.HAVE_NEW);
+						if (have_new.trim().length() > 2)
+							sp.setBooleanValue(user_id, SharedPreferenceUtil.HAS_NEW_WATCH, true);
+						sp.setStringValue(user_id, PARAM_KEYS.LASTREAD, json.getString(PARAM_KEYS.LASTREAD));
+					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 					error = "获取消息列表失败:" + e.getMessage();
@@ -804,5 +815,51 @@ public class UserUtil extends BaseHttpUtil {
 				return result;
 		}
 		return null;
+	}
+	
+	public static void Login(final String account, final String password, final Location location, final JsonCallback callback) {
+		JSONObject data = new JSONObject();
+//			{"fc":"user_login","userid":1257053, "pass":"123456", "poslong":"113.3261", "poslat":"23.1330"}
+		try {
+			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_LOGIN);
+			data.put(PARAM_KEYS.USERID, account);
+			data.put(PARAM_KEYS.PASSWORD, password);
+			data.put(PARAM_KEYS.POSLAT, location == null ? "" : location.getLatitude());
+			data.put(PARAM_KEYS.POSLONG, location == null ? "" : location.getLongitude());
+		} catch (JSONException e) {
+		}
+		RequestParams params = new RequestParams();
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
+		HttpUtils http = Tools.getHttpUtils();
+		http.send(HttpRequest.HttpMethod.POST, URL.LOGIN, params, new RequestCallBack<String>() {
+			
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				String result = Tools.decodeString(responseInfo.result);
+				String error = null;
+				String login_id = null;
+				JSONObject json = null;
+				try {
+					json = new JSONObject(result);
+					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
+						error = json.getString(PARAM_KEYS.RESULT_ERROR);
+					else
+						login_id = json.getString(PARAM_KEYS.LOGINID);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				if (login_id == null)
+					error = "登录失败";
+				if (error != null)
+					callback.fail(error);
+				else
+					callback.succeed(json);
+			}
+			
+			@Override
+			public void onFailure(HttpException error, String msg) {
+				callback.fail(ServerConstants.NET_ERROR_TIP);
+			}
+		});
 	}
 }
