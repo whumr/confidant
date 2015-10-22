@@ -107,9 +107,9 @@
 -keep public class com.tencent.** {*;}
 -keep class com.umeng.socialize.sensor.**
 
--keep class com.tencent.mm.sdk.modelmsg.WXMediaMessage {*;}
-
--keep class com.tencent.mm.sdk.modelmsg.** implements com.tencent.mm.sdk.modelmsg.WXMediaMessage$IMediaObject {*;}
+-keep class com.tencent.mm.sdk.** {
+   *;
+}
 
 -keep class im.yixin.sdk.api.YXMessage {*;}
 -keep class im.yixin.sdk.api.** implements im.yixin.sdk.api.YXMessage$YXMessageData{*;}
