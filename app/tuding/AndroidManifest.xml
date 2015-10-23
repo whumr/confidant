@@ -161,10 +161,6 @@
         <activity 
             android:name="com.fingertip.tuding.account.RegisterActivity"
             android:theme="@style/NothingTheme"  />
-        
-        <activity 
-            android:name="com.fingertip.tuding.account.AccountActivationActivity"
-            android:theme="@style/NothingTheme"  />
 
         <activity 
             android:name="com.fingertip.tuding.widget.SelectPicActivity"
