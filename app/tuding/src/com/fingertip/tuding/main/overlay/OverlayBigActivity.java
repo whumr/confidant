@@ -54,8 +54,8 @@ import com.umeng.analytics.MobclickAgent;
  */
 public class OverlayBigActivity extends BaseActivity implements View.OnClickListener {
 
-	private LinearLayout layout_main, layout_img, layout_commend, layout_collection, layout_share;
-	private ImageView iv_head, iv_topic;
+	private LinearLayout layout_main, layout_img, layout_commend, layout_collection, layout_share, layout_signup;
+	private ImageView iv_head, iv_topic, iv_img_signup;
 	private TextView tv_title, tv_name, tv_time, tv_detail, tv_collection, 
 		tv_btnCollection, tv_recommendTopic, tv_recommend, tv_accusation;
 	private WebView wv_detail;
@@ -103,9 +103,11 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		tv_time = (TextView) findViewById(R.id.tv_time);
 		iv_head = (ImageView) findViewById(R.id.iv_head);
 		iv_topic = (ImageView) findViewById(R.id.iv_topic);
+		iv_img_signup = (ImageView) findViewById(R.id.iv_img_signup);
 		tv_accusation = (TextView) findViewById(R.id.tv_accusation);
 		layout_collection = (LinearLayout) findViewById(R.id.layout_collection);
 		layout_share = (LinearLayout) findViewById(R.id.layout_share);
+		layout_signup = (LinearLayout) findViewById(R.id.layout_signup);
 		wv_detail = (WebView) findViewById(R.id.wv_detail);
 	}
 
@@ -134,6 +136,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 
 		layout_collection.setOnClickListener(this);
 		layout_share.setOnClickListener(this);
+		layout_signup.setOnClickListener(this);
 
 		session = UserSession.getInstance();
 	}
@@ -382,6 +385,9 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 			intent.putExtra(EXTRA_PARAM, shareEntity);
 			startActivity(intent);
 			break;
+		case R.id.layout_signup:
+			signup();
+			break;
 		}
 	}
 
@@ -454,7 +460,14 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 					}
 				});
 	}
-
+	
+	/**
+	 * ±¨Ãû
+	 */
+	private void signup() {
+		iv_img_signup.setImageDrawable(getResources().getDrawable(R.drawable.icon_signuped));
+	}
+	
 	@Override
 	protected void setPageCount() {
 		setPageName(PAGE.EVENT_DETAIL);
