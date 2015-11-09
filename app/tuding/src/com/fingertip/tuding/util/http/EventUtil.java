@@ -463,4 +463,105 @@ public class EventUtil extends BaseHttpUtil {
 			}
 		});
 	}
+	
+	public static void signEvent(String event_id, final DefaultCallback callback) {
+		signEvent0(event_id, PARAM_VALUES.SIGN_EVENT_SIGN, callback);
+	}
+	
+	public static void checkEvent(String event_id, final DefaultCallback callback) {
+		signEvent0(event_id, PARAM_VALUES.SIGN_EVENT_CHECK, callback);
+	}
+	
+	public static void cancelEvent(String event_id, final DefaultCallback callback) {
+		signEvent0(event_id, PARAM_VALUES.SIGN_EVENT_CANCEL, callback);
+	}
+	
+	private static void signEvent0(String event_id, String type, final DefaultCallback callback) {
+		UserSession session = UserSession.getInstance();
+//		{"fc":"set_action_sign", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", "actionid":"58dh48i-8327549-4g", "does":"sign"}
+		JSONObject data = new JSONObject();
+		try {
+			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_SIGN_EVENT);
+			data.put(PARAM_KEYS.USERID, session.getId());
+			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
+			data.put(PARAM_KEYS.ACTIONID, event_id);
+			data.put(PARAM_KEYS.DOES, type);
+		} catch (JSONException e) {
+		}
+		RequestParams params = new RequestParams();
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
+		HttpUtils http = Tools.getHttpUtils();
+		http.send(HttpRequest.HttpMethod.POST, URL.SIGN_EVENT, params, new RequestCallBack<String>() {
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				String result = Tools.decodeString(responseInfo.result);
+				String error = null;
+				JSONObject json = null;
+				try {
+					json = new JSONObject(result);
+					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
+						error = json.getString(PARAM_KEYS.RESULT_ERROR);
+				} catch (Exception e) {
+					error = e.getMessage();
+				}
+				if (error != null)
+					callback.fail(error);
+				else
+					callback.succeed();
+			}
+			
+			@Override
+			public void onFailure(HttpException error, String msg) {
+				callback.fail(ServerConstants.NET_ERROR_TIP);
+			}
+		});
+	}
+	
+	public static void getSignedEvents(final EntityListCallback<EventEntity> callback) {
+		
+	}
+	
+	public static void getSignedEvents0(int page, final EntityListCallback<EventEntity> callback) {
+		UserSession session = UserSession.getInstance();
+		JSONObject data = new JSONObject();
+//		{"fc":"action_sign_ofmy", "userid":18000343400, "loginid":"t4etskerghskdryhgsdfklhs", "pageno":1}
+		try {
+			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_GET_SIGN_EVENT);
+			data.put(PARAM_KEYS.USERID, session.getId());
+			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
+			data.put(PARAM_KEYS.PAGENO, page);
+		} catch (JSONException e) {
+		}
+		RequestParams params = new RequestParams();
+		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
+		HttpUtils http = Tools.getHttpUtils();
+		http.send(HttpRequest.HttpMethod.POST, URL.GET_MY_FAVOR_EVENT, params, new RequestCallBack<String>() {
+			@Override
+			public void onSuccess(ResponseInfo<String> responseInfo) {
+				String result = Tools.decodeString(responseInfo.result);
+				String error = null;
+				JSONObject json = null;
+				List<EventEntity> list = null;
+				try {
+					json = new JSONObject(result);
+					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
+						error = json.getString(PARAM_KEYS.RESULT_ERROR);
+					else
+						list = EventEntity.parseList(json);
+				} catch (JSONException e) {
+					e.printStackTrace();
+					error = "获取活动列表失败:" + e.getMessage();
+				}
+				if (error != null)
+					callback.fail(error);
+				else
+					callback.succeed(list);
+			}
+			
+			@Override
+			public void onFailure(HttpException error, String msg) {
+				callback.fail(ServerConstants.NET_ERROR_TIP);
+			}
+		});
+	}
 }

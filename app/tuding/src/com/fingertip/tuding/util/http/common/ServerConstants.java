@@ -63,6 +63,10 @@ public class ServerConstants {
 		public static String GET_EVENT_TEMPLATE = BASE_URL + "/_system/get_action_template.php";
 		
 		public static String PUBLISH_EVENT_V2 = BASE_URL + "/_action/action_post_v2.php";
+
+		public static String SIGN_EVENT = BASE_URL + "/_action/set_action_sign.php";
+		public static String GET_SIGN_EVENT = BASE_URL + "/_action/action_sign_ofmy.php";
+		public static String GET_SIGN_USERS = BASE_URL + "/_action/get_action_sign_list.php";
 		
 		/**
 		 * msg
@@ -159,6 +163,7 @@ public class ServerConstants {
 		public static String METERS = "meters";
 		public static String SHOWMODE = "showmode";
 		public static String POSLIST = "poslist";
+		public static String DOES = "does";
 		
 		/**
 		 * comment
@@ -241,6 +246,13 @@ public class ServerConstants {
 		public static String STATUS_OVER = "over";
 
 		public static String FC_PUBLISH_EVENT_V2 = "action_post_v2";
+		public static String FC_SIGN_EVENT = "set_action_sign";
+		public static String FC_GET_SIGN_EVENT = "action_sign_ofmy";
+		public static String FC_GET_SIGN_USERS = "get_action_sign_list";
+		
+		public static String SIGN_EVENT_SIGN = "sign";
+		public static String SIGN_EVENT_CHECK = "check";
+		public static String SIGN_EVENT_CANCEL = "cancel";
 		
 		/**
 		 * msg
