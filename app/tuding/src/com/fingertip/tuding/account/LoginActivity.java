@@ -203,8 +203,6 @@ public class LoginActivity extends BaseNavActivity implements View.OnClickListen
 		session.setLogin(true);
 		session.setId(user_id);
 		session.setLogin_id(login_id);
-		UserUtil.loadFavorList();
-		UserUtil.loadWatchList();
 		finish();
 	}
 }

@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fingertip.tuding.base.BaseEntity;
+
 /**
  * ÏûÏ¢
  * @author Administrator
  *
  */
-public class ContactEntity implements Serializable{
+public class ContactEntity extends BaseEntity implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	

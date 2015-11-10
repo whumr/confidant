@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fingertip.tuding.base.BaseEntity;
 import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.Validator;
@@ -26,7 +27,7 @@ import com.lidroid.xutils.db.annotation.Table;
  * @author Administrator
  *
  */
-public class MessageEntity implements Serializable{
+public class MessageEntity extends BaseEntity implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -64,7 +65,8 @@ public class MessageEntity implements Serializable{
 	}
 	
 	
-	public static List<MessageEntity> parseList(JSONObject json) throws JSONException {
+	@SuppressWarnings("unchecked")
+	public static List<MessageEntity> parseJsonArray(JSONObject json) throws JSONException {
 		List<MessageEntity> list = new ArrayList<MessageEntity>();
 		try {
 			JSONArray array = json.getJSONArray(PARAM_KEYS.LIST);
@@ -147,13 +149,9 @@ public class MessageEntity implements Serializable{
 		return null;
 	}
 	
-	
-	
 	public String getTypeStr() {
 		return type_map.get(type) == null ? type : type_map.get(type);
 	}
-
-	
 
 	public static class SaysEntity implements Serializable {
 		

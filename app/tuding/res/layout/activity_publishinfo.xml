@@ -76,6 +76,7 @@
         	android:layout_centerVertical="true"
         	android:textColor="@color/white"
         	android:textSize="18sp"
+        	android:visibility="gone"
             android:text="模板"/>
         
     </RelativeLayout>

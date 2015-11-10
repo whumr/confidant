@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical" >
+
+    <TextView android:id="@+id/close_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_gravity="right"
+        android:text="X"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:background="@color/gray_b9"/>
+    
+    <TextView android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_margin="10dp"
+        android:layout_gravity="center"
+        android:text="报名凭证"/>
+
+    <TextView android:id="@+id/title_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_margin="10dp"
+        android:textColor="@color/gray_56"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="福利时间改了的房间给快乐飞德国进口来访的好几个发的进口国"/>
+    
+    <ImageView android:id="@+id/barcode_img"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:src="@drawable/icon_sign_succeed"/>
+    
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_margin="10dp"
+        android:textColor="@color/gray_56"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="将您的凭证保存至手机"/>
+    
+    <Button android:id="@+id/save_btn"
+        android:layout_gravity="center"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/blue_button"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:text="保存"/>
+
+</LinearLayout>

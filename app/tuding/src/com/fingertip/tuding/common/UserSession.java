@@ -9,12 +9,15 @@ import com.fingertip.tuding.entity.EventTemplate;
 import com.fingertip.tuding.entity.UserEntity;
 import com.fingertip.tuding.entity.WatchEntity;
 import com.fingertip.tuding.util.Validator;
+import com.fingertip.tuding.util.http.UserUtil;
 
 public class UserSession {
 	
 	private String id, login_id, nick_name, head_url, sex, place, mark;
-	private boolean login, load_info, load_watcher, load_favor, load_event_template;
-	private Set<String> watcher_list = new HashSet<String>(), favor_event_list = new HashSet<String>();
+	private boolean login, load_info, load_watcher, load_favor, load_event_template, load_sign_event;
+	private Set<String> watcher_list = new HashSet<String>(), 
+			favor_event_list = new HashSet<String>(),
+			sign_list = new HashSet<String>();
 	private List<EventTemplate> event_templates = new ArrayList<EventTemplate>();
 
 	private static UserSession session;
@@ -32,6 +35,7 @@ public class UserSession {
 		if (session != null) {
 			session.getFavor_event_list().clear();
 			session.getWatcher_list().clear();
+			session.getSign_list().clear();
 			session = null;
 		}
 	}
@@ -98,6 +102,8 @@ public class UserSession {
 
 	public void setLogin(boolean login) {
 		this.login = login;
+		if (login)
+			loadInitData();
 	}
 
 	public boolean isLoad_info() {
@@ -158,6 +164,18 @@ public class UserSession {
 		return event_templates;
 	}
 	
+	public boolean isLoad_sign_event() {
+		return load_sign_event;
+	}
+
+	public void setLoad_sign_event(boolean load_sign_event) {
+		this.load_sign_event = load_sign_event;
+	}
+
+	public Set<String> getSign_list() {
+		return sign_list;
+	}
+
 	public UserEntity getUser() {
 		UserEntity user = new UserEntity();
 		user.id = id;
@@ -167,5 +185,14 @@ public class UserSession {
 		user.place = place;
 		user.mark = mark;
 		return user;
+	}
+	
+	private void loadInitData() {
+		if (!load_favor)
+			UserUtil.loadFavorList(null);
+		if (!load_watcher)
+			UserUtil.loadWatchList(null);
+		if (!load_sign_event)
+			UserUtil.loadSignedList(null);
 	}
 }

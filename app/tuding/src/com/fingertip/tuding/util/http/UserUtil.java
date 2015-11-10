@@ -59,13 +59,10 @@ public class UserUtil extends BaseHttpUtil {
 	 * @param full
 	 */
 	public static void getUserInfo(String user_id, final EntityCallback<UserEntity> callback, boolean full) {
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 //		{"fc":"get_user_infor", "userid":1257053, "loginid":"t4etskerghskdryhgsdfklhs", "inforuid":1257053, "infor":"mini"}
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_GET_USER_INFO);
-			data.put(PARAM_KEYS.USERID, session.getId() == null ? "" : session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id() == null ? "" : session.getLogin_id());
 			data.put(PARAM_KEYS.INFORUID, user_id);
 			if (full)
 				data.put(PARAM_KEYS.INFOR, PARAM_VALUES.INFOR_PLUS);
@@ -73,40 +70,7 @@ public class UserUtil extends BaseHttpUtil {
 				data.put(PARAM_KEYS.INFOR, PARAM_VALUES.INFOR_MINI);
 		} catch (JSONException e) {
 		}
-		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
-		HttpUtils http = Tools.getHttpUtils();
-		http.send(HttpRequest.HttpMethod.POST, URL.GET_USER_INFO, params, new RequestCallBack<String>() {
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = Tools.decodeString(responseInfo.result);
-				String error = null;
-				UserEntity user = null;
-				try {
-					JSONObject json = new JSONObject(result);
-					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
-						error = json.getString(PARAM_KEYS.RESULT_ERROR);
-					if (error == null) 
-						if (json.has(PARAM_KEYS.INFOR) && json.get(PARAM_KEYS.INFOR) != null 
-							&& !"null".equals(json.get(PARAM_KEYS.INFOR).toString())) 
-							user = UserEntity.parseJson(json.getJSONObject(PARAM_KEYS.INFOR));
-				} catch (JSONException e) {
-					e.printStackTrace();
-					error = "获取用户资料失败:" + e.getMessage();
-				}
-				if (user != null)
-					callback.succeed(user);
-				else 
-					error = "未找到该用户";
-				if (error != null)
-					callback.fail(error);
-			}
-			
-			@Override
-			public void onFailure(HttpException error, String msg) {
-				callback.fail(ServerConstants.NET_ERROR_TIP);
-			}
-		});
+		postForEntity(URL.GET_USER_INFO, data, "获取用户资料失败:", callback, UserEntity.class);
 	}
 
 	/**
@@ -115,48 +79,14 @@ public class UserUtil extends BaseHttpUtil {
 	 * @param callback
 	 */
 	public static void searchUserByNick(String nick, final EntityListCallback<UserEntity> callback) {
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 //		{"fc":"get_user_bysearch", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", "nick":"Jim"}
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_SEARCH_USER);
-			data.put(PARAM_KEYS.USERID, session.getId() == null ? "" : session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id() == null ? "" : session.getLogin_id());
 			data.put(PARAM_KEYS.USER_NICK_NAME, nick);
 		} catch (JSONException e) {
 		}
-		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
-		HttpUtils http = Tools.getHttpUtils();
-		http.send(HttpRequest.HttpMethod.POST, URL.SEARCH_USER, params, new RequestCallBack<String>() {
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = Tools.decodeString(responseInfo.result);
-				String error = null;
-				List<UserEntity> list = null;
-				try {
-					JSONObject json = new JSONObject(result);
-					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
-						error = json.getString(PARAM_KEYS.RESULT_ERROR);
-					else
-						list = UserEntity.parseList(json);
-				} catch (JSONException e) {
-					e.printStackTrace();
-					error = "查询用户失败:" + e.getMessage();
-				}
-				if (Validator.isEmptyList(list))
-					error = "用户不存在";
-				if (error != null)
-					callback.fail(error);
-				else
-					callback.succeed(list);
-			}
-			
-			@Override
-			public void onFailure(HttpException error, String msg) {
-				callback.fail(ServerConstants.NET_ERROR_TIP);
-			}
-		});
+		postForEntityList(URL.SEARCH_USER, data, "查询用户失败:", callback, UserEntity.class);
 	}
 	
 	/**
@@ -167,13 +97,10 @@ public class UserUtil extends BaseHttpUtil {
 	 * @param callback
 	 */
 	public static void editWatch(String user_id, String action, final DefaultCallback callback) {
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 //		{"fc":"friend_link", "userid":1257053, "loginid":"t4etskerghskdryhgsdfklhs", "frienduid":"1644980", "link":"shanchu"}
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_EDIT_WATCH);
-			data.put(PARAM_KEYS.USERID, session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.FRIENDUID, user_id);
 			data.put(PARAM_KEYS.LINK, action);
 		} catch (JSONException e) {
@@ -203,13 +130,9 @@ public class UserUtil extends BaseHttpUtil {
 	public static void sendTextMsg(String to_user_id, String content, String title, String event_id, final DefaultCallback callback) {
 	//		{"fc":"send_msg", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", 
 	//		 "touserid":"18979528420", "says":"eyJraW5kIjoidGV4dCIsImNvbnRlbnQiOiI2SXVONkl5cjU1cUU1YVNwNXJhdjVwaXY1b2lSNTVxRTU0aXgifQ=="}
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
-	//	{"fc":"friend_link", "userid":1257053, "loginid":"t4etskerghskdryhgsdfklhs", "frienduid":"1644980", "link":"shanchu"}
+		JSONObject data = getSessionJson();
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_SEND_MSG);
-			data.put(PARAM_KEYS.USERID, session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.TOUSERID, to_user_id);
 			JSONObject says = new JSONObject();
 			says.put(PARAM_KEYS.KIND, PARAM_VALUES.SAYS_TEXT);
@@ -229,56 +152,21 @@ public class UserUtil extends BaseHttpUtil {
 	 * @param callback
 	 */
 	public static void getUserWatchList(final EntityListCallback<WatchEntity> callback) {
-		final UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 //		{"fc":"get_friend_list", "userid":1257053, "loginid":"t4etskerghskdryhgsdfklhs", "link":"guanzhu", "infor":"mini"}
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_GET_MY_WATCH);
-			data.put(PARAM_KEYS.USERID, session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.LINK, PARAM_VALUES.LINK_WATCH);
 			data.put(PARAM_KEYS.INFOR, PARAM_VALUES.INFOR_STAND);
 		} catch (JSONException e) {
 		}
-		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
-		HttpUtils http = Tools.getHttpUtils();
-		http.send(HttpRequest.HttpMethod.POST, URL.GET_MY_WATCH, params, new RequestCallBack<String>() {
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = Tools.decodeString(responseInfo.result);
-				String error = null;
-				JSONObject json = null;
-				List<WatchEntity> list = null;
-				try {
-					json = new JSONObject(result);
-					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
-						error = json.getString(PARAM_KEYS.RESULT_ERROR);
-					else
-						list = WatchEntity.parseList(json);
-				} catch (JSONException e) {
-					e.printStackTrace();
-					error = "获取关注列表失败:" + e.getMessage();
-				}
-				if (error != null)
-					callback.fail(error);
-				else {
-					callback.succeed(list);
-					session.setWatcher_list(list);
-				}
-			}
-			
-			@Override
-			public void onFailure(HttpException error, String msg) {
-				callback.fail(ServerConstants.NET_ERROR_TIP);
-			}
-		});
+		postForEntityList(URL.GET_MY_WATCH, data, "获取关注列表失败:", callback, WatchEntity.class);
 	}
 	
 	/**
 	 * 加载用户关注列表到内存
 	 */
-	public static void loadWatchList() {
+	public static void loadWatchList(final DefaultCallback callback) {
 		final UserSession session = UserSession.getInstance();
 		if (session.isLogin()) {
 			final Set<String> watch_set = session.getWatcher_list();
@@ -290,13 +178,16 @@ public class UserUtil extends BaseHttpUtil {
 						for (WatchEntity watchEntity : list)
 							watch_set.add(watchEntity.user.id);
 					}
+					session.setWatcher_list(list);
 					session.setLoad_watcher(true);
-					Log.e("loadWatchList", "succeed");
+					if (callback != null)
+						callback.succeed();
 				}
 				
 				@Override
 				public void fail(String error) {
-					Log.e("loadWatchList", error);
+					if (callback != null)
+						callback.fail(error);
 				}
 			});
 		}
@@ -307,53 +198,18 @@ public class UserUtil extends BaseHttpUtil {
 	 * @param page
 	 * @param callback
 	 */
-//	public static void getUserFavorEvents(int page, final EntityListCallback<EventEntity> callback) {
 	public static void getUserFavorEvents(final EntityListCallback<EventEntity> callback) {
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 //		{"fc":"action_fav_ofmy", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs"}
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_GET_MY_FAVOR_EVENT);
-			data.put(PARAM_KEYS.USERID, session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.DECODE_CONTENT, PARAM_VALUES.N);
-//			data.put(PARAM_KEYS.PAGENO, page);
 		} catch (JSONException e) {
 		}
-		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
-		HttpUtils http = Tools.getHttpUtils();
-		http.send(HttpRequest.HttpMethod.POST, URL.GET_MY_FAVOR_EVENT, params, new RequestCallBack<String>() {
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = Tools.decodeString(responseInfo.result);
-				String error = null;
-				JSONObject json = null;
-				List<EventEntity> list = null;
-				try {
-					json = new JSONObject(result);
-					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
-						error = json.getString(PARAM_KEYS.RESULT_ERROR);
-					else
-						list = EventEntity.parseList(json);
-				} catch (JSONException e) {
-					e.printStackTrace();
-					error = "获取活动列表失败:" + e.getMessage();
-				}
-				if (error != null)
-					callback.fail(error);
-				else
-					callback.succeed(list);
-			}
-			
-			@Override
-			public void onFailure(HttpException error, String msg) {
-				callback.fail(ServerConstants.NET_ERROR_TIP);
-			}
-		});
+		postForEntityList(URL.GET_MY_FAVOR_EVENT, data, "获取活动列表失败:", callback, EventEntity.class);
 	}
 	
-	public static void loadFavorList() {
+	public static void loadFavorList(final DefaultCallback callback) {
 		final UserSession session = UserSession.getInstance();
 		if (session.isLogin()) {
 			final Set<String> favor_set = session.getFavor_event_list();
@@ -366,58 +222,55 @@ public class UserUtil extends BaseHttpUtil {
 							favor_set.add(eventEntity.id);
 					}
 					session.setLoad_favor(true);
-					Log.e("loadFavorList0", "succeed");
+					if (callback != null)
+						callback.succeed();
 				}
 				
 				@Override
 				public void fail(String error) {
-					Log.e("loadFavorList0", error);
+					if (callback != null)
+						callback.fail(error);
 				}
 			});
-//			loadFavorList0(favor_set);
-//			loadFavorList0(1, favor_set);
 		}
 	}
-
-	/**
-	 * 循环加载全部关注的活动
-	 * @param page
-	 * @param favor_set
-	 */
-//	private static void loadFavorList0(final int page, final Set<String> favor_set) {
-//		getUserFavorEvents(page, new EntityListCallback<EventEntity>() {
-//	private static void loadFavorList0(final Set<String> favor_set) {
-//		getUserFavorEvents(new EntityListCallback<EventEntity>() {
-//			@Override
-//			public void succeed(List<EventEntity> list) {
-//				favor_set.clear();
-//				if (!Validator.isEmptyList(list)) {
-//					for (EventEntity eventEntity : list)
-//						favor_set.add(eventEntity.id);
-////					loadFavorList0((page + 1), favor_set);
-//				}
-//				Log.e("loadFavorList0", "succeed");
-//			}
-//			
-//			@Override
-//			public void fail(String error) {
-//				Log.e("loadFavorList0", error);
-//			}
-//		});
-//	}
+	
+	public static void loadSignedList(final DefaultCallback callback) {
+		final UserSession session = UserSession.getInstance();
+		if (session.isLogin()) {
+			final Set<String> signed_set = session.getSign_list();
+			EventUtil.getSignedEvents(new EntityListCallback<EventEntity>() {
+				@Override
+				public void succeed(List<EventEntity> list) {
+					signed_set.clear();
+					signed_set.clear();
+					if (!Validator.isEmptyList(list)) {
+						for (EventEntity eventEntity : list)
+							signed_set.add(eventEntity.id);
+					}
+					session.setLoad_sign_event(true);
+					if (callback != null)
+						callback.succeed();
+				}
+				
+				@Override
+				public void fail(String error) {
+					if (callback != null)
+						callback.fail(error);
+				}
+			});
+		}
+	}
 	
 	/**
 	 * 获取用户的消息
 	 * @param callback
 	 */
 	public static void loadUserMsg(String lastread, final SharedPreferenceUtil sp, final EntityListCallback<MessageEntity> callback) {
-		final UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 //		{"fc":"get_msg_ofmy", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", "lastread":"-"}
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_GET_MY_MSG);
-			data.put(PARAM_KEYS.USERID, session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.LASTREAD, lastread);
 		} catch (JSONException e) {
 		}
@@ -439,8 +292,8 @@ public class UserUtil extends BaseHttpUtil {
 					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
 						error = json.getString(PARAM_KEYS.RESULT_ERROR);
 					else {
-						list = MessageEntity.parseList(json);
-						String user_id = session.getId();
+						list = MessageEntity.parseJsonArray(json);
+						String user_id = UserSession.getInstance().getId();
 						if (!Validator.isEmptyList(list))
 							sp.setBooleanValue(user_id, SharedPreferenceUtil.HAS_NEW_MESSAGE, true);
 						String have_new = json.getString(PARAM_KEYS.HAVE_NEW);
@@ -470,49 +323,15 @@ public class UserUtil extends BaseHttpUtil {
 	 * @param callback
 	 */
 	public static void getMyEvents(int page, final EntityListCallback<EventEntity> callback) {
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 //		{"fc":"action_ofmy", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs"}
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_GET_MY_EVENT);
-			data.put(PARAM_KEYS.USERID, session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.PAGENO, page);
 			data.put(PARAM_KEYS.DECODE_CONTENT, PARAM_VALUES.N);
 		} catch (JSONException e) {
 		}
-		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
-		HttpUtils http = Tools.getHttpUtils();
-		http.send(HttpRequest.HttpMethod.POST, URL.GET_MY_EVENT, params, new RequestCallBack<String>() {
-			
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = Tools.decodeString(responseInfo.result);
-				String error = null;
-				JSONObject json = null;
-				List<EventEntity> list = new ArrayList<EventEntity>();
-				try {
-					json = new JSONObject(result);
-					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
-						error = json.getString(PARAM_KEYS.RESULT_ERROR);
-					else 
-						list = EventEntity.parseList(json);
-				} catch (JSONException e) {
-					e.printStackTrace();
-					error = "获取活动列表失败:" + e.getMessage();
-				}
-				if (error != null)
-					callback.fail(error);
-				else
-					callback.succeed(list);
-			}
-			
-			@Override
-			public void onFailure(HttpException error, String msg) {
-				callback.fail(ServerConstants.NET_ERROR_TIP);
-			}
-		});
+		postForEntityList(URL.GET_MY_EVENT, data, "获取活动列表失败:", callback, EventEntity.class);
 	}
 	
 	/**
@@ -521,104 +340,36 @@ public class UserUtil extends BaseHttpUtil {
 	 * @param callback
 	 */
 	public static void getUserEvents(String user_id, final EntityListCallback<EventEntity> callback) {
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 //		{"fc":"action_list_byuser", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", "byuser":13641411876}
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_GET_USER_EVENT);
-			data.put(PARAM_KEYS.USERID, session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.BYUSER, user_id);
 			data.put(PARAM_KEYS.DECODE_CONTENT, PARAM_VALUES.N);
 		} catch (JSONException e) {
 		}
-		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
-		HttpUtils http = Tools.getHttpUtils();
-		http.send(HttpRequest.HttpMethod.POST, URL.GET_USER_EVENT, params, new RequestCallBack<String>() {
-			
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = Tools.decodeString(responseInfo.result);
-				String error = null;
-				JSONObject json = null;
-				List<EventEntity> list = new ArrayList<EventEntity>();
-				try {
-					json = new JSONObject(result);
-					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
-						error = json.getString(PARAM_KEYS.RESULT_ERROR);
-					else
-						list = EventEntity.parseList(json);
-				} catch (JSONException e) {
-					e.printStackTrace();
-					error = "获取活动列表失败:" + e.getMessage();
-				}
-				if (error != null)
-					callback.fail(error);
-				else
-					callback.succeed(list);
-			}
-			
-			@Override
-			public void onFailure(HttpException error, String msg) {
-				callback.fail(ServerConstants.NET_ERROR_TIP);
-			}
-		});
+		postForEntityList(URL.GET_USER_EVENT, data, "获取活动列表失败:", callback, EventEntity.class);
 	}
 	
 	public static void checkReg(String phone_list, final JsonCallback callback) {
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 //		{"fc":"friend_link", "userid":1257053, "loginid":"t4etskerghskdryhgsdfklhs", "frienduid":"1644980", "link":"shanchu"}
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_CHECK_PHONE_REG);
-			data.put(PARAM_KEYS.USERID, session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.PHONELIST, phone_list);
 		} catch (JSONException e) {
 		}
-		RequestParams params = new RequestParams();
-		params.addBodyParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
-		HttpUtils http = Tools.getHttpUtils();
-		http.send(HttpRequest.HttpMethod.POST, URL.CHECK_PHONE_REG, params, new RequestCallBack<String>() {
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = Tools.decodeString(responseInfo.result);
-				String error = null;
-				JSONObject json = null;
-				try {
-					json = new JSONObject(result);
-					Log.e("checkReg", json.toString());
-					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
-						error = json.getString(PARAM_KEYS.RESULT_ERROR);
-				} catch (JSONException e) {
-					e.printStackTrace();
-					error = "获取数据失败:" + e.getMessage();
-				}
-				if (error != null)
-					callback.fail(error);
-				else
-					callback.succeed(json);
-			}
-			
-			@Override
-			public void onFailure(HttpException error, String msg) {
-				callback.fail(ServerConstants.NET_ERROR_TIP);
-			}
-		});
+		postForJson(URL.CHECK_PHONE_REG, data, "获取数据失败:", callback);
 	}
 	
 	public static void modifyUserInfo(String[] keys, String[] values, final DefaultCallback callback) {
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 //		{"fc":"user_infor_edit", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", 
 //			 "head":"http://xxxxxxxx/xxx.jpg", "headbig":"http://xxxxxx/xxx.jpg",
 //			 "nick":"Jim", "address":"广州市体育东路1号", "aboutme":"我就是我"}
 		try {
 			//必须参数
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_EDIT_USER_INFO);
-			data.put(PARAM_KEYS.USERID, session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			//修改值
 			for (int i = 0; i < keys.length; i++) 
 				data.put(keys[i], values[i]);
@@ -628,13 +379,10 @@ public class UserUtil extends BaseHttpUtil {
 	}
 	
 	public static void deleteMyEvent(String event_id, final DefaultCallback callback) {
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 //		{"fc":"action_delete", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", "actionid":"56gg55e-D5CB6E8-4g"}
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_DELETE_MY_EVENT);
-			data.put(PARAM_KEYS.USERID, session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.ACTIONID, event_id);
 		} catch (JSONException e) {
 		}
@@ -642,13 +390,10 @@ public class UserUtil extends BaseHttpUtil {
 	}
 	
 	public static void deleteMyFavorEvent(String event_id, final DefaultCallback callback) {
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 //		{"fc":"action_fav_del", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", "actionid":"56gg55e-D5CB6E8-4g"}
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_DELETE_MY_FAVOR_EVENT);
-			data.put(PARAM_KEYS.USERID, session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.ACTIONID, event_id);
 		} catch (JSONException e) {
 		}
@@ -656,13 +401,10 @@ public class UserUtil extends BaseHttpUtil {
 	}
 	
 	public static void deleteMyWatcher(final String user_id, final DefaultCallback callback) {
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 //		{"fc":"friend_link", "userid":1257053, "loginid":"t4etskerghskdryhgsdfklhs", "frienduid":"1644980", "link":"shanchu"}
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_EDIT_WATCH);
-			data.put(PARAM_KEYS.USERID, session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.FRIENDUID, user_id);
 			data.put(PARAM_KEYS.LINK, PARAM_VALUES.LINK_SHANCHU);
 		} catch (JSONException e) {
@@ -671,14 +413,11 @@ public class UserUtil extends BaseHttpUtil {
 	}
 	
 	public static void resetPassword(String old_pwd, String new_pwd, final DefaultCallback callback) {
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 		try {
 			//http://tutuapp.aliapp.com/_user/user_pass_edit.php
 			//{"fc":"user_pass_edit", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", "oldpass":"123456", "newpass":"abcdefg"}
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_EDIT_USER_PASS);
-			data.put(PARAM_KEYS.USERID, session.getId());
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
 			data.put(PARAM_KEYS.USER_OLD_PASS, old_pwd);
 			data.put(PARAM_KEYS.USER_NEW_PASS, new_pwd);
 		} catch (JSONException e) {
@@ -687,16 +426,13 @@ public class UserUtil extends BaseHttpUtil {
 	}
 	
 	public static void uploadHeadImg(String big_head_path, String small_head_path, final JsonCallback callback) {
-		UserSession session = UserSession.getInstance();
 //	            		"fc":"upload_file", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs",
 //	            		 "filefor":"头像"
 //	            		sfile 缩略图, sfull 原图
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_UPLOAD_FILE);
 			data.put(PARAM_KEYS.UPLOAD_FILEFOR, PARAM_VALUES.UPLOAD_HEAD);
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
-			data.put(PARAM_KEYS.USERID, session.getId());
 		} catch (JSONException e) {
 		}
 		RequestParams params = new RequestParams();
@@ -741,49 +477,16 @@ public class UserUtil extends BaseHttpUtil {
 	public static void getMyWatchGroup(String poslat, String poslong, int page, final EntityListCallback<EventEntity> callback) {
 //		{"fc":"get_myfriend_action", "userid":18979528420, "loginid":"t4etskerghskdryhgsdfklhs", 
 //			 "poslong":113.8124, "poslat":22.5428, "pageno":1 }
-		UserSession session = UserSession.getInstance();
-		JSONObject data = new JSONObject();
+		JSONObject data = getSessionJson();
 		try {
 			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_GET_WATCH_GROUP);
-			data.put(PARAM_KEYS.LOGINID, session.getLogin_id());
-			data.put(PARAM_KEYS.USERID, session.getId());
 			data.put(PARAM_KEYS.POSLAT, poslat);
 			data.put(PARAM_KEYS.POSLONG, poslong);
 			data.put(PARAM_KEYS.PAGENO, page);
 			data.put(PARAM_KEYS.DECODE_CONTENT, PARAM_VALUES.N);
 		} catch (JSONException e) {
 		}
-		RequestParams params = new RequestParams();
-		params.addQueryStringParameter(PARAM_KEYS.COMMAND, Tools.encodeString(data.toString()));
-		HttpUtils http = Tools.getHttpUtils();
-		http.send(HttpRequest.HttpMethod.POST, ServerConstants.URL.GET_WATCH_GROUP, params, new RequestCallBack<String>() {
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo) {
-				String result = Tools.decodeString(responseInfo.result);
-				String error = null;
-				JSONObject json = null;
-				List<EventEntity> list = null;
-				try {
-					json = new JSONObject(result);
-					if (PARAM_VALUES.RESULT_FAIL.equals(json.getString(PARAM_KEYS.RESULT_STATUS)))
-						error = json.getString(PARAM_KEYS.RESULT_ERROR);
-					else
-						list = EventEntity.parseList(json);
-				} catch (JSONException e) {
-					e.printStackTrace();
-					error = "查询失败:" + e.getMessage();
-				}
-				if (error != null)
-					callback.fail(error);
-				else
-					callback.succeed(list);
-			}
-
-			@Override
-			public void onFailure(HttpException error, String msg) {
-				callback.fail(ServerConstants.NET_ERROR_TIP);
-			}
-		});
+		postForEntityList(URL.GET_WATCH_GROUP, data, "查询失败:", callback, EventEntity.class);
 	}
 
 	private static final int BLACK = 0xff000000;

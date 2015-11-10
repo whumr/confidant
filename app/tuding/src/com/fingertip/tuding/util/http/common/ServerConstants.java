@@ -14,6 +14,7 @@ public class ServerConstants {
 	public static int BIG_PIC_KB = 500;
 	
 	public static String NET_ERROR_TIP = "网络异常，请确认打开网络或稍后再试";
+	public static String PARSE_ERROR_TIP = "数据错误，请稍后重试";
 	
 	public static class URL {
 		public static String BASE_URL = "http://tutuapp.aliapp.com";
@@ -108,6 +109,9 @@ public class ServerConstants {
 		public static String FEEDBACK = "feedback";
 		public static String PARAMOF = "paramof";
 		public static String MSGCODE = "verifycode";
+		public static String AUTOID = "autoid";
+		public static String CHECKOUT = "checkout";
+		public static String TIMEOF = "timeof";
 		
 		/**
 		 * user info

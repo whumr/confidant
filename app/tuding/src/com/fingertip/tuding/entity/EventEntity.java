@@ -1,7 +1,6 @@
 package com.fingertip.tuding.entity;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fingertip.tuding.R;
+import com.fingertip.tuding.base.BaseEntity;
 import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_VALUES;
@@ -27,7 +27,7 @@ import com.fingertip.tuding.util.http.common.ServerConstants.URL;
  * @author Administrator
  *
  */
-public class EventEntity implements Serializable{
+public class EventEntity extends BaseEntity implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -98,7 +98,8 @@ public class EventEntity implements Serializable{
 //	{"aboutme":"vvv不","userid":"13641411876","sex":"f","head":"http:\/\.jpg","nick":"嘎嘎嘎","address":"安徽省安庆市"},
 //	"poslat":"22.553186","titleof":"饭否风格","userid":"13641411876","picof":"","replycount":"0","likedcount":"0","content":"红河谷",
 //	"statusof":"over","actionid":"577b032-603E420-6h","poslong":"113.952568","address":"","timeto":"0000-00-00 00:00:00","kindof":"优惠\/特价"}
-	public static List<EventEntity> parseList(JSONObject json) throws JSONException {
+	@SuppressWarnings("unchecked")
+	public static List<EventEntity> parseJsonArray(JSONObject json) throws Exception {
 		List<EventEntity> list = new ArrayList<EventEntity>();
 		try {
 			JSONArray array = json.getJSONArray(PARAM_KEYS.LIST);
@@ -115,7 +116,10 @@ public class EventEntity implements Serializable{
 		return list;
 	}
 	
-	public static EventEntity parseJson(JSONObject json) throws JSONException, ParseException {
+	@SuppressWarnings("unchecked")
+	public static EventEntity parseJson(JSONObject json) throws Exception {
+		if (json.has(PARAM_KEYS.ACTIONINFOR) && json.get(PARAM_KEYS.ACTIONINFOR) instanceof JSONObject)
+			json = json.getJSONObject(PARAM_KEYS.ACTIONINFOR);
 		EventEntity event = new EventEntity();
 		event.sender = UserEntity.parseJson(json.getJSONObject(PARAM_KEYS.USERINFOR));
 //		public String id, title, content, userid, statusof, address, kindof;

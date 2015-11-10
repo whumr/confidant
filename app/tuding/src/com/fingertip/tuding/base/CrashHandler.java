@@ -5,15 +5,10 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.fingertip.tuding.guide.GuideActivity;
 import com.fingertip.tuding.util.FileUtil;
 
 public class CrashHandler implements UncaughtExceptionHandler {
@@ -37,13 +32,13 @@ public class CrashHandler implements UncaughtExceptionHandler {
 			} catch (InterruptedException e) {
 				Log.e(TAG, "error : ", e);
 			}    
-            Intent intent = new Intent(application.getApplicationContext(), GuideActivity.class);  
-            PendingIntent restartIntent = PendingIntent.getActivity(    
-                    application.getApplicationContext(), 0, intent,    
-                    Intent.FLAG_ACTIVITY_NEW_TASK);                                                 
-            AlarmManager mgr = (AlarmManager)application.getSystemService(Context.ALARM_SERVICE);    
-            // 1秒钟后重启应用   
-            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, restartIntent);
+//            Intent intent = new Intent(application.getApplicationContext(), GuideActivity.class);  
+//            PendingIntent restartIntent = PendingIntent.getActivity(    
+//                    application.getApplicationContext(), 0, intent,    
+//                    Intent.FLAG_ACTIVITY_NEW_TASK);                                                 
+//            AlarmManager mgr = (AlarmManager)application.getSystemService(Context.ALARM_SERVICE);    
+//            // 1秒钟后重启应用   
+//            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, restartIntent);
             application.finishActivity();  
         }    
     }  

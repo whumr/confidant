@@ -8,18 +8,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fingertip.tuding.base.BaseEntity;
 import com.fingertip.tuding.entity.EventEntity.EventType;
 import com.fingertip.tuding.util.Tools;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
 
-public class EventTemplate implements Serializable {
+public class EventTemplate extends BaseEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	public String titleof, content, picof;
 	public EventType kindof;
 	
-	public static List<EventTemplate> parseList(JSONObject json) {
+	@SuppressWarnings("unchecked")
+	public static List<EventTemplate> parseJsonArray(JSONObject json) {
 		List<EventTemplate> list = new ArrayList<EventTemplate>();
 		try {
 			JSONArray array = json.getJSONArray(PARAM_KEYS.LIST);
@@ -36,6 +38,7 @@ public class EventTemplate implements Serializable {
 		return list;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static EventTemplate parseJson(JSONObject json) throws JSONException {
 		EventTemplate template = new EventTemplate();
 		template.titleof = Tools.decodeString(json.getString(PARAM_KEYS.TITLEOF));

@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseNavActivity;
+import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.common.gif.GifView;
 import com.fingertip.tuding.entity.WatchEntity;
 import com.fingertip.tuding.my.adapter.AdapterMyWatch;
@@ -178,6 +179,7 @@ public class MyWatchListActivity extends BaseNavActivity implements View.OnClick
 				else
 					listView.setVisibility(View.VISIBLE);
 				afterLoad();
+				UserSession.getInstance().setWatcher_list(list);
 			}
 			
 			@Override

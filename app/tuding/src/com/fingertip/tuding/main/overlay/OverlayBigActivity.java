@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ import com.fingertip.tuding.entity.EventEntity.EventType;
 import com.fingertip.tuding.entity.ShareEntity;
 import com.fingertip.tuding.entity.UserEntity;
 import com.fingertip.tuding.main.widget.PublicRecommendActivity;
+import com.fingertip.tuding.main.widget.SignedDialog;
 import com.fingertip.tuding.my.UserInfoActivity;
 import com.fingertip.tuding.setting.ReportActivity;
 import com.fingertip.tuding.util.ImageCache;
@@ -64,13 +66,14 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 	private boolean rich_event = false;
 	private BitmapUtils bitmapUtils;
 	private SharedPreferenceUtil sp;
+	private SignedDialog signedDialog;
 
 	// 屏幕左右间隔
 	private int screenMargin = 80;
 	/** 当前评论页数 **/
 	private int pageIndex_recommend = 1;
 	private boolean isFirst = true;
-
+	private int screen_width, screen_height;
 	private UserSession session;
 
 	@Override
@@ -139,6 +142,11 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		layout_signup.setOnClickListener(this);
 
 		session = UserSession.getInstance();
+		
+		DisplayMetrics outMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
+		screen_width = outMetrics.widthPixels;
+		screen_height = outMetrics.heightPixels;
 	}
 
 	private void initEntity() {
@@ -222,20 +230,29 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		setOverlayType();
 	}
 
-	private void setCollected() {
-		findViewById(R.id.iv_collection_starts).setBackgroundResource(R.drawable.collection_starts_p);
-		tv_btnCollection.setOnClickListener(null);
-		tv_btnCollection.setText("已收藏");
-	}
-
 	private void initFavor() {
 		if (session.isLogin()) {
 			if (session.isLoad_favor()) {
 				if (session.getFavor_event_list().contains(event.id))
 					setCollected();
 			} else
-				UserUtil.loadFavorList();
+				UserUtil.loadFavorList(null);
+			if (session.isLoad_sign_event()) {
+				if (session.getSign_list().contains(event.id))
+					setSigned();
+			} else
+				UserUtil.loadSignedList(null);
 		}
+	}
+	
+	private void setCollected() {
+		findViewById(R.id.iv_collection_starts).setBackgroundResource(R.drawable.collection_starts_p);
+		tv_btnCollection.setOnClickListener(null);
+		tv_btnCollection.setText("已收藏");
+	}
+	
+	private void setSigned() {
+		iv_img_signup.setImageDrawable(getResources().getDrawable(R.drawable.icon_signuped));
 	}
 
 	private View.OnClickListener imgOnClickListener = new View.OnClickListener() {
@@ -386,7 +403,8 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 			startActivity(intent);
 			break;
 		case R.id.layout_signup:
-			signup();
+			if (Tools.checkLogin(this))
+				signup();
 			break;
 		}
 	}
@@ -465,7 +483,30 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 	 * 报名
 	 */
 	private void signup() {
-		iv_img_signup.setImageDrawable(getResources().getDrawable(R.drawable.icon_signuped));
+		if (signedDialog == null)
+			signedDialog = new SignedDialog(this, screen_width, screen_height);
+		//已报名
+		if (session.getSign_list().contains(event.id)) {
+			
+		//未报名
+		} else {
+			showProgressDialog(false);
+			EventUtil.signEvent(event.id, new DefaultCallback() {
+				@Override
+				public void succeed() {
+					setSigned();
+					session.getSign_list().add(event.id);
+					dismissProgressDialog();
+					signedDialog.show();
+				}
+				
+				@Override
+				public void fail(String error) {
+					toastShort("报名失败");
+					dismissProgressDialog();
+				}
+			});
+		}
 	}
 	
 	@Override

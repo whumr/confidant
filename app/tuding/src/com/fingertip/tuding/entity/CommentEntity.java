@@ -8,9 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fingertip.tuding.base.BaseEntity;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
 
-public class CommentEntity implements Serializable{
+public class CommentEntity extends BaseEntity implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -27,7 +28,8 @@ public class CommentEntity implements Serializable{
 	//»Ø¸´
 	public String reply;
 	
-	public static List<CommentEntity> parseList(JSONObject json) {
+	@SuppressWarnings("unchecked")
+	public static List<CommentEntity> parseJsonArray(JSONObject json) {
 		List<CommentEntity> list = new ArrayList<CommentEntity>();
 		try {
 			JSONArray array = json.getJSONArray(PARAM_KEYS.REPLYLIST);
@@ -44,6 +46,7 @@ public class CommentEntity implements Serializable{
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static CommentEntity parseJson(JSONObject json) throws JSONException {
 		CommentEntity comment = new CommentEntity();
 		comment.id = json.getString(PARAM_KEYS.REPLYID);

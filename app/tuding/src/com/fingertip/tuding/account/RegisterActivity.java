@@ -355,8 +355,6 @@ public class RegisterActivity extends BaseNavActivity implements
 		session.setLogin(true);
 		session.setId(user_id);
 		session.setLogin_id(login_id);
-		UserUtil.loadFavorList();
-		UserUtil.loadWatchList();
 		Globals.clearActivityList(false);
 	}
 	

@@ -2,8 +2,10 @@ package com.fingertip.tuding.entity;
 
 import java.io.Serializable;
 
+import com.fingertip.tuding.base.BaseEntity;
+
 /** ·ÖÏíÊµÌå **/
-public class ShareEntity implements Serializable{
+public class ShareEntity extends BaseEntity implements Serializable{
 	/**  **/
 	private static final long serialVersionUID = 1L;
 	

@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fingertip.tuding.base.BaseEntity;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
 
 /**
@@ -15,7 +16,7 @@ import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
  * @author Administrator
  *
  */
-public class WatchEntity implements Serializable{
+public class WatchEntity extends BaseEntity implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -25,7 +26,8 @@ public class WatchEntity implements Serializable{
 	public UserEntity user;
 	
 //	{"list":[{"aboutme":"我就是我","userid":"1644980","sex":"m","head":"","nick":"jim","address":"广州市体育东路1号"}],"ok":"y","fc":"get_friend_list"}
-	public static List<WatchEntity> parseList(JSONObject json) throws JSONException {
+	@SuppressWarnings("unchecked")
+	public static List<WatchEntity> parseJsonArray(JSONObject json) throws JSONException {
 		List<WatchEntity> list = new ArrayList<WatchEntity>();
 		try {
 			JSONArray array = json.getJSONArray(PARAM_KEYS.LIST);

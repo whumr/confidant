@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseActivity;
+import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.common.gif.GifView;
 import com.fingertip.tuding.entity.ShareEntity;
 import com.fingertip.tuding.entity.WatchEntity;
@@ -97,6 +98,7 @@ public class AttentionSelectedActivity extends BaseActivity implements View.OnCl
 			public void succeed(List<WatchEntity> list) {
 				adapterAttentions.addAllList(list);
 				setNodataVisible();
+				UserSession.getInstance().setWatcher_list(list);
 			}
 			
 			@Override

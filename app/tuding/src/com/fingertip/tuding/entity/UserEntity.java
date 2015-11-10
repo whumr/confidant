@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.fingertip.tuding.base.BaseEntity;
 import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
 
 /**
@@ -15,7 +16,7 @@ import com.fingertip.tuding.util.http.common.ServerConstants.PARAM_KEYS;
  * @author Administrator
  *
  */
-public class UserEntity implements Serializable{
+public class UserEntity extends BaseEntity implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	
@@ -29,7 +30,8 @@ public class UserEntity implements Serializable{
 	public UserType type;
 	public int up_count;
 	
-	public static List<UserEntity> parseList(JSONObject json) throws JSONException {
+	@SuppressWarnings("unchecked")
+	public static List<UserEntity> parseJsonArray(JSONObject json) throws JSONException {
 		List<UserEntity> list = new ArrayList<UserEntity>();
 		try {
 			JSONArray array = json.getJSONArray(PARAM_KEYS.LIST);
@@ -48,7 +50,11 @@ public class UserEntity implements Serializable{
 	
 //	{"userid": "1257053","nick": "Jim","sex": "m","head": "","address": "广州市体育东路1号","aboutme": "我就是我","headbig": "http://x/v922l-6313D63.jpg",
 //    "fans": {"f": "3","h": "0","g": "3","x": "0"}}
+	@SuppressWarnings("unchecked")
 	public static UserEntity parseJson(JSONObject json) throws JSONException {
+		if (json.has(PARAM_KEYS.INFOR) && json.get(PARAM_KEYS.INFOR) != null 
+			&& json.get(PARAM_KEYS.INFOR) instanceof JSONObject) 
+			json = json.getJSONObject(PARAM_KEYS.INFOR);
 		UserEntity user = new UserEntity();
 		user.id = json.getString(PARAM_KEYS.USERID);
 		user.nick_name = json.getString(PARAM_KEYS.USER_NICK_NAME);
