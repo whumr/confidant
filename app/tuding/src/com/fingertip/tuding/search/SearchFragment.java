@@ -53,7 +53,7 @@ public class SearchFragment extends BaseFragment implements RefreshListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		if(mView == null){
-			mView = inflater.inflate(R.layout.listview_search, container, false);
+			mView = inflater.inflate(R.layout.listview_common_refreshable, container, false);
 			findViews();
 			setupViews();
 			listView.initData();

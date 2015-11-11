@@ -32,7 +32,9 @@ import com.fingertip.tuding.entity.EventEntity.EventType;
 import com.fingertip.tuding.entity.ShareEntity;
 import com.fingertip.tuding.entity.UserEntity;
 import com.fingertip.tuding.main.widget.PublicRecommendActivity;
+import com.fingertip.tuding.main.widget.SignCertDialog;
 import com.fingertip.tuding.main.widget.SignedDialog;
+import com.fingertip.tuding.main.widget.SignedMenuDialog;
 import com.fingertip.tuding.my.UserInfoActivity;
 import com.fingertip.tuding.setting.ReportActivity;
 import com.fingertip.tuding.util.ImageCache;
@@ -67,6 +69,8 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 	private BitmapUtils bitmapUtils;
 	private SharedPreferenceUtil sp;
 	private SignedDialog signedDialog;
+	private SignCertDialog signCertDialog;
+	private SignedMenuDialog signedMenuDialog;
 
 	// 屏幕左右间隔
 	private int screenMargin = 80;
@@ -190,7 +194,6 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		if (rich_event) {
 			layout_img.setVisibility(View.GONE);
 			findViewById(R.id.tv_img_tip).setVisibility(View.GONE);
-			findViewById(R.id.v_img_line).setVisibility(View.GONE);
 		} else {
 			ImageView imageView = null;
 			LinearLayout layout_img_horizontal = null;
@@ -239,7 +242,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 				UserUtil.loadFavorList(null);
 			if (session.isLoad_sign_event()) {
 				if (session.getSign_list().contains(event.id))
-					setSigned();
+					setSigned(true);
 			} else
 				UserUtil.loadSignedList(null);
 		}
@@ -251,8 +254,8 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		tv_btnCollection.setText("已收藏");
 	}
 	
-	private void setSigned() {
-		iv_img_signup.setImageDrawable(getResources().getDrawable(R.drawable.icon_signuped));
+	private void setSigned(boolean signed) {
+		iv_img_signup.setImageDrawable(getResources().getDrawable(signed ? R.drawable.icon_signuped : R.drawable.icon_signup));
 	}
 
 	private View.OnClickListener imgOnClickListener = new View.OnClickListener() {
@@ -483,20 +486,24 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 	 * 报名
 	 */
 	private void signup() {
-		if (signedDialog == null)
-			signedDialog = new SignedDialog(this, screen_width, screen_height);
 		//已报名
 		if (session.getSign_list().contains(event.id)) {
-			
+			if (signedMenuDialog == null) {
+				signedMenuDialog = new SignedMenuDialog(this, screen_width, screen_height);
+				signedMenuDialog.getWindow().setGravity(Gravity.BOTTOM);
+			}
+			signedMenuDialog.show();
 		//未报名
 		} else {
 			showProgressDialog(false);
 			EventUtil.signEvent(event.id, new DefaultCallback() {
 				@Override
 				public void succeed() {
-					setSigned();
+					setSigned(true);
 					session.getSign_list().add(event.id);
 					dismissProgressDialog();
+					if (signedDialog == null)
+						signedDialog = new SignedDialog(OverlayBigActivity.this, screen_width, screen_height);
 					signedDialog.show();
 				}
 				
@@ -507,6 +514,37 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 				}
 			});
 		}
+	}
+	
+	public void showSignCert() {
+		if (signCertDialog == null)
+			signCertDialog = new SignCertDialog(this, screen_width, screen_height, event);
+		if (signedDialog != null && signedDialog.isShowing())
+			signedDialog.dismiss();
+		if (signedMenuDialog != null && signedMenuDialog.isShowing())
+			signedMenuDialog.dismiss();
+		signCertDialog.show();
+	}
+	
+	public void cancelSign() {
+		if (signedMenuDialog != null && signedMenuDialog.isShowing())
+			signedMenuDialog.dismiss();
+		showProgressDialog(false);
+		EventUtil.cancelEvent(event.id, new DefaultCallback() {
+			@Override
+			public void succeed() {
+				setSigned(false);
+				session.getSign_list().remove(event.id);
+				toastShort("已取消报名");
+				dismissProgressDialog();
+			}
+			
+			@Override
+			public void fail(String error) {
+				toastShort("报名失败");
+				dismissProgressDialog();
+			}
+		});
 	}
 	
 	@Override

@@ -97,45 +97,6 @@ public class Tools {
 	}
 	
 	/**
-	 * 字符串格式
-	 * 
-	 * @param str
-	 * @return 
-	 */
-	public static String strToFormat(String str) {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.getDefault());
-		String returnString = "";
-		Date date = null;
-		try {
-			date = format.parse(str);
-			returnString = format.format(date);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return returnString;
-	}//end StrToDate
-	
-	/**
-	 * 字符串格式
-	 * 
-	 * @param str
-	 * @return 
-	 */
-	public static String strToFormatDay(String str) {
-		SimpleDateFormat format = new SimpleDateFormat("MM-dd", Locale.getDefault());
-		SimpleDateFormat format2 = new SimpleDateFormat("MM月dd日", Locale.getDefault());
-		String returnString = "";
-		Date date = null;
-		try {
-			date = format.parse(str);
-			returnString = format2.format(date);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return returnString;
-	}//end StrToDate
-	
-	/**
 	 * 字符串转换成日期
 	 * 
 	 * @param str

@@ -121,11 +121,11 @@ public class EventEntity extends BaseEntity implements Serializable{
 		if (json.has(PARAM_KEYS.ACTIONINFOR) && json.get(PARAM_KEYS.ACTIONINFOR) instanceof JSONObject)
 			json = json.getJSONObject(PARAM_KEYS.ACTIONINFOR);
 		EventEntity event = new EventEntity();
-		event.sender = UserEntity.parseJson(json.getJSONObject(PARAM_KEYS.USERINFOR));
-//		public String id, title, content, userid, statusof, address, kindof;
-//		public long send_time, timeto;
-//		public int likedcount, replycount;
-//		public double poslat, poslong;
+		try {
+			event.sender = UserEntity.parseJson(json.getJSONObject(PARAM_KEYS.USERINFOR));
+		} catch (Exception e) {
+			event.sender = new UserEntity();
+		}
 		event.id = json.getString(PARAM_KEYS.ACTIONID);
 		event.title = json.getString(PARAM_KEYS.TITLEOF);
 		event.userid = json.getString(PARAM_KEYS.USERID); 

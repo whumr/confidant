@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.location.Location;
 import android.util.Log;
 
@@ -239,7 +240,7 @@ public class UserUtil extends BaseHttpUtil {
 		final UserSession session = UserSession.getInstance();
 		if (session.isLogin()) {
 			final Set<String> signed_set = session.getSign_list();
-			EventUtil.getSignedEvents(new EntityListCallback<EventEntity>() {
+			EventUtil.getAllSignedEvents(new EntityListCallback<EventEntity>() {
 				@Override
 				public void succeed(List<EventEntity> list) {
 					signed_set.clear();
@@ -489,8 +490,6 @@ public class UserUtil extends BaseHttpUtil {
 		postForEntityList(URL.GET_WATCH_GROUP, data, "≤È—Ø ß∞‹:", callback, EventEntity.class);
 	}
 
-	private static final int BLACK = 0xff000000;
-	
 	public static Bitmap createQRCode(String user_id, int widthAndHeight) throws WriterException {  
         Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();  
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");  
@@ -501,9 +500,10 @@ public class UserUtil extends BaseHttpUtil {
   
         for (int y = 0; y < height; y++) {  
             for (int x = 0; x < width; x++) {  
-                if (matrix.get(x, y)) {  
-                    pixels[y * width + x] = BLACK;  
-                }  
+                if (matrix.get(x, y))
+                    pixels[y * width + x] = Color.BLACK;  
+                else
+                	pixels[y * width + x] = Color.WHITE;  
             }  
         }  
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);  

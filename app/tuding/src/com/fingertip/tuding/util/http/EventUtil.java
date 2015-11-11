@@ -249,12 +249,12 @@ public class EventUtil extends BaseHttpUtil {
 		postDefalt(URL.SIGN_EVENT, data, "", callback);
 	}
 	
-	public static void getSignedEvents(final EntityListCallback<EventEntity> callback) {
+	public static void getAllSignedEvents(final EntityListCallback<EventEntity> callback) {
 		List<EventEntity> list = new ArrayList<EventEntity>();
-		getSignedEvents0(1, list, callback);
+		getSignedEvents(1, list, callback);
 	}
 	
-	public static void getSignedEvents0(final int page, final List<EventEntity> all_list, final EntityListCallback<EventEntity> callback) {
+	private static void getSignedEvents(final int page, final List<EventEntity> all_list, final EntityListCallback<EventEntity> callback) {
 		JSONObject data = getSessionJson();
 //		{"fc":"action_sign_ofmy", "userid":18000343400, "loginid":"t4etskerghskdryhgsdfklhs", "pageno":1}
 		try {
@@ -267,7 +267,7 @@ public class EventUtil extends BaseHttpUtil {
 			public void succeed(List<EventEntity> list) {
 				if (!Validator.isEmptyList(list)) {
 					all_list.addAll(list);
-					getSignedEvents0(page + 1, all_list, callback);
+					getSignedEvents(page + 1, all_list, callback);
 				} else
 					callback.succeed(all_list);
 			}
@@ -277,6 +277,17 @@ public class EventUtil extends BaseHttpUtil {
 				callback.fail(error);
 			}
 		}, EventEntity.class);
+	}
+	
+	public static void getSignedEvents(final int page, final EntityListCallback<EventEntity> callback) {
+		JSONObject data = getSessionJson();
+//		{"fc":"action_sign_ofmy", "userid":18000343400, "loginid":"t4etskerghskdryhgsdfklhs", "pageno":1}
+		try {
+			data.put(PARAM_KEYS.FC, PARAM_VALUES.FC_GET_SIGN_EVENT);
+			data.put(PARAM_KEYS.PAGENO, page);
+		} catch (JSONException e) {
+		}
+		postForEntityList(URL.GET_SIGN_EVENT, data, "获取参与的活动列表失败:", callback, EventEntity.class);
 	}
 	
 	public static void getEventSigners(String event_id, final EntityListCallback<SignerEntity> callback) {

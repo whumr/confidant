@@ -104,7 +104,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	private float lastZoom = 16;
 	private String current_type = EventType.ALL.getType();
 	
-	private boolean load_data = false;
+	private boolean loading = false;
 	private LatLng last_lat = null;
 	
 	private static int MULTI_COUNT = 3;
@@ -560,8 +560,7 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 					}
 				}
 			}
-			
-			if (!load_data)
+			if (!loading)
 				getPosData();
 		}
 		public void onReceivePoi(BDLocation poiLocation) { }
@@ -613,50 +612,51 @@ public class MainActivity extends BaseActivity implements UpdateNotify{
 	public void notifyUpdata(int index) {
 		current_type = view_tab.getSelectedText();
 		EventUtil.KINDOF = current_type;
-		showProgressDialog(false);
+//		showProgressDialog(true);
 		clearUnmatchType();
 		getPosData();
 	}
 	
 	/** 获取地图数据 **/
 	private void getPosData(){
-		double latitude = sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT);
-		double longitude = sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG);
-		LatLng ll = mMapView.getMap().getMapStatus().bound.getCenter();
-		if (ll != null && ll.latitude != 0 && ll.longitude != 0) {
-			latitude = ll.latitude;
-			longitude = ll.longitude;
-			refreshMultiEvents();
-		}
-		if (latitude > 0 && longitude > 0) {
-			last_lat = new LatLng(latitude, longitude);
-			EventUtil.searchEvents(EventUtil.Type.nearest, longitude + "", latitude + "", 1, new EntityListCallback<EventEntity>(){
-				@Override
-				public void succeed(List<EventEntity> list) {
-					dismissProgressDialog();
-					if (!Validator.isEmptyList(list)) {
-						List<EventEntity> append_list = new ArrayList<EventEntity>();
-						for (EventEntity event :list) {
-							if (event_id_set.add(event.id)) {
-								append_list.add(event);
-//								event_list.add(event);
+		if (!loading) {
+			loading = true;
+			double latitude = sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT);
+			double longitude = sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG);
+			LatLng ll = mMapView.getMap().getMapStatus().bound.getCenter();
+			if (ll != null && ll.latitude != 0 && ll.longitude != 0) {
+				latitude = ll.latitude;
+				longitude = ll.longitude;
+				refreshMultiEvents();
+			}
+			if (latitude > 0 && longitude > 0) {
+				last_lat = new LatLng(latitude, longitude);
+				EventUtil.searchEvents(EventUtil.Type.nearest, longitude + "", latitude + "", 1, new EntityListCallback<EventEntity>(){
+					@Override
+					public void succeed(List<EventEntity> list) {
+						dismissProgressDialog();
+						if (!Validator.isEmptyList(list)) {
+							List<EventEntity> append_list = new ArrayList<EventEntity>();
+							for (EventEntity event :list) {
+								if (event_id_set.add(event.id)) {
+									append_list.add(event);
+								}
 							}
+							if (!append_list.isEmpty())
+								appendOverlay(append_list);
 						}
-						if (!append_list.isEmpty())
-							appendOverlay(append_list);
-//						event_list.clear();
-//						event_list.addAll(list);
-//		            	resetOverlay();
+						loading = false;
 					}
-				}
-				
-				@Override
-				public void fail(String error) {
-					dismissProgressDialog();
-					toastShort(error);
-				}
-			});
-			load_data = true;
+					
+					@Override
+					public void fail(String error) {
+						dismissProgressDialog();
+						toastShort(error);
+						loading = false;
+					}
+				});
+			} else
+				loading = false;
 		}
 	}
 	

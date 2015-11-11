@@ -6,9 +6,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
 import com.fingertip.tuding.Globals;
 
@@ -45,10 +47,29 @@ public class FileUtil {
 			bos.flush();
 			bos.close();
 		} catch (Exception e) {
-			Log.e("saveImage", spath + " " + e.getMessage());
 			return false;
 		}
 		return true;
+	}
+	
+	public static boolean saveCert(Bitmap photo, String title, Context context) {
+		String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator 
+				+ Globals.PATH_BASE + File.separator;
+		File base = new File(path);
+		if (!base.exists())
+			base.mkdirs();
+		String file_name = (title.length() > 10 ? title.substring(0, 10) : title) + ".jpg";
+		boolean saved = saveImage(photo, path + file_name);
+		if (saved)
+			refreshDicm(context, path + file_name);
+		return saved;
+	}
+	
+	public static void refreshDicm(Context context, String path) {
+		Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+		Uri uri = Uri.fromFile(new File(path));
+		intent.setData(uri);
+		context.sendBroadcast(intent);
 	}
 	
 	/**
