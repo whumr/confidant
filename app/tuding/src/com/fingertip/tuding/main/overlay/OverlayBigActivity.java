@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -31,6 +31,7 @@ import com.fingertip.tuding.entity.EventEntity;
 import com.fingertip.tuding.entity.EventEntity.EventType;
 import com.fingertip.tuding.entity.ShareEntity;
 import com.fingertip.tuding.entity.UserEntity;
+import com.fingertip.tuding.main.widget.AdapterComment;
 import com.fingertip.tuding.main.widget.PublicRecommendActivity;
 import com.fingertip.tuding.main.widget.SignCertDialog;
 import com.fingertip.tuding.main.widget.SignedDialog;
@@ -47,7 +48,6 @@ import com.fingertip.tuding.util.http.UserUtil;
 import com.fingertip.tuding.util.http.callback.DefaultCallback;
 import com.fingertip.tuding.util.http.callback.EntityListCallback;
 import com.lidroid.xutils.BitmapUtils;
-import com.lidroid.xutils.util.LogUtils;
 import com.umeng.analytics.MobclickAgent;
 
 /**
@@ -56,9 +56,9 @@ import com.umeng.analytics.MobclickAgent;
  * @author Administrator
  *
  */
-public class OverlayBigActivity extends BaseActivity implements View.OnClickListener {
+public class OverlayBigActivity extends BaseActivity implements OnClickListener {
 
-	private LinearLayout layout_main, layout_img, layout_commend, layout_collection, layout_share, layout_signup;
+	private LinearLayout layout_main, layout_img, layout_collection, layout_share, layout_signup;
 	private ImageView iv_head, iv_topic, iv_img_signup;
 	private TextView tv_title, tv_name, tv_time, tv_detail, tv_collection, 
 		tv_btnCollection, tv_recommendTopic, tv_recommend, tv_accusation;
@@ -72,6 +72,9 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 	private SignCertDialog signCertDialog;
 	private SignedMenuDialog signedMenuDialog;
 
+	private ListView comment_listview;
+	private AdapterComment adapter_comment;
+	
 	// 屏幕左右间隔
 	private int screenMargin = 80;
 	/** 当前评论页数 **/
@@ -98,7 +101,6 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 
 	private void findViews() {
 		layout_main = (LinearLayout) findViewById(R.id.layout_main);
-		layout_commend = (LinearLayout) findViewById(R.id.layout_commend);
 		layout_img = (LinearLayout) findViewById(R.id.layout_img);
 		tv_title = (TextView) findViewById(R.id.tv_title);
 		tv_name = (TextView) findViewById(R.id.tv_name);
@@ -116,10 +118,10 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		layout_share = (LinearLayout) findViewById(R.id.layout_share);
 		layout_signup = (LinearLayout) findViewById(R.id.layout_signup);
 		wv_detail = (WebView) findViewById(R.id.wv_detail);
+		comment_listview = (ListView) findViewById(R.id.comment_listview);
 	}
 
 	private void setupViews() {
-
 		ViewTreeObserver vto = layout_main.getViewTreeObserver();
 		vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
 			@Override
@@ -151,6 +153,9 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
 		screen_width = outMetrics.widthPixels;
 		screen_height = outMetrics.heightPixels;
+		
+		adapter_comment = new AdapterComment(this);
+		comment_listview.setAdapter(adapter_comment);
 	}
 
 	private void initEntity() {
@@ -258,7 +263,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 		iv_img_signup.setImageDrawable(getResources().getDrawable(signed ? R.drawable.icon_signuped : R.drawable.icon_signup));
 	}
 
-	private View.OnClickListener imgOnClickListener = new View.OnClickListener() {
+	private OnClickListener imgOnClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			Tools.previewPics(OverlayBigActivity.this, (ArrayList<String>)event.pics_big, (Integer) v.getTag());
@@ -299,68 +304,68 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 	/** 设置评论 **/
 	@SuppressLint("InflateParams")
 	private void setComment() {
-		Context context = OverlayBigActivity.this;
-		// 评论
-		List<CommentEntity> commentList = event.comments;
-		tv_recommendTopic.setText("评论（" + event.replycount + "）");
-		
-		CommentEntity comment = null;
-		View view_line = null;
-		View view_commend = null;
-		ImageView iv_commendHead;
-		TextView tv_commendName;
-		TextView tv_commendReply;
-		TextView tv_commendContent;
-
-		for (int i = 0; i < commentList.size(); i++) {
-			LogUtils.i("i:" + i + ",i*2:" + (i * 2) + ",count:" + layout_commend.getChildCount());
-			if ((i * 2) < layout_commend.getChildCount()) {
-				view_commend = layout_commend.getChildAt(i * 2);
-			} else {
-				view_commend = LayoutInflater.from(context).inflate(R.layout.view_commend_listitem, null);
-				layout_commend.addView(view_commend);
-
-				view_line = new View(OverlayBigActivity.this);
-				view_line.setBackgroundColor(getResources().getColor(R.color.gray_d7));
-				LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, 1);
-				layoutParams.topMargin = 8;
-				layout_commend.addView(view_line, layoutParams);
-			}
-
-			comment = commentList.get(i);
-			iv_commendHead = (ImageView) view_commend.findViewById(R.id.iv_head);
-			tv_commendName = (TextView) view_commend.findViewById(R.id.tv_name);
-			tv_commendReply = (TextView) view_commend.findViewById(R.id.tv_reply);
-			tv_commendContent = (TextView) view_commend.findViewById(R.id.tv_content);
-
-			try {
-				iv_commendHead.setImageDrawable(getResources().getDrawable(R.drawable.bg_head_default_little));
-				ImageCache.loadUserHeadImg(comment.userEntity.head_img_url, comment.userEntity.id, sp, bitmapUtils, iv_commendHead);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			tv_commendName.setText(comment.userEntity.nick_name);
-			if (comment.reply != null) {
-				tv_commendReply.setText(comment.reply);
-				tv_commendReply.setVisibility(View.VISIBLE);
-			}
-			tv_commendContent.setText(comment.comment);
-
-			iv_commendHead.setTag(comment.userEntity);
-			iv_commendHead.setOnClickListener(onClickListener);
-
-			view_commend.setTag(comment);
-			view_commend.setBackgroundResource(R.drawable.selector_bg_gray);
-			view_commend.setOnClickListener(onClickListener_reply);
-		}
-
-		commentList = null;
-		comment = null;
-
-		view_commend = null;
-		iv_commendHead = null;
-		tv_commendName = null;
-		tv_commendContent = null;
+//		Context context = OverlayBigActivity.this;
+//		// 评论
+//		List<CommentEntity> commentList = event.comments;
+//		tv_recommendTopic.setText("评论（" + event.replycount + "）");
+//		
+//		CommentEntity comment = null;
+//		View view_line = null;
+//		View view_commend = null;
+//		ImageView iv_commendHead;
+//		TextView tv_commendName;
+//		TextView tv_commendReply;
+//		TextView tv_commendContent;
+//
+//		for (int i = 0; i < commentList.size(); i++) {
+//			LogUtils.i("i:" + i + ",i*2:" + (i * 2) + ",count:" + layout_commend.getChildCount());
+//			if ((i * 2) < layout_commend.getChildCount()) {
+//				view_commend = layout_commend.getChildAt(i * 2);
+//			} else {
+//				view_commend = LayoutInflater.from(context).inflate(R.layout.view_commend_listitem, null);
+//				layout_commend.addView(view_commend);
+//
+//				view_line = new View(OverlayBigActivity.this);
+//				view_line.setBackgroundColor(getResources().getColor(R.color.gray_d7));
+//				LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, 1);
+//				layoutParams.topMargin = 8;
+//				layout_commend.addView(view_line, layoutParams);
+//			}
+//
+//			comment = commentList.get(i);
+//			iv_commendHead = (ImageView) view_commend.findViewById(R.id.iv_head);
+//			tv_commendName = (TextView) view_commend.findViewById(R.id.tv_name);
+//			tv_commendReply = (TextView) view_commend.findViewById(R.id.tv_reply);
+//			tv_commendContent = (TextView) view_commend.findViewById(R.id.tv_content);
+//
+//			try {
+//				iv_commendHead.setImageDrawable(getResources().getDrawable(R.drawable.bg_head_default_little));
+//				ImageCache.loadUserHeadImg(comment.userEntity.head_img_url, comment.userEntity.id, sp, bitmapUtils, iv_commendHead);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//			tv_commendName.setText(comment.userEntity.nick_name);
+//			if (comment.reply != null) {
+//				tv_commendReply.setText(comment.reply);
+//				tv_commendReply.setVisibility(View.VISIBLE);
+//			}
+//			tv_commendContent.setText(comment.comment);
+//
+//			iv_commendHead.setTag(comment.userEntity);
+//			iv_commendHead.setOnClickListener(onClickListener);
+//
+//			view_commend.setTag(comment);
+//			view_commend.setBackgroundResource(R.drawable.selector_bg_gray);
+//			view_commend.setOnClickListener(onClickListener_reply);
+//		}
+//
+//		commentList = null;
+//		comment = null;
+//
+//		view_commend = null;
+//		iv_commendHead = null;
+//		tv_commendName = null;
+//		tv_commendContent = null;
 	}
 
 	@Override
@@ -413,7 +418,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 	}
 
 	/** 头像 **/
-	private View.OnClickListener onClickListener = new View.OnClickListener() {
+	private OnClickListener onClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View view) {
 			Tools.openUser(OverlayBigActivity.this, ((UserEntity) view.getTag()).id);
@@ -421,7 +426,7 @@ public class OverlayBigActivity extends BaseActivity implements View.OnClickList
 	};
 
 	/** 评论回复 **/
-	private View.OnClickListener onClickListener_reply = new View.OnClickListener() {
+	private OnClickListener onClickListener_reply = new OnClickListener() {
 		@Override
 		public void onClick(View view) {
 			if (Tools.checkLogin(OverlayBigActivity.this)) {

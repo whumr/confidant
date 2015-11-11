@@ -209,6 +209,12 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
+            <ListView android:id="@+id/comment_listview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </ListView>
+            
+            <!-- 
             <LinearLayout
                 android:id="@+id/layout_commend"
                 android:layout_width="match_parent"
@@ -219,6 +225,7 @@
                 android:paddingRight="6dp"
                 android:paddingTop="6dp" >
             </LinearLayout>
+             -->
         </LinearLayout>
     </ScrollView>
 
