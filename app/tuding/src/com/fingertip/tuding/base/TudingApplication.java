@@ -1,9 +1,9 @@
 package com.fingertip.tuding.base;
 
-import android.os.Process;
-
 import android.app.Application;
 import android.content.Context;
+import android.os.Process;
+import cn.jpush.android.api.JPushInterface;
 
 import com.fingertip.tuding.Globals;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -17,6 +17,8 @@ public class TudingApplication extends Application {
 		initImageLoader(getApplicationContext());
 		CrashHandler crashHandler = new CrashHandler(this);
 		Thread.setDefaultUncaughtExceptionHandler(crashHandler);
+		JPushInterface.setDebugMode(true);
+		JPushInterface.init(this);
 	}
 
 	public static void initImageLoader(Context context) {
