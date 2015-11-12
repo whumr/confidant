@@ -1,8 +1,12 @@
 package com.fingertip.tuding.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fingertip.tuding.base.BaseEntity;
@@ -29,6 +33,24 @@ public class SignerEntity extends BaseEntity implements Serializable {
 		signer.checked = PARAM_VALUES.Y.equals(signer.checkout);
 		signer.time = Tools.strToDate(signer.timeof);
 		signer.user = UserEntity.parseJson(json.getJSONObject(PARAM_KEYS.USERINFOR));
-		return null;
+		return signer;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<SignerEntity> parseJsonArray(JSONObject json) throws Exception {
+		List<SignerEntity> list = new ArrayList<SignerEntity>();
+		try {
+			JSONArray array = json.getJSONArray(PARAM_KEYS.LIST);
+			for (int i = 0; i < array.length(); i++) {
+				try {
+					list.add(parseJson(array.getJSONObject(i)));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 }

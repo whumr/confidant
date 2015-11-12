@@ -25,16 +25,8 @@
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="未知"
+            android:text="男神"
             android:textColor="@color/gray_98" />
-
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/tv_content1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="未知"
-            android:textColor="@color/black" />
 
         <LinearLayout android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -46,7 +38,7 @@
 	            android:textColor="@color/gray_97"
 	            android:textSize="12sp"
 	            android:visibility="gone"
-	            android:text="weizhi" />
+	            android:text="回复xxx" />
             
             <TextView
 	            android:id="@+id/tv_content"
@@ -54,36 +46,9 @@
 	            android:layout_height="wrap_content"
 	            android:textColor="@color/black_33"
 	            android:textSize="12sp"
-	            android:text="未知" />
+	            android:text="事实上事实上" />
         </LinearLayout>
 
     </LinearLayout>
-
-    <!-- 
-    <RelativeLayout
-        android:visibility="gone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14px" >
-
-        <ImageView
-            android:id="@+id/iv_hand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/bg_commend_hand" />
-
-        <TextView
-            android:layout_centerInParent="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/iv_hand"
-            android:layout_gravity="fill|center_horizontal"
-            android:paddingTop="10px"
-            android:text="888"
-            android:textColor="@color/black"
-            android:textSize="18px" />
-    </RelativeLayout>
-     -->
 
 </LinearLayout>

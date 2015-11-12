@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical" >
+
+    <LinearLayout android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="6"
+        android:gravity="center_vertical">
+        <ImageView
+	        android:id="@+id/iv_head"
+	        android:layout_width="45dp"
+	        android:layout_height="45dp"
+	        android:layout_marginLeft="5dp"
+	        android:layout_marginTop="3dp"
+	        android:layout_marginBottom="3dp"
+	        android:src="@drawable/bg_head_default_little" />
+        
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="男神对方水电费"
+            android:textColor="@color/blue_39db" />
+    </LinearLayout>
+    
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_weight="2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="已验票"
+        android:visibility="gone"
+        android:textColor="@color/green_event" />
+
+	<TextView
+        android:id="@+id/tv_sign_time"
+        android:layout_weight="3"
+        android:layout_width="0dp"
+        android:gravity="right"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:text="10月11日"
+        android:textColor="@color/gray_56" />
+	
+</LinearLayout>

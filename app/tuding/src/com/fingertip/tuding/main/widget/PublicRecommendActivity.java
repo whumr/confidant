@@ -1,5 +1,6 @@
 package com.fingertip.tuding.main.widget;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 
 import com.fingertip.tuding.R;
 import com.fingertip.tuding.base.BaseActivity;
+import com.fingertip.tuding.common.UserSession;
 import com.fingertip.tuding.entity.CommentEntity;
 import com.fingertip.tuding.entity.EventEntity;
 import com.fingertip.tuding.util.http.EventUtil;
@@ -72,12 +74,15 @@ public class PublicRecommendActivity extends BaseActivity{
 	
 	/** 发布评论 **/
 	private void requestPublicRecommend(){
-		EventUtil.pubEventComment(event.id, et_content.getText().toString(), new DefaultCallback() {
+		EventUtil.pubEventComment(event.id, et_content.getText().toString().trim(), new DefaultCallback() {
 			@Override
 			public void succeed() {
 				dismissProgressDialog();
 				toastShort("评论评成功");
-				finish();
+				CommentEntity comment = new CommentEntity();
+				comment.comment = et_content.getText().toString().trim();
+				comment.userEntity = UserSession.getInstance().getUser();
+				setCommentResult(comment);
 			}
 			
 			@Override
@@ -90,12 +95,16 @@ public class PublicRecommendActivity extends BaseActivity{
 	
 	/** 评论回复 **/
 	private void requestPublicRecommendReply(){
-		EventUtil.replyEventComment(event.id, commentEntity.id, et_content.getText().toString(), new DefaultCallback() {
+		EventUtil.replyEventComment(event.id, commentEntity.id, et_content.getText().toString().trim(), new DefaultCallback() {
 			@Override
 			public void succeed() {
 				dismissProgressDialog();
 				toastShort("评论回复成功");
-				finish();
+				CommentEntity comment = new CommentEntity();
+				comment.comment = et_content.getText().toString().trim();
+				comment.userEntity = UserSession.getInstance().getUser();
+				comment.reply = "回复" + commentEntity.userEntity.nick_name;
+				setCommentResult(comment);
 			}
 			
 			@Override
@@ -104,5 +113,12 @@ public class PublicRecommendActivity extends BaseActivity{
 				toastShort(error);
 			}
 		});
+	}
+	
+	private void setCommentResult(CommentEntity comment) {
+		Intent intent = new Intent();
+		intent.putExtra(EXTRA_PARAM, comment);
+		setResult(RESULT_OK, intent);
+		finish();
 	}
 }

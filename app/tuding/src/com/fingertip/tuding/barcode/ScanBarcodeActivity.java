@@ -97,7 +97,7 @@ public class ScanBarcodeActivity extends BaseNavActivity implements SurfaceHolde
 			if (validator.canProcess(rawResult))
 				returnCode(rawResult);
 			else {
-				toastShort("未能识别的二维码");
+//				toastShort("未能识别的二维码");
 				restartPreviewAfterDelay();
 			}
 		} else {
@@ -117,13 +117,13 @@ public class ScanBarcodeActivity extends BaseNavActivity implements SurfaceHolde
 				if (validator.canProcess(rawResult))
 					returnCode(rawResult);
 				else {
-					toastShort("未能识别的二维码");
+//					toastShort("未能识别的二维码");
 					restartPreviewAfterDelay();
 				}
 			} else
 				Toast.makeText(this, rawResult.getText(), Toast.LENGTH_LONG).show();
 		} else {
-			toastShort("未能识别出二维码");
+//			toastShort("未能识别出二维码");
 			restartPreviewAfterDelay();
 		}
 	}

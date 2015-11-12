@@ -12,12 +12,12 @@ import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.fingertip.tuding.R;
 import com.fingertip.tuding.util.Tools;
+import com.fingertip.tuding.widget.view.ListViewForScroll;
 
 /**
  * @author SunnyCoffee
@@ -26,7 +26,7 @@ import com.fingertip.tuding.util.Tools;
  * @desc 自定义Listview　下拉刷新,上拉加载更多
  */
 
-public class RefreshableListView extends ListView implements OnScrollListener {
+public class RefreshableListView extends ListViewForScroll implements OnScrollListener {
 
 	// 区分当前操作是刷新还是加载
 	public static final int REFRESH = 0;
@@ -146,6 +146,7 @@ public class RefreshableListView extends ListView implements OnScrollListener {
 		topPadding(-headerContentHeight);
 		addHeaderView(header);
 		setOnScrollListener(this);
+		setBackgroundResource(R.color.white);
 	}
 
 	public void refreshComplete() {

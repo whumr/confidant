@@ -172,6 +172,68 @@
                 android:layout_marginBottom="14dp"
                 android:layout_marginTop="14dp"
                 android:orientation="vertical" />
+            
+            <LinearLayout android:id="@+id/sign_list_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                
+                <LinearLayout
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_marginTop="6dp"
+	                android:background="@drawable/title_bg" >
+	
+	                <TextView
+	                    android:id="@+id/tv_sign_topic"
+	                    android:layout_width="0dp"
+	                    android:layout_height="wrap_content"
+	                    android:layout_weight="1"
+	                    android:paddingBottom="4dp"
+	                    android:paddingLeft="12dp"
+	                    android:paddingTop="4dp"
+	                    android:text="报名"
+	                    android:textColor="@color/blue_39db"
+	                    android:textSize="14sp" />
+	
+	                <TextView
+	                    android:id="@+id/tv_check"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginLeft="12dp"
+	                    android:background="@drawable/bg_btn_event"
+	                    android:drawablePadding="4dp"
+	                    android:gravity="center"
+	                    android:paddingBottom="4dp"
+	                    android:paddingLeft="8dp"
+	                    android:paddingRight="8dp"
+	                    android:paddingTop="4dp"
+	                    android:text="验票"
+	                    android:visibility="gone"
+	                    android:textColor="@color/white"
+	                    android:textSize="14sp" />
+	            </LinearLayout>
+                
+                <com.fingertip.tuding.widget.view.ListViewForScroll android:id="@+id/sign_listview"
+	                android:layout_width="match_parent"
+	                android:layout_height="wrap_content">
+	            </com.fingertip.tuding.widget.view.ListViewForScroll>
+	            
+	            <TextView android:id="@+id/no_sign_txt"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_gravity="center"
+	                android:text="暂无人报名" />
+	            
+	            <TextView android:id="@+id/load_sign_txt" 
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:padding="3dp"
+	                android:textColor="@color/blue"
+	                android:layout_gravity="center"
+	                android:visibility="gone"
+	                android:text="展开更多报名" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -209,23 +271,23 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
-            <ListView android:id="@+id/comment_listview"
+            <com.fingertip.tuding.widget.view.ListViewForScroll android:id="@+id/comment_listview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-            </ListView>
+            </com.fingertip.tuding.widget.view.ListViewForScroll>
             
-            <!-- 
-            <LinearLayout
-                android:id="@+id/layout_commend"
-                android:layout_width="match_parent"
+            <TextView android:id="@+id/no_comment_txt"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:orientation="vertical"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
-                android:paddingTop="6dp" >
-            </LinearLayout>
-             -->
+                android:layout_gravity="center"
+                android:text="暂无评论" />
+            
+            <TextView android:id="@+id/load_comment_txt" 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:text="点击加载更多" />
         </LinearLayout>
     </ScrollView>
 
