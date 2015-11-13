@@ -12,3 +12,7 @@ app/social_sdk_library_project/bin/
 app/social_sdk_library_project/gen/
 app/richEditor/bin/
 app/richEditor/gen/
+app/ping_client/bin/
+app/ping_client/gen/
+app/ping_server/build/classes
+app/ping_server/.settings

@@ -22,6 +22,8 @@ public class Globals {
 	public static final String APPID_WX = "wx2ba593638ec9fab5";
 	/** Î¢ÐÅsecret **/
 	public static final String SECRET_WX = "336126680718253602e839242e67cbc5";
+	/** debug **/
+	//public static final String SECRET_WX = "d4624c36b6795d1d99dcf0547af5443d";
 	
 	public static final String COMMON_RESULT = "result";
 	
