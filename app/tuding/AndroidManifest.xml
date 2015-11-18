@@ -8,7 +8,6 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="19" />
     
-    <!-- Required ⾃定义⽤来收发消息的相关权限 -->
     <permission android:name="com.fingertip.tuding.permission.JPUSH_MESSAGE"
         android:protectionLevel="signature" />
     <uses-permission android:name="com.fingertip.tuding.permission.JPUSH_MESSAGE" />
