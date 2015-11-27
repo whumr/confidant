@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <EditText android:id="@+id/edit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="6"
+        android:hint="支付金额"/>
+    
+    <Button android:id="@+id/alipay_btn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+		android:layout_marginBottom="10dp"
+        android:text="支付宝"/>
+
+    <Button android:id="@+id/wx_btn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+		android:layout_marginBottom="10dp"
+        android:text="微信"/>
+
+</LinearLayout>
