@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.fingertip.tuding.R;
+import com.fingertip.tuding.util.http.common.ServerConstants;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -69,6 +70,8 @@ public class TestpayActivity extends Activity implements OnClickListener {
 		RequestParams params = new RequestParams();
 		params.addBodyParameter("amount", amount + "");
 		params.addBodyParameter("channel", channel);
+		params.addBodyParameter(ServerConstants.PARAM_KEYS.USERID, "13311111111");
+		params.addBodyParameter(ServerConstants.PARAM_KEYS.ACTIONID, "-1");
 		HttpUtils http = new HttpUtils();
 		http.send(HttpRequest.HttpMethod.POST, URL_CHARGE, params, new RequestCallBack<String>() {
 	        @Override
