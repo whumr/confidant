@@ -147,7 +147,7 @@ public class ImageCache {
 				
 				@Override
 				public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
-					Log.e("ImageCache", "ÏÂÔØÍ·ÏñÊ§°Ü");
+					Log.e("ImageCache", "ÏÂÔØÍ·ÏñÊ§°Ü:" + uri);
 					if (callback != null)
 						callback.loadFail();
 				}
@@ -201,7 +201,7 @@ public class ImageCache {
 				
 				@Override
 				public void onLoadFailed(View container, String uri, Drawable drawable) {
-					Log.e("ImageCache", "ÏÂÔØÍ¼Æ¬Ê§°Ü");
+					Log.e("ImageCache", "ÏÂÔØÍ¼Æ¬Ê§°Ü:" + uri);
 				}
 			});
 	}

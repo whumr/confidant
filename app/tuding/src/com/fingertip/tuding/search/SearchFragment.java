@@ -30,6 +30,7 @@ public class SearchFragment extends BaseFragment implements RefreshListener {
 	private Type seach_type;
 	private SearchMainActivity search_activity;
 	private int current_page;
+	private boolean searching = false;
 	
 	private SharedPreferenceUtil sp;
 	
@@ -87,32 +88,35 @@ public class SearchFragment extends BaseFragment implements RefreshListener {
 	}
 	
 	private void loadData(final boolean append) {
-		float latitude = sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT);
-		float longitude = sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG);
-		if (latitude != 0 && longitude!= 0) {
-			EventUtil.searchEvents(seach_type, EventType.ALL.getType(), longitude + "", latitude + "", current_page, new EntityListCallback<EventEntity>() {
-				@Override
-				public void succeed(List<EventEntity> list) {
-					if (append)
-						adapterSearch.appendAllData(list);
-					else
-						adapterSearch.addAllData(list);
-					afterLoad(append, true, Validator.isEmptyList(list) ? 0 : list.size());
-				}
-				
-				@Override
-				public void fail(String error) {
-					Tools.toastShort(search_activity, error);
-					if (append)
-						current_page--;
-					afterLoad(append, false, 0);
-				}
-			});
-		} else {
-			Tools.toastShort(search_activity, "无法定位当前位置");
-			if (append)
-				current_page--;
-			afterLoad(append, false, 0);
+		if (!searching) {
+			searching = true;
+			float latitude = sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLAT);
+			float longitude = sp.getFloatValue(SharedPreferenceUtil.LASTLOCATIONLONG);
+			if (latitude != 0 && longitude!= 0) {
+				EventUtil.searchEvents(seach_type, EventType.ALL.getType(), longitude + "", latitude + "", current_page, new EntityListCallback<EventEntity>() {
+					@Override
+					public void succeed(List<EventEntity> list) {
+						if (append)
+							adapterSearch.appendAllData(list);
+						else
+							adapterSearch.addAllData(list);
+						afterLoad(append, true, Validator.isEmptyList(list) ? 0 : list.size());
+					}
+					
+					@Override
+					public void fail(String error) {
+						Tools.toastShort(search_activity, error);
+						if (append)
+							current_page--;
+						afterLoad(append, false, 0);
+					}
+				});
+			} else {
+				Tools.toastShort(search_activity, "无法定位当前位置");
+				if (append)
+					current_page--;
+				afterLoad(append, false, 0);
+			}
 		}
 	}
 	
@@ -122,6 +126,7 @@ public class SearchFragment extends BaseFragment implements RefreshListener {
 			listView.loadComplete();
 		else
 			listView.refreshComplete();
+		searching = false;
 	}
 
 	@Override
