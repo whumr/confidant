@@ -258,6 +258,34 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/my_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingLeft="30dp"
+        android:paddingStart="40dp"
+        android:paddingTop="10dp" >
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:contentDescription="@string/empty"
+            android:src="@drawable/icon_my_setting" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="28dp"
+            android:paddingStart="20dp"
+            android:text="我的账户"
+            android:textColor="@color/black_42"
+            android:textSize="@dimen/pub_eventTextSize" />
+    </LinearLayout>
+
+    <!-- 
+    <LinearLayout
         android:id="@+id/test_pay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -283,5 +311,6 @@
             android:textColor="@color/black_42"
             android:textSize="@dimen/pub_eventTextSize" />
     </LinearLayout>
+     -->
 
 </LinearLayout>

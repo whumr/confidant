@@ -164,7 +164,11 @@
         <activity 
             android:name="com.fingertip.tuding.my.MyWatchGroupActivity"
             android:theme="@style/NothingTheme"  />
-        
+
+        <activity 
+            android:name="com.fingertip.tuding.my.MyAccountActivity"
+            android:theme="@style/NothingTheme"  />
+
         <activity 
             android:name="com.fingertip.tuding.account.RegisterActivity"
             android:theme="@style/NothingTheme"  />
@@ -267,8 +271,6 @@
 		    android:configChanges="orientation|keyboardHidden|navigation"
 		    android:exported="false"
 		    android:screenOrientation="behind" />
-		
-        <activity android:name="com.fingertip.tuding.my.TestpayActivity" />
 		
         <!-- 百度地图 -->
         <service

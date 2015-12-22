@@ -39,8 +39,7 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 	private LinearLayout my_watch_list;
 	private LinearLayout my_setting;
 	private LinearLayout my_info;
-
-	private LinearLayout test_pay;
+	private LinearLayout my_account;
 	
 	private BitmapUtils bitmapUtils;
 	private UserSession session;
@@ -67,7 +66,7 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 		my_place_txt = (TextView) findViewById(R.id.my_place_txt);
 		
 		my_info = (LinearLayout) findViewById(R.id.my_info);
-		test_pay = (LinearLayout) findViewById(R.id.test_pay);
+		my_account = (LinearLayout) findViewById(R.id.my_account);
 		my_pub_event = (LinearLayout) findViewById(R.id.my_pub_event);
 		my_events = (LinearLayout) findViewById(R.id.my_events);
 		my_msg_center = (LinearLayout) findViewById(R.id.my_msg_center);
@@ -82,7 +81,7 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 		session = UserSession.getInstance();
 		
 		my_info.setOnClickListener(this);
-		test_pay.setOnClickListener(this);
+		my_account.setOnClickListener(this);
 		my_pub_event.setOnClickListener(this);
 		my_events.setOnClickListener(this);
 		my_msg_center.setOnClickListener(this);
@@ -133,9 +132,9 @@ public class MyIndexActivity extends BaseActivity implements View.OnClickListene
 			case R.id.my_pub_event:
 				Tools.pubEvent(this);
 				break;
-			case R.id.test_pay:
+			case R.id.my_account:
 				intent = new Intent();
-				intent.setClass(MyIndexActivity.this, TestpayActivity.class);
+				intent.setClass(MyIndexActivity.this, MyAccountActivity.class);
 				break;
 			}
 		}

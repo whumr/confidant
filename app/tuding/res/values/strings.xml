@@ -21,6 +21,7 @@
     <string name="my_watch_add">添加关注</string>
     <string name="my_watch_myinfo">我的资料</string>
     <string name="my_user_info">用户资料</string>
+    <string name="my_account">我的账户</string>
     <string name="my_contact">通讯录</string>
     <string name="my_contact_sm">短信邀请</string>
     <string name="my_contact_watched">已关注</string>
