@@ -16,3 +16,4 @@ app/ping_client/bin/
 app/ping_client/gen/
 app/ping_server/build/classes
 app/ping_server/.settings
+app/tuding/lint.xml
